@@ -2,6 +2,8 @@ import { useCallback, useEffect } from "react";
 import useAuthStore from "../../stores/use-auth-store";
 import React from "react";
 import "./Login.css";
+import { FaRegUserCircle } from "react-icons/fa";
+import { FaLock } from "react-icons/fa";
 
 
 const Login = () => {
@@ -23,9 +25,11 @@ const Login = () => {
         <h1>Login</h1>
         <div className="input-box">
           <input type="text" placeholder='Username' required/>
+          <FaRegUserCircle />
         </div>
         <div className="input-box">
           <input type="password" placeholder='Password' required/>
+          <FaLock />
         </div>
 
         <div className="remember-forgot">
