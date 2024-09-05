@@ -1,9 +1,24 @@
-import { StrictMode } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
 import Quiz from "./pages/quiz/Quiz.jsx";
+import useAuthStore from "./stores/use-auth-store";
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuthStore();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 
 const router = createBrowserRouter([
@@ -13,11 +28,16 @@ const router = createBrowserRouter([
   },
   {
     path: "/Quiz",
-    element: <Quiz />,
+    element: (
+      <ProtectedRoute>
+        <Quiz />
+      </ProtectedRoute>
+    ),
   },
 ]);
+
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  <React.StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>
+  </React.StrictMode>
 );

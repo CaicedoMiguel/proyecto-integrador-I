@@ -1,21 +1,23 @@
-import { useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import useQuizStore from "../../stores/use-quiz-store";
 
+export default function Quiz() {
+  const { quiz, aumentarPorcentaje } = useQuizStore();
 
+  // Asegúrate de que se quite el fondo de login si llegas aquí
+  useEffect(() => {
+    document.body.classList.remove('login-background');
+  }, []);
 
-export default function Quiz(){
+  const onHandlerButtonNext = useCallback(() => {
+    aumentarPorcentaje();
+  }, [aumentarPorcentaje]);
 
-    const {quiz, aumentarPorcentaje} = useQuizStore();
-
-    const onHandlerButtonNext = useCallback(()=>{
-        aumentarPorcentaje()
-    })
-  
-    return (
-        <div>
-            <h1>Hola</h1>
-            <p>Progreso del quiz:{quiz.percentageQuizCompleted}%</p>
-            <button onClick={onHandlerButtonNext}>Aumentar</button>
-        </div>
-    )
+  return (
+    <div>
+      <h1>Hola</h1>
+      <p>Progreso del quiz: {quiz.percentageQuizCompleted}%</p>
+      <button onClick={onHandlerButtonNext}>Aumentar</button>
+    </div>
+  );
 }
