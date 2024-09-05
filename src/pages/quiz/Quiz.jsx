@@ -1,23 +1,27 @@
 import React, { useEffect, useCallback } from "react";
-import useQuizStore from "../../stores/use-quiz-store";
+import useAuthStore from '../../stores/use-auth-store';
+import { useNavigate } from 'react-router-dom';
+import './Quiz.css'; // Asegúrate de que este archivo CSS exista en la ruta especificada
 
 export default function Quiz() {
-  const { quiz, aumentarPorcentaje } = useQuizStore();
+    const { quiz = { percentageQuizCompleted: 0 }, aumentarPorcentaje, logout } = useAuthStore();
+    const navigate = useNavigate();
 
-  // Asegúrate de que se quite el fondo de login si llegas aquí
-  useEffect(() => {
-    document.body.classList.remove('login-background');
-  }, []);
+    const handleLogout = useCallback(async () => {
+        try {
+            await logout();
+            navigate('/login'); // Redirige a la página de login después de hacer logout
+        } catch (error) {
+            console.error("Error al hacer logout:", error);
+        }
+    }, [logout, navigate]);
 
-  const onHandlerButtonNext = useCallback(() => {
-    aumentarPorcentaje();
-  }, [aumentarPorcentaje]);
-
-  return (
-    <div>
-      <h1>Hola</h1>
-      <p>Progreso del quiz: {quiz.percentageQuizCompleted}%</p>
-      <button onClick={onHandlerButtonNext}>Aumentar</button>
-    </div>
-  );
+    return (
+        <div className="quiz-container">
+            <h1>Hola</h1>
+            <p>Progreso del quiz: {quiz.percentageQuizCompleted}%</p>
+            <button onClick={aumentarPorcentaje}>Aumentar</button>
+            <button onClick={handleLogout}>Logout</button>
+        </div>
+    );
 }
