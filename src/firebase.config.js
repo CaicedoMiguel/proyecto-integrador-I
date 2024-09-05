@@ -7,12 +7,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC8zjO4otwnFgtlDfftb0Jkei01phJqH9I",
-  authDomain: "proyecto-pi-edf34.firebaseapp.com",
-  projectId: "proyecto-pi-edf34",
-  storageBucket: "proyecto-pi-edf34.appspot.com",
-  messagingSenderId: "423764092882",
-  appId: "1:423764092882:web:ad8a284832db846fa7ca0b"
+  apiKey: "AIzaSyC7fQUtUzjcxFGotwtfjWP5cadv0paxLdA",
+  authDomain: "tierra-santa-pi-i.firebaseapp.com",
+  projectId: "tierra-santa-pi-i",
+  storageBucket: "tierra-santa-pi-i.appspot.com",
+  messagingSenderId: "13695817060",
+  appId: "1:13695817060:web:e297642445f883fb0e5671"
 };
 
 // Initialize Firebase
