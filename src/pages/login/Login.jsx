@@ -8,27 +8,30 @@ import { useNavigate } from "react-router-dom";
 // import userDAO from "../../daos/userDAO";
 
 
+
 const Login = () => {
     const {user,loginGoogleWithPopup,observeAuthState, } = useAuthStore();
-
+    // const handleLogout = useCallback(() => {
+    //   logout();
+    // }, [logout]);
+    
     const navigate = useNavigate();
     useEffect(() => {
         observeAuthState();
     }
     ,[observeAuthState]);
 
-    // useEffect(() => {
-    //   if (user) {
-    //     const newUser = {
-    //       email: user.email,
-    //       name: user.displayName,
-    //       photo: user.photoURL,
-    //     };
-    //     userDAO.createUser(newUser);
-    //     navigate("/Quiz");
-    //   }
-    // }, [user, navigate]);
-
+    useEffect(() => {
+      if (user) {
+        const newUser = {
+          email: user.email,
+          name: user.displayName,
+          photo: user.photoURL,
+        };
+        // userDAO.createUser(newUser);
+        // navigate("/Quiz");
+      }
+    }, [user, navigate]);
 
     const onHandlerLogin = useCallback (() => {
         loginGoogleWithPopup()
@@ -41,11 +44,11 @@ const Login = () => {
         <h1>Login</h1>
         <div className="input-box">
           <input type="text" placeholder='Username' required/>
-          <FaRegUserCircle />
+          <FaRegUserCircle className='icon'/>
         </div>
         <div className="input-box">
           <input type="password" placeholder='Password' required/>
-          <FaLock />
+          <FaLock className='icon' />
         </div>
 
         <div className="remember-forgot">
@@ -65,4 +68,4 @@ const Login = () => {
   );
 };
 
-export default Login
+export default Login;
