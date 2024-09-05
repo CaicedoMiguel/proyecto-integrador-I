@@ -19,7 +19,7 @@ export default function Component() {
 
   return (
     <div className="quiz-container">
-      <h1 className="quiz-header">Quiz 3D</h1>
+      <h1 className="quiz-header">TIERRA SANTA</h1>
       <div className="model-viewer-container">
         <ModelViewer />
       </div>

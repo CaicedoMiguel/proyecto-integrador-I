@@ -15,8 +15,8 @@
 
 .model-viewer-container {
   width: 100%;
-  max-width: 600px;
-  height: 400px;
+  max-width: 1000px;
+  height: 1000px;
   margin-bottom: 20px;
 }
 
