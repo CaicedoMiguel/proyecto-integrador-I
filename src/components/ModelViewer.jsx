@@ -52,13 +52,13 @@ function Model() {
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (modelRef.current) {
-      modelRef.current.position.y = Math.cos(t * 0.5) * 0.5; // Animación de coseno en el eje Y
+      modelRef.current.position.y = Math.cos(t * 0.7) * 1; // Animación de coseno en el eje Y
       modelRef.current.rotation.x = rotation.x;
       modelRef.current.rotation.y = rotation.y;
     }
   });
 
-  return <primitive ref={modelRef} object={scene} scale={1.5} position={[0, 0, 0]} />;
+  return <primitive ref={modelRef} object={scene} scale={1.7} position={[0, 0, 0]} />;
 }
 
 function SkyBackground() {
