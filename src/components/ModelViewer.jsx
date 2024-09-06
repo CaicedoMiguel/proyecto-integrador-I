@@ -6,8 +6,8 @@ import * as THREE from 'three';
 function Model() {
   const modelRef = useRef();
   const { scene } = useGLTF('/models/Low_Poly_Forest.glb');
-  const [isDragging, setIsDragging] = useState(false); // Para detectar si está arrastrando
-  const [rotation, setRotation] = useState({ x: 0, y: 0 }); // Estado para controlar la rotación
+  const [isDragging, setIsDragging] = useState(false);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
 
   // Cambiar material del modelo
   scene.traverse((child) => {
@@ -20,7 +20,7 @@ function Model() {
         shininess: 50,
         specular: new THREE.Color(0x111111)
       });
-      child.material.needsUpdate = true; 
+      child.material.needsUpdate = true;
     }
   });
 
@@ -48,26 +48,27 @@ function Model() {
     };
   }, [isDragging]);
 
-  // Actualiza la rotación y posición con animación de coseno
+  // Actualiza la rotación y posición con animación de coseno en X e Y
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (modelRef.current) {
-      modelRef.current.position.y = Math.cos(t * 0.7) * 1; // Animación de coseno en el eje Y
+      modelRef.current.position.x = Math.cos(t * 0.8) * 1.5; // Animación de coseno en X
+      modelRef.current.position.y = Math.sin(t * 0.8) * 1.5; // Animación de seno en Y
       modelRef.current.rotation.x = rotation.x;
       modelRef.current.rotation.y = rotation.y;
     }
   });
 
-  return <primitive ref={modelRef} object={scene} scale={1.7} position={[0, 0, 0]} />;
+  return <primitive ref={modelRef} object={scene} scale={2} position={[0, 0, 0]} />;
 }
 
 function SkyBackground() {
   return (
-    <Sky 
-      distance={100} 
-      sunPosition={[0, 1, 0]} 
-      inclination={0.6} 
-      azimuth={0.1} 
+    <Sky
+      distance={100}
+      sunPosition={[0, 1, 0]}
+      inclination={0.6}
+      azimuth={0.1}
     />
   );
 }
