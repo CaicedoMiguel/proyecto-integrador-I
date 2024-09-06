@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useAuthStore from "../../stores/use-auth-store";
 import { useNavigate } from "react-router-dom";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
@@ -22,7 +22,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user && isInitialized) {
-      navigate("/Quiz");
+      navigate("/Cubo");
     }
   }, [user, navigate, isInitialized]);
 
@@ -69,9 +69,7 @@ const Login = () => {
         <button type="button" onClick={onHandlerLogin}>sign in with google account</button>
 
         <div className="register-link">
-          <p>
-            Don't have an account? <a href="#"> Register </a>
-          </p>
+          <p> Don't have an account? <a href="#"> Register </a></p>
         </div>
       </form>
     </div>

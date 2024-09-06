@@ -1,11 +1,13 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
-import Quiz from "./pages/quiz/Quiz.jsx";
+import Cubo from "./pages/cubo/Cubo.jsx";
 import useAuthStore from "./stores/use-auth-store";
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuthStore();
 
@@ -27,10 +29,10 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/Quiz",
+    path: "/Cubo",
     element: (
       <ProtectedRoute>
-        <Quiz />
+        <Cubo />
       </ProtectedRoute>
     ),
   },
