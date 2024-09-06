@@ -59,8 +59,7 @@ function Model() {
     const t = clock.getElapsedTime();
     if (modelRef.current) {
       positionX += 0.01 * direction;
-      modelRef.current.position.x = positionX;
-      // modelRef.current.position.x = Math.cos(t * 0.8) * 1.5; // Animación de coseno en X
+      modelRef.current.position.x = positionX; // Animación de coseno en X
       modelRef.current.position.y = Math.sin(t * 0.8) * 1.5; // Animación de seno en Y
       modelRef.current.rotation.x = rotation.x;
       modelRef.current.rotation.y = rotation.y;

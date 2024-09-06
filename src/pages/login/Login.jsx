@@ -22,7 +22,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user && isInitialized) {
-      navigate("/Cubo");
+      navigate("/Home");
     }
   }, [user, navigate, isInitialized]);
 
@@ -69,7 +69,7 @@ const Login = () => {
         <button type="button" onClick={onHandlerLogin}>sign in with google account</button>
 
         <div className="register-link">
-          <p> Don't have an account? <a href="#"> Register </a></p>
+          <p> Don t have an account? <a href="#"> Register </a></p>
         </div>
       </form>
     </div>
