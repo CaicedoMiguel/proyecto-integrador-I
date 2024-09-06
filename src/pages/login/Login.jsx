@@ -9,6 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // useEffect for observing authentication state and setting the background
   useEffect(() => {
     document.body.classList.add("login-background");
     const unsubscribe = observeAuthState();
@@ -20,24 +21,28 @@ const Login = () => {
     };
   }, [observeAuthState]);
 
+  // useEffect to navigate to the home page when a user logs in
   useEffect(() => {
     if (user && isInitialized) {
       navigate("/Home");
     }
   }, [user, navigate, isInitialized]);
 
+  // Handles Google login action using useCallback for memoization
   const onHandlerLogin = useCallback(() => {
     loginGoogleWithPopup();
   }, [loginGoogleWithPopup]);
 
+  // If the auth flow is not initialized or it's loading, show a loading message
   if (!isInitialized || loading) {
     return <div>Loading...</div>;
   }
-
+// If the user is already logged in, return null to avoid showing the login form
   if (user) {
     return null;
   }
 
+  // The main JSX layout for the login form
   return (
     <div className="wrapper">
       {error && (
