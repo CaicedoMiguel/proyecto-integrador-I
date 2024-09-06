@@ -5,25 +5,21 @@ import * as THREE from 'three';
 
 export default function Model() {
   const modelRef = useRef();
-  const { scene, materials } = useGLTF('../../public/models/Low_Poly_Forest.glb');
+  const { scene } = useGLTF('../../public/models/Low_Poly_Forest.glb');
 
-  // Use the original material, but modify it to be metallic
   scene.traverse((child) => {
     if (child.isMesh) {
-      const originalMaterial = child.material;
-
-      // Aplicar propiedades de metalicidad y suavidad sin eliminar las texturas
-      originalMaterial.metalness = 0.9;  // Metalizado alto
-      originalMaterial.roughness = 0.2;  // Suavidad media
-      originalMaterial.envMapIntensity = 1;  // Reflejos si hay un environment map
+      child.material.metalness = 0.9;
+      child.material.roughness = 0.2;
+      child.material.envMapIntensity = 1;
     }
   });
 
-  // Apply cosine-based slow animation to the model
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    modelRef.current.position.y = Math.cos(t * 0.5) * 0.5; // Slower movement using cos
+    modelRef.current.position.y = Math.cos(t * 0.5) * 0.5;
+    modelRef.current.rotation.y += 0.005; // Añade una rotación suave
   });
 
-  return <primitive ref={modelRef} object={scene} scale={1} position={[0, 20, 0]} />;
+  return <primitive ref={modelRef} object={scene} scale={0.5} position={[0, 0, 0]} />;
 }
