@@ -1,62 +1,70 @@
-import React, { useRef, useEffect, Suspense } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import React, { useRef, useState, useEffect, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, useGLTF, Sky } from '@react-three/drei';
 import * as THREE from 'three';
 
 function Model() {
   const modelRef = useRef();
   const { scene } = useGLTF('/models/Low_Poly_Forest.glb');
+  const [isDragging, setIsDragging] = useState(false); // Para detectar si está arrastrando
+  const [rotation, setRotation] = useState({ x: 0, y: 0 }); // Estado para controlar la rotación
 
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    if (modelRef.current) {
-      modelRef.current.position.y = Math.cos(t * 0.5) * 0.5;
-      modelRef.current.rotation.y += 0.005;
+  // Cambiar material del modelo
+  scene.traverse((child) => {
+    if (child.isMesh) {
+      const originalMaterial = child.material.clone();
+      child.material = new THREE.MeshPhongMaterial({
+        map: originalMaterial.map,
+        color: originalMaterial.color,
+        flatShading: true,
+        shininess: 50,
+        specular: new THREE.Color(0x111111)
+      });
+      child.material.needsUpdate = true; 
     }
   });
 
-  return <primitive ref={modelRef} object={scene} scale={1} position={[0, 0, 0]} />;
-}
-
-function CameraController() {
-  const { camera } = useThree();
-  const targetRotation = useRef(new THREE.Euler());
-
+  // Detectar el arrastre del mouse para rotar el modelo
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      const rotationSpeed = 0.1;
-      switch(event.key) {
-        case 'ArrowLeft':
-          targetRotation.current.y += rotationSpeed;
-          break;
-        case 'ArrowRight':
-          targetRotation.current.y -= rotationSpeed;
-          break;
-        case 'ArrowUp':
-          targetRotation.current.x = Math.max(targetRotation.current.x - rotationSpeed, -Math.PI / 2);
-          break;
-        case 'ArrowDown':
-          targetRotation.current.x = Math.min(targetRotation.current.x + rotationSpeed, Math.PI / 2);
-          break;
+    const handleMouseDown = () => setIsDragging(true);
+    const handleMouseUp = () => setIsDragging(false);
+    const handleMouseMove = (event) => {
+      if (isDragging) {
+        setRotation((prev) => ({
+          x: prev.x + event.movementY * 0.01,
+          y: prev.y + event.movementX * 0.01
+        }));
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove);
 
-  useFrame(() => {
-    camera.rotation.x += (targetRotation.current.x - camera.rotation.x) * 0.1;
-    camera.rotation.y += (targetRotation.current.y - camera.rotation.y) * 0.1;
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isDragging]);
+
+  // Actualiza la rotación y posición con animación de coseno
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (modelRef.current) {
+      modelRef.current.position.y = Math.cos(t * 0.5) * 0.5; // Animación de coseno en el eje Y
+      modelRef.current.rotation.x = rotation.x;
+      modelRef.current.rotation.y = rotation.y;
+    }
   });
 
-  return null;
+  return <primitive ref={modelRef} object={scene} scale={1.5} position={[0, 0, 0]} />;
 }
 
 function SkyBackground() {
   return (
     <Sky 
-      distance={450000} 
+      distance={100} 
       sunPosition={[0, 1, 0]} 
       inclination={0.6} 
       azimuth={0.1} 
@@ -77,7 +85,6 @@ export default function ModelViewer() {
         <Model />
         <Environment preset="sunset" />
       </Suspense>
-      <CameraController />
     </Canvas>
   );
 }
