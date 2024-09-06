@@ -2,11 +2,23 @@ import { create } from "zustand";
 import { auth } from "../firebase.config";
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
+/**
+ * Auth Store
+ * 
+ * This Zustand store manages authentication state and provides methods
+ * for logging in with Google, observing authentication state changes,
+ * and logging out.
+ */
 const useAuthStore = create((set) => ({
   user: null,
   loading: true,
   error: null,
 
+   /**
+   * Logs in a user using Google authentication via a popup.
+   * 
+   * @returns {Promise<void>} - A promise that resolves when login is complete.
+   */
   loginGoogleWithPopup: async () => {
     set({ loading: true, error: null });
     try {
@@ -19,12 +31,22 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  /**
+   * Observes changes in authentication state.
+   * 
+   * @returns {Function} - A function that unsubscribes from the auth state listener.
+   */
   observeAuthState: () => {
     return onAuthStateChanged(auth, (user) => {
       set({ user, loading: false });
     });
   },
 
+  /**
+   * Logs out the currently authenticated user.
+   * 
+   * @returns {Promise<void>} - A promise that resolves when logout is complete.
+   */
   logout: async () => {
     set({ loading: true, error: null });
     try {
@@ -36,6 +58,9 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  /**
+   * Clears any existing authentication error.
+   */
   clearError: () => set({ error: null }),
 }));
 

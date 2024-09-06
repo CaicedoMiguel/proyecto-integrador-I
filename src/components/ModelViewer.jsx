@@ -3,13 +3,21 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, useGLTF, Sky } from '@react-three/drei';
 import * as THREE from 'three';
 
+/**
+ * Model Component
+ * 
+ * This component loads a 3D model, applies custom material properties, and handles user interactions
+ * for rotating the model. It also animates the model's position and rotation.
+ * 
+ * @returns {JSX.Element} The 3D model rendered in the scene.
+ */
 function Model() {
   const modelRef = useRef();
   const { scene } = useGLTF('/models/Low_Poly_Forest.glb');
   const [isDragging, setIsDragging] = useState(false);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
 
-  // Cambiar material del modelo
+  // Change the material of the model
   scene.traverse((child) => {
     if (child.isMesh) {
       const originalMaterial = child.material.clone();
@@ -24,7 +32,7 @@ function Model() {
     }
   });
 
-  // Detectar el arrastre del mouse para rotar el modelo
+  // Detect mouse drag to rotate the model
   useEffect(() => {
     const handleMouseDown = () => setIsDragging(true);
     const handleMouseUp = () => setIsDragging(false);
@@ -37,6 +45,7 @@ function Model() {
       }
     };
 
+    // Add event listeners for mouse actions
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('mousemove', handleMouseMove);
@@ -48,7 +57,7 @@ function Model() {
     };
   }, [isDragging]);
 
-  // Actualiza la rotación y posición con animación de coseno en X e Y
+  // Animate the model's position and rotation
   let direction = 1;
   let positionX = 0;
 
@@ -69,6 +78,13 @@ function Model() {
   return <primitive ref={modelRef} object={scene} scale={2} position={[0, 0, 0]} />;
 }
 
+/**
+ * SkyBackground Component
+ * 
+ * This component sets up the background sky with specific properties.
+ * 
+ * @returns {JSX.Element} The sky background element.
+ */
 function SkyBackground() {
   return (
     <Sky

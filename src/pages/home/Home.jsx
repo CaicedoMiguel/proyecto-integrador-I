@@ -4,9 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import ModelViewer from "../../components/ModelViewer";
 
 export default function Component() {
+  // Retrieve the `logout` function from the authentication store.
   const { logout } = useAuthStore();
+  // Initialize the `navigate` function for navigation purposes.
   const navigate = useNavigate();
 
+// Function to handle the logout process
   const handleLogout = async () => {
     try {
       await logout();
