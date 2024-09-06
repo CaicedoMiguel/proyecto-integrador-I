@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Login from "./pages/login/Login.jsx";
-import Cubo from "./pages/cubo/Cubo.jsx";
+import Cubo from "./pages/quiz/Quiz.jsx";
 import useAuthStore from "./stores/use-auth-store";
 
 // eslint-disable-next-line react-refresh/only-export-components

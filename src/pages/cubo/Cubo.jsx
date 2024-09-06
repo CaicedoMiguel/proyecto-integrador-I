@@ -29,7 +29,7 @@ const Esfera = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(25, width / height, 0.01, 1000);
     scene.add(camera);
-    camera.position.z = 6;
+    camera.position.z = 15;
     camera.position.x = 6;
 
     const renderer = new THREE.WebGLRenderer();
@@ -52,12 +52,20 @@ const Esfera = () => {
     scene.add(light);
 
     const clock = new THREE.Clock();
+    let direction = 1;
+    let positionX = 0;
     const animate = () => {
+      if (positionX > 3 || positionX < -3) {
+        direction *= -1;
+    }
       const elapsedTime = clock.getElapsedTime();
       cube.rotation.y = elapsedTime;
-      // sphere.rotation.x = Math.cos(elapsedTime);
       cube.rotation.x = elapsedTime;
-      cube.rotation.y = Math.sin(elapsedTime);
+      positionX += 0.01 * direction;
+      cube.position.x = positionX;
+      // cube.position.x += 0.01;
+      // cube.position.x = Math.sin(elapsedTime);
+      cube.position.y = Math.cos(elapsedTime);
 
       controls.update();
       renderer.render(scene, camera);
