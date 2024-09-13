@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import useAuthStore from '../../stores/use-auth-store';
 import { useNavigate } from 'react-router-dom';
 import ModelViewer from "../../components/ModelViewer";
@@ -10,14 +10,15 @@ export default function Component() {
   const navigate = useNavigate();
 
 // Function to handle the logout process
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error("Error al hacer logout:", error);
-    }
-  };
+  const handleLogout = useCallback(() => {
+    logout();
+    // try {
+    //   await logout();
+    //   navigate('/');
+    // } catch (error) {
+    //   console.error("Error al hacer logout:", error);
+    // }
+  }, [logout]);
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>

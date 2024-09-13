@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  setDoc,
   getDoc,
   deleteDoc,
   updateDoc,
@@ -28,17 +29,17 @@ class UserDAO {
      * An object containing the success status and either the user data or an error.
      */
   async getUserById(id) {
-      try {
-          const userDoc = await getDoc(doc(this.collectionRef, id));
-          if (userDoc.exists()) {
-              return { success: true, data: userDoc.data() };
-          } else {
-              return { success: false, data: null };
-          }
-      } catch (error) {
+    await getDoc(doc(this.collectionRef, id))
+    .then((userDoc) => {
+        if (userDoc.exists()) {
+            return { success: true, data: userDoc.data() };
+        } else {
+            return { success: false, data: null };
+        }
+    })
+    .catch ((error) => {
           console.log("Error getting document:", error);
-          return { success: false, error };
-      }
+      })
   }
 
    /**
@@ -49,14 +50,17 @@ class UserDAO {
      * An object containing the success status and the new document ID or an error.
      */
   async createUser(userData) {
-      try {
-          const docRef = await addDoc(this.collectionRef, userData);
-          console.log("Document written with ID: ", docRef.id);
-          return { success: true, id: docRef.id };
-      } catch (error) {
+    await addDoc(this.collectionRef, userData)
+    .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+        console.log(docRef);
+        
+        //   return { success: true, id: docRef.id };
+    })
+    .catch ((error) => {
           console.error("Error adding document: ", error);
-          return { success: false, error };
-      }
+        //   return { success: false, error };
+      });
   }
 
    /**
@@ -68,15 +72,14 @@ class UserDAO {
      * An object containing the success status or an error.
      */
   async updateUser(id, userData) {
-      try {
-          const userRef = doc(this.collectionRef, id);
-          await updateDoc(userRef, userData);
-          console.log("Document successfully updated!");
-          return { success: true };
-      } catch (error) {
+    const userRef = doc(this.collectionRef, id);
+    await updateDoc(userRef, userData)
+        .then(console.log("Document successfully updated!"))
+        //   return { success: true };
+        .catch ((error) => {
           console.error("Error updating document: ", error);
-          return { success: false, error };
-      }
+        //   return { success: false, error };
+      })
   }
 
   /**
@@ -87,15 +90,14 @@ class UserDAO {
      * An object containing the success status or an error.
      */
   async deleteUser(id) {
-      try {
-          await deleteDoc(doc(this.collectionRef, id));
-          console.log("Document successfully deleted!");
-          return { success: true };
-      } catch (error) {
+    await deleteDoc(doc(this.collectionRef, id))
+    .then(console.log("Document successfully deleted!"))
+        //   return { success: true };}
+    .catch((error) => {
           console.error("Error removing document: ", error);
-          return { success: false, error };
-      }
+        //   return { success: false, error };
+      });
   }
-}
 
+}
 export default new UserDAO();

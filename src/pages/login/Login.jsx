@@ -3,40 +3,54 @@ import useAuthStore from "../../stores/use-auth-store";
 import { useNavigate } from "react-router-dom";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
 import "./Login.css";
+import userDAO from "../../daos/userDAO";
 
 const Login = () => {
-  const { user, loading, error, loginGoogleWithPopup, observeAuthState, clearError } = useAuthStore();
+  const { user, loading, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
   const navigate = useNavigate();
   const [isInitialized, setIsInitialized] = useState(false);
 
   // useEffect for observing authentication state and setting the background
   useEffect(() => {
-    document.body.classList.add("login-background");
-    const unsubscribe = observeAuthState();
-    setIsInitialized(true);
+    if (user) {
+      const newUser = {
+        email: user.email,
+        name: user.displayName,
+        photo: user.photoURL,
+      };
+      userDAO.createUser(newUser);
+      navigate("/Home");
+    }
+  }, [user, navigate]);
+  // useEffect(() => {
+  //   document.body.classList.add("login-background");
+  //   const unsubscribe = observeAuthState();
+  //   setIsInitialized(true);
     
-    return () => {
-      document.body.classList.remove("login-background");
-      unsubscribe();
-    };
-  }, [observeAuthState]);
+  //   return () => {
+  //     document.body.classList.remove("login-background");
+  //     unsubscribe();
+  //   };
+  // }, [observeAuthState]);
 
   // useEffect to navigate to the home page when a user logs in
   useEffect(() => {
-    if (user && isInitialized) {
-      navigate("/Home");
-    }
-  }, [user, navigate, isInitialized]);
+    observeAuthState();
+  }, [observeAuthState]);
 
   // Handles Google login action using useCallback for memoization
-  const onHandlerLogin = useCallback(() => {
-    loginGoogleWithPopup();
-  }, [loginGoogleWithPopup]);
+  const handleLogin = useCallback(() => {
+    loginGoogleWithPopUp();
+  }, [loginGoogleWithPopUp]);
+
+  // const handleLogout = useCallback(() => {
+  //   logout();
+  // }, [logout])
 
   // If the auth flow is not initialized or it's loading, show a loading message
-  if (!isInitialized || loading) {
-    return <div>Loading...</div>;
-  }
+  // if (!isInitialized || loading) {
+  //   return <div>Loading...</div>;
+  // }
 // If the user is already logged in, return null to avoid showing the login form
   if (user) {
     return null;
@@ -71,7 +85,7 @@ const Login = () => {
 
         <button type="submit">login</button>
 
-        <button type="button" onClick={onHandlerLogin}>sign in with google account</button>
+        <button type="button" onClick={handleLogin}>sign in with google account</button>
 
         <div className="register-link">
           <p> Don t have an account? <a href="#"> Register </a></p>
