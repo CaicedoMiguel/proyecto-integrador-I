@@ -3,9 +3,15 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/login/login';
 import Quiz from './pages/quiz/quiz';
 import Escenario3DPersonalizado from './Escenario3DPersonalizado';
-
+import { div } from 'three/webgpu';
+import Navbar from './components/NavBar/Navbar';
+ 
 const App = () => {
   return (
+    <>
+    <div>
+      <Navbar />
+    </div>
     <Router>
       <div className="app">
         <Routes>
@@ -18,6 +24,8 @@ const App = () => {
         </div>
       </div>
     </Router>
+
+    </>
   );
 }
 

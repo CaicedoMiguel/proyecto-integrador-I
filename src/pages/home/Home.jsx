@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import useAuthStore from '../../stores/use-auth-store';
 import { useNavigate } from 'react-router-dom';
 import ModelViewer from "../../components/ModelViewer";
+import Navbar from "../../components/NavBar/Navbar";
 
 export default function Component() {
   // Retrieve the `logout` function from the authentication store.
@@ -12,22 +13,21 @@ export default function Component() {
 // Function to handle the logout process
   const handleLogout = useCallback(() => {
     logout();
-    // try {
-    //   await logout();
-    //   navigate('/');
-    // } catch (error) {
-    //   console.error("Error al hacer logout:", error);
-    // }
   }, [logout]);
 
   return (
+    <>
+    
+    <div>
+      <Navbar />
+    </div>
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <ModelViewer />
       <button 
         onClick={handleLogout} 
         style={{
           position: 'absolute',
-          top: '10px',
+          bottom: '10px',
           right: '10px',
           padding: '5px 10px',
           fontSize: '0.8rem',
@@ -42,5 +42,7 @@ export default function Component() {
         Logout
       </button>
     </div>
+
+    </>
   );
 }
