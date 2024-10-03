@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
 import "./Login.css";
 import userDAO from "../../daos/userDAO";
+import Navbar from "../../components/NavBar/Navbar";
 
 const Login = () => {
   const { user, loading, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
@@ -19,19 +20,9 @@ const Login = () => {
         photo: user.photoURL,
       };
       userDAO.createUser(newUser);
-      navigate("/Home");
+      navigate("/Modelado3D");
     }
   }, [user, navigate]);
-  // useEffect(() => {
-  //   document.body.classList.add("login-background");
-  //   const unsubscribe = observeAuthState();
-  //   setIsInitialized(true);
-    
-  //   return () => {
-  //     document.body.classList.remove("login-background");
-  //     unsubscribe();
-  //   };
-  // }, [observeAuthState]);
 
   // useEffect to navigate to the home page when a user logs in
   useEffect(() => {
@@ -43,21 +34,17 @@ const Login = () => {
     loginGoogleWithPopUp();
   }, [loginGoogleWithPopUp]);
 
-  // const handleLogout = useCallback(() => {
-  //   logout();
-  // }, [logout])
-
-  // If the auth flow is not initialized or it's loading, show a loading message
-  // if (!isInitialized || loading) {
-  //   return <div>Loading...</div>;
-  // }
-// If the user is already logged in, return null to avoid showing the login form
+  // If the user is already logged in, return null to avoid showing the login form
   if (user) {
     return null;
   }
 
   // The main JSX layout for the login form
   return (
+    <>
+    <div>
+      <Navbar />
+    </div>
     <div className="wrapper">
       {error && (
         <div className="error-message">
@@ -92,6 +79,7 @@ const Login = () => {
         </div>
       </form>
     </div>
+    </>
   );
 };
 

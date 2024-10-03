@@ -1,10 +1,3 @@
-/* *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
-} */
-
 .header{
     position: fixed;
     top: 0;
@@ -20,17 +13,18 @@
 
 .logo {
     font-size: 32px;
-    color: seagreen;
+    color: rgb(0, 0, 0);
     font-weight: 700;
 }
-a {
+a, li {
     text-decoration: none;
+    list-style-type: none;
 }
 
 .navbar a {
     position: relative;
     font-size: 18px;
-    color: seagreen;
+    color: rgb(0, 0, 0);
     font-weight: 500;
     margin-left: 40px;
 }
@@ -41,7 +35,7 @@ a {
     left: 0;
     width: 0;
     height: 2px;
-    background: seagreen;
+    background: rgb(0, 0, 0);
     transition: .3s;
 
 }
