@@ -16,7 +16,7 @@
     color: rgb(0, 0, 0);
     font-weight: 700;
 }
-a, li {
+li, a {
     text-decoration: none;
     list-style-type: none;
 }
