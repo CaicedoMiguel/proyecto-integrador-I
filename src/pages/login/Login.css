@@ -1,5 +1,6 @@
-.wrapper {
-  width: 420px;
+ .wrapper {
+  height: 450px;
+  width: 400px;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(30px);
@@ -7,6 +8,9 @@
   color: #fff;
   border-radius: 10px;
   padding: 30px 40px;
+  background: url(../../assets/background.jpg) no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .wrapper h1 {

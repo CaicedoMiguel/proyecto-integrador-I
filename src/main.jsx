@@ -3,18 +3,14 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import Login from "./pages/login/Login.jsx";
 import Home from "./pages/home/Home.jsx";
+import Modelado3D from "./pages/modelado3D/Modelado3D.jsx";
 import useAuthStore from "./stores/use-auth-store";
+import Sitemap from "./pages/sitemap/Sitemap.jsx";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuthStore();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+  const { user } = useAuthStore();
   if (!user) {
     return <Navigate to="/" replace />;
   }
@@ -22,17 +18,20 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: <Home />,
   },
   {
-    path: "/Home",
+    path: "sitemap",
+    element: <Sitemap />,
+  },
+  {
+    path: "/Modelado3D",
     element: (
       <ProtectedRoute>
-        <Home />
+        <Modelado3D />
       </ProtectedRoute>
     ),
   },

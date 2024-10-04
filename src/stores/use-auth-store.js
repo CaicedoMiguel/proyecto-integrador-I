@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { auth } from "../firebase.config";
-import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 
+const provider = new GoogleAuthProvider();
 /**
  * Auth Store
  * 
@@ -12,33 +13,17 @@ import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebas
 const useAuthStore = create((set) => ({
   user: null,
   loading: true,
-  error: null,
+  // error: null,
 
    /**
    * Logs in a user using Google authentication via a popup.
    * 
    * @returns {Promise<void>} - A promise that resolves when login is complete.
    */
-  loginGoogleWithPopup: async () => {
-    set({ loading: true, error: null });
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      set({ user: result.user, loading: false });
-    } catch (error) {
+  loginGoogleWithPopUp: async () => {
+    await signInWithPopup(auth, provider)
+    .catch((error) =>{
       console.error("Error during Google login:", error);
-      set({ error: error.message, loading: false });
-    }
-  },
-
-  /**
-   * Observes changes in authentication state.
-   * 
-   * @returns {Function} - A function that unsubscribes from the auth state listener.
-   */
-  observeAuthState: () => {
-    return onAuthStateChanged(auth, (user) => {
-      set({ user, loading: false });
     });
   },
 
@@ -46,16 +31,30 @@ const useAuthStore = create((set) => ({
    * Logs out the currently authenticated user.
    * 
    * @returns {Promise<void>} - A promise that resolves when logout is complete.
-   */
+  */
   logout: async () => {
-    set({ loading: true, error: null });
-    try {
-      await auth.signOut();
-      set({ user: null, loading: false });
-    } catch (error) {
+   await signOut(auth).then(() => {
+     set({ user: null });
+    })
+    .catch ((error) => {
       console.error("Error during logout:", error);
-      set({ error: error.message, loading: false });
-    }
+    });
+  },
+  
+  /**
+   * Observes changes in authentication state.
+   * 
+   * @returns {Function} - A function that unsubscribes from the auth state listener.
+   */
+  observeAuthState: () => {
+    set({loading: true});
+    onAuthStateChanged(auth, (user) => {
+      if (user){
+        set({user, loading: false});
+      } else {
+        set({user: null, loading: false});
+      }
+    });
   },
 
   /**
