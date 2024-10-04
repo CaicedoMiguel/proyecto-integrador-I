@@ -2,6 +2,7 @@
 import React from "react";
 import Navbar from "../../components/NavBar/Navbar";
 import Login from "../login/Login";
+import './Home.css';
 
 const Home = ()=> {    
     return (
@@ -9,7 +10,7 @@ const Home = ()=> {
         <div>
             <Navbar />
         </div>
-        <div>
+        <div className="componenteLogin">
             <Login />
         </div>
         </>

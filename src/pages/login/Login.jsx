@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import useAuthStore from "../../stores/use-auth-store";
 import { useNavigate } from "react-router-dom";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
@@ -7,9 +7,8 @@ import userDAO from "../../daos/userDAO";
 import Navbar from "../../components/NavBar/Navbar";
 
 const Login = () => {
-  const { user, loading, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
+  const { user, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
   const navigate = useNavigate();
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // useEffect for observing authentication state and setting the background
   useEffect(() => {

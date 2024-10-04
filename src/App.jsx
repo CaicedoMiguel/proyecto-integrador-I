@@ -14,8 +14,7 @@ const App = () => {
         <Route path='/sitemap' element={<Sitemap />}/>      
       </Routes>
     </div>
-    </>
-    
+    </>   
   );
 }
 

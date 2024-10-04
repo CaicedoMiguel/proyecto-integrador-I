@@ -1,17 +1,7 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-body{
-    display: flex;
-    justify-content: flex-start;
-    min-height: 100vh;
-    background: #e9e6e6;
-}
-
-.contenedor {
-    margin: 15px 25px;
+.contenedorSitemap {
+    position: absolute;
+    top: 140px;
+    left: 30px;
 }
 
 p, a{  

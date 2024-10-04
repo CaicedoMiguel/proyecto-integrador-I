@@ -11,7 +11,7 @@ const Sitemap = ()=> {
             <Navbar />
         </div>
         <main>
-            <div className="contenedor">
+            <div className="contenedorSitemap">
                 <h2>Site map</h2>
                 <p>Home</p>
                 <ul>
