@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import useAuthStore from '../../stores/use-auth-store';
 import { useNavigate } from 'react-router-dom';
 import ModelViewer from "../../components/ModelViewer";
-import Navbar from "../../components/NavBar/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 
 export default function Component() {
   // Retrieve the `logout` function from the authentication store.
