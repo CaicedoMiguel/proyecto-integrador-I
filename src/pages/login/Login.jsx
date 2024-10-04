@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
 import "./Login.css";
 import userDAO from "../../daos/userDAO";
-import Navbar from "../../components/NavBar/Navbar";
 
 const Login = () => {
   const { user, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
@@ -41,9 +40,6 @@ const Login = () => {
   // The main JSX layout for the login form
   return (
     <>
-    <div>
-      <Navbar />
-    </div>
     <div className="wrapper">
       {error && (
         <div className="error-message">
