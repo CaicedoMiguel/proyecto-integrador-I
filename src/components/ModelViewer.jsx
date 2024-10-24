@@ -1,51 +1,48 @@
-import React, { useRef, useState, useEffect, Suspense } from 'react';
+import React, { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, useGLTF, Sky } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, Sky, SpotLight, useHelper } from '@react-three/drei';
+import { SpotLightHelper } from 'three';
 import * as THREE from 'three';
+import { Model } from './Model';
 
-/**
- * Model Component
- * 
- * This component loads a 3D model, applies custom material properties, and handles user interactions
- * for rotating the model. It also animates the model's position and rotation.
- * 
- * @returns {JSX.Element} The 3D model rendered in the scene.
- */
-function Model() {
-  const modelRef = useRef();
-  const { scene } = useGLTF('/models/Low_Poly_Forest.glb');
+function Lights() {
+  const spotLightRef = useRef();
+  useHelper(spotLightRef, SpotLightHelper, 'cyan');
+
+  return (
+    <>
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 5, 5]} intensity={0.8} castShadow />
+      <SpotLight
+        ref={spotLightRef}
+        position={[0, 10, 5]}
+        angle={0.6}
+        penumbra={1}
+        intensity={1.5}
+        castShadow
+        shadow-mapSize={[2048, 2048]}
+      />
+      <pointLight position={[-5, -5, -5]} intensity={0.5} />
+    </>
+  );
+}
+
+const AnimatedModel = React.forwardRef((props, ref) => {
   const [isDragging, setIsDragging] = useState(false);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
 
-  // Change the material of the model
-  scene.traverse((child) => {
-    if (child.isMesh) {
-      const originalMaterial = child.material.clone();
-      child.material = new THREE.MeshPhongMaterial({
-        map: originalMaterial.map,
-        color: originalMaterial.color,
-        flatShading: true,
-        shininess: 50,
-        specular: new THREE.Color(0x111111)
-      });
-      child.material.needsUpdate = true;
-    }
-  });
-
-  // Detect mouse drag to rotate the model
   useEffect(() => {
     const handleMouseDown = () => setIsDragging(true);
     const handleMouseUp = () => setIsDragging(false);
     const handleMouseMove = (event) => {
       if (isDragging) {
         setRotation((prev) => ({
-          x: prev.x + event.movementY * 0.01,
-          y: prev.y + event.movementX * 0.01
+          x: prev.x + event.movementY * 0.002,
+          y: prev.y + event.movementX * 0.002
         }));
       }
     };
 
-    // Add event listeners for mouse actions
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('mousemove', handleMouseMove);
@@ -57,60 +54,47 @@ function Model() {
     };
   }, [isDragging]);
 
-  // Animate the model's position and rotation
-  let direction = 1;
-  let positionX = 0;
-
   useFrame(({ clock }) => {
-    if (positionX > 3 || positionX < -3) {
-      direction *= -1;
-  }
-    const t = clock.getElapsedTime();
-    if (modelRef.current) {
-      positionX += 0.01 * direction;
-      modelRef.current.position.x = positionX; // Animación de coseno en X
-      modelRef.current.position.y = Math.sin(t * 0.8) * 1.5; // Animación de seno en Y
-      modelRef.current.rotation.x = rotation.x;
-      modelRef.current.rotation.y = rotation.y;
+    if (ref.current) {
+      const t = clock.getElapsedTime();
+      ref.current.position.y = Math.sin(t * 0.2) * 0.05;
+      ref.current.rotation.x = rotation.x;
+      ref.current.rotation.y = rotation.y;
     }
   });
 
-  return <primitive ref={modelRef} object={scene} scale={2} position={[0, 0, 0]} />;
-}
+  return <Model ref={ref} scale={0.4} position={[0, -1, 0]} />;
+});
 
-/**
- * SkyBackground Component
- * 
- * This component sets up the background sky with specific properties.
- * 
- * @returns {JSX.Element} The sky background element.
- */
-function SkyBackground() {
+function ModelViewer() {
+  const modelRef = useRef();
+
   return (
-    <Sky
-      distance={100}
-      sunPosition={[0, 1, 0]}
-      inclination={0.6}
-      azimuth={0.1}
-    />
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: '#87CEEB' }}>
+      <Canvas shadows camera={{ position: [0, 2, 3], fov: 60 }}>
+        <color attach="background" args={['#87CEEB']} />
+        <PerspectiveCamera makeDefault position={[0, 2, 3]} fov={60} />
+        <Suspense fallback={null}>
+          <AnimatedModel ref={modelRef} />
+          <Lights />
+          <Environment preset="sunset" />
+          <Sky
+            distance={450000}
+            sunPosition={[0, 1, 0]}
+            inclination={0.6}
+            azimuth={0.1}
+          />
+          <OrbitControls 
+            enableZoom={true} 
+            enablePan={true}
+            minDistance={1}
+            maxDistance={10}
+            target={[0, 0, 0]}
+          />
+        </Suspense>
+      </Canvas>
+    </div>
   );
 }
 
-export default function ModelViewer() {
-  return (
-    <Canvas
-      camera={{ position: [0, 10, 20], fov: 50 }}
-      style={{ width: '100vw', height: '100vh' }}
-    >
-      <SkyBackground />
-      <ambientLight intensity={0.5} />
-      <directionalLight intensity={0.8} position={[5, 5, 5]} castShadow />
-      <Suspense fallback={null}>
-        <Model />
-        <Environment preset="sunset" />
-      </Suspense>
-    </Canvas>
-  );
-}
-
-useGLTF.preload('/models/Low_Poly_Forest.glb');
+export default ModelViewer;
