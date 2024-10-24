@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import Home from "./pages/home/Home.jsx";
 import Modelado3D from "./pages/modelado3D/Modelado3D.jsx";
 import useAuthStore from "./stores/use-auth-store";
-import Sitemap from "./pages/sitemap/Sitemap.jsx";
+
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = ({ children }) => {
@@ -22,10 +22,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
-  },
-  {
-    path: "sitemap",
-    element: <Sitemap />,
   },
   {
     path: "/Modelado3D",
