@@ -4,6 +4,7 @@ import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import ModelViewer from "./components/ModelViewer";
 import Navbar from "./components/Navbar";
+import Biodiversity from "./pages/enviromental_impacts/Biodiversity";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         } />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/biodiversity" element={<Biodiversity />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

@@ -23,7 +23,9 @@ const Navbar = () => {
           <ul className="menu-list">
             <li><a href="#home">Inicio</a></li>
             <li><a href="#environmental-impact">Impactos ambientales</a></li>
+            <li><a href="/biodiversity">Biodiversidad</a></li>
             <li><a href="#about">Sobre nosotros</a></li>
+
           </ul>
         </div>
       )}
