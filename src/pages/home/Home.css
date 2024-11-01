@@ -1,5 +1,26 @@
-.componenteLogin{
-    position: absolute;
-    top: 100px;
-    left: 460px;
+*{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	border: none;
+	outline: none;
+}
+.container{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+.modelo3D{
+    float: right;
+    width: 40vw;
+    height: 100vh;
+}
+.introducion{
+    width: 20vw;
+    float: left;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

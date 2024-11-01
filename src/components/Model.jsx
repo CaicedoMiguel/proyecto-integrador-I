@@ -1,37 +1,15 @@
-import React, { useRef, useEffect } from 'react'
-import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
-import * as THREE from 'three'
+/* eslint-disable react/no-unknown-property */
+// eslint-disable-next-line no-unused-vars
+import React, { useRef } from 'react'
+import { useGLTF,  } from '@react-three/drei'
 
-export const Model = React.forwardRef((props, ref) => {
-  const { nodes, materials } = useGLTF('/models/scene3D.glb')
-  const groupRef = useRef()
-  const racoonRef = useRef()
-
-  useEffect(() => {
-    Object.values(materials).forEach((material) => {
-      material.side = THREE.DoubleSide
-    })
-  }, [materials])
-
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.2) * 0.1
-    }
-
-    // Animación ajustada del mapache: movimiento más suave
-    if (racoonRef.current) {
-      const time = clock.getElapsedTime()
-      racoonRef.current.position.y = 1.56 + Math.sin(time * 2) * 0.05 // Movimiento vertical reducido
-      racoonRef.current.rotation.y += 0.01 // Rotación lenta en el eje Y
-    }
-  })
-
-  // Hacer que el grupo sea accesible desde fuera del componente a través de `ref`
-  React.useImperativeHandle(ref, () => groupRef.current)
+const Model = (props) => {
+  const group = useRef()
+  const { nodes, materials,  } = useGLTF("./public/models/scene3D.glb");
+  // const { actions } = useAnimations(animations, group);
 
   return (
-    <group ref={groupRef} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null}>
       <group name="Scene">
         <group
           name="Birds1"
@@ -49,16 +27,13 @@ export const Model = React.forwardRef((props, ref) => {
           <mesh name="Mesh_8" geometry={nodes.Mesh_8.geometry} material={materials.orange2} />
           <mesh name="Mesh_9" geometry={nodes.Mesh_9.geometry} material={materials.yellow3} />
         </group>
-
-        {/* Aquí animamos el mapache */}
         <mesh
-          ref={racoonRef} // Referencia al mapache
           name="_Racoon_v1_L3PolySphere_1"
           geometry={nodes._Racoon_v1_L3PolySphere_1.geometry}
           material={materials['_Racoon_v1_L3:_Racoon_v2']}
-          position={[-2.417, 1.56, -1.004]} // Ajuste la posición Y inicial
+          position={[-2.417, 1.56, -1.004]}
           rotation={[0, -1.26, 0]}
-          scale={0.05} // Aumentar la escala del mapache
+          scale={0.01}
         />
         <mesh
           name="Line001"
@@ -272,7 +247,9 @@ export const Model = React.forwardRef((props, ref) => {
         />
       </group>
     </group>
-  )
-})
+  );
+};
 
-useGLTF.preload('/models/scene3D.glb')
+export default Model;
+
+useGLTF.preload('./public/models/scene3D.glb')

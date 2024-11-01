@@ -14,6 +14,7 @@ const LostBiodiversity = () => {
 const Biodiversity = () => {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
+      <Navbar />
       <Canvas>
         <Suspense fallback={null}>
             <LostBiodiversity />
