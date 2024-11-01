@@ -1,5 +1,39 @@
-.componenteLogin{
+*{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	border: none;
+	outline: none;
+}
+.container{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+.modelo3D{
+    float: right;
+    width: 40vw;
+    height: 100vh;
+}
+.introducion{
+    width: 30vw;
+    float: left;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+@font-face {
+    font-family: BebasNue-Regular;
+    src: url("fonts/BebasNue-Regular");
+}
+.titulo{
     position: absolute;
+    z-index: 9;
     top: 100px;
-    left: 460px;
+    left: 380px;
+    font-family: "BebasNue-Regular" ;
 }
