@@ -19,7 +19,7 @@ function ModelViewer () {
 
         <Canvas shadows camera={{ position: [3, 15, 20], fov: 75 }}>
           <Model />
-          <ambientLight intensity={1} castShadow/>
+          <ambientLight intensity={1} />
           <directionalLight 
           position={[5, 10, 2]} intensity={5} castShadow />
           <SpotLight

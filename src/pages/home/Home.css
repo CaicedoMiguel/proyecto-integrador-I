@@ -17,10 +17,23 @@
     height: 100vh;
 }
 .introducion{
-    width: 20vw;
+    width: 30vw;
     float: left;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 20px;
+}
+
+@font-face {
+    font-family: BebasNue-Regular;
+    src: url("fonts/BebasNue-Regular");
+}
+.titulo{
+    position: absolute;
+    z-index: 9;
+    top: 100px;
+    left: 380px;
+    font-family: "BebasNue-Regular" ;
 }
