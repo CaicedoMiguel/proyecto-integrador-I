@@ -22,7 +22,7 @@ const Navbar = () => {
         <div className="menu-overlay">
           <ul className="menu-list">
             <li><a href="/">Inicio</a></li>
-            <li><a href="#environmental-impact">Impactos ambientales</a></li>
+            <li><a href="/deforestation">Deforestacion</a></li>
             <li><a href="/biodiversity">Biodiversidad</a></li>
             <li><a href="#about">Sobre nosotros</a></li>
 
