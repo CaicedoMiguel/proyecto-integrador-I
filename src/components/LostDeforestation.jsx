@@ -358,5 +358,5 @@ const LostDeforestation = (props) => {
 
 export default LostDeforestation;
 
-useGLTF.preload('/deforestation.glb')
+useGLTF.preload('/models/deforestation.glb')
     
