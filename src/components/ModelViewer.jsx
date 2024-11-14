@@ -6,6 +6,7 @@ import {  OrbitControls, SpotLight, useHelper } from '@react-three/drei';
 import { DirectionalLightHelper, } from 'three';
 import Model from './Model';
 
+
 function Lights ()  {
   const directionalLightRef = useRef();
   useHelper(directionalLightRef, DirectionalLightHelper, 'cyan');

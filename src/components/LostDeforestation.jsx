@@ -1,10 +1,21 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 
 const LostDeforestation = (props) => {
     const { nodes, materials } = useGLTF('/deforestation.glb')
 
+// Referencias para los elementos que tendrán eventos de clic
+    const plane1Ref = useRef()
+    const plane2Ref = useRef()
+    const sphere007Ref = useRef()
+
+    // Manejador del evento de clic
+    const handleClick = (e, name) => {
+        e.stopPropagation() // Evitar propagación del evento
+        console.log(`Clicked on ${name}`)
+    }
     return (
       <group {...props} dispose={null}>
       <group position={[0, -5.101, 36.979]} scale={[115.932, 169.274, 174.736]}>
