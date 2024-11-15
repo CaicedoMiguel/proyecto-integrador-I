@@ -126,12 +126,12 @@ const Home = () => {
             opacity: 1,
           }}
         >
-          es una aplicación web informativa<br />
+          Tierra Santa es una aplicación web informativa<br />
           sobre el medio ambiente mediante<br />
           modelos y objetos en 3D. <br /> <br />
-          Nuestra misión es brindar el conocimiento adecuado<br />
+          Nuestra misión es brindar el conocimiento adecuado y <br />
           necesario para cuidar y proteger nuestro<br />
-          medio ambiente, haciendo que nuestro<br />
+          medioambiente, haciendo que nuestro<br />
           planeta siga siendo esa TIERRA maravillosa.
         </div>
       )}
@@ -183,6 +183,14 @@ const TierraSantaModel = () => {
 
 const TierraSantaTitle = ({ initial, onClick }) => {
   const textRef = useRef();
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    if (textRef.current) {
+      textRef.current.material.color.set(hovered ? '#FFFF00' : '#4CAF50');
+      textRef.current.material.emissive = new THREE.Color(hovered ? '#FFFF00' : '#000000');
+    }
+  }, [hovered]);
 
   return (
     <Text3D
@@ -197,10 +205,12 @@ const TierraSantaTitle = ({ initial, onClick }) => {
       bevelOffset={0}
       bevelSegments={5}
       position={[-50, 20, -10]}
+      onPointerOver={() => setHovered(true)} // Detecta cuando el mouse está encima
+      onPointerOut={() => setHovered(false)} // Detecta cuando el mouse se mueve fuera
       onClick={onClick}
     >
       TIERRA SANTA
-      <meshPhongMaterial color="#4CAF50" />
+      <meshPhongMaterial color="#4CAF50" emissive="#000000" emissiveIntensity={0.5} />
     </Text3D>
   );
 };
