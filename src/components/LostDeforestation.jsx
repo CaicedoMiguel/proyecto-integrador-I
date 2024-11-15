@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 // eslint-disable-next-line no-unused-vars
 import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
