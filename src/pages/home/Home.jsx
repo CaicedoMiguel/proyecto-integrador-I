@@ -5,10 +5,10 @@ import {
   useGLTF,
   Stars,
   Sky,
-  Environment,
   Html,
   Text3D,
   Cloud,
+  Environment,
 } from '@react-three/drei';
 import * as THREE from 'three';
 import Navbar from '../../components/Navbar';
@@ -47,7 +47,7 @@ const Home = () => {
           <TierraSantaTitle initial />
 
           {/* Ambiente y Cielo */}
-          <Environment preset="night" /> {/* Cambié a un entorno nocturno */}
+          {/* <Environment preset="night" /> Cambié a un entorno nocturno */}
           <Sky
             distance={450000}
             sunPosition={[0, -1, -1]} // Mueve el sol por debajo del horizonte para un efecto nocturno
