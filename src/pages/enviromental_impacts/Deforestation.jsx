@@ -1,9 +1,12 @@
-import React, { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Text3D, Stars, Sky } from '@react-three/drei';
+import React, { Suspense, useRef, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Stars, Sky } from '@react-three/drei';
 import Navbar from '../../components/Navbar';
 import * as THREE from 'three';
 import CameraDeforestation from '../../controls/CameraDeforestation';
+import DeforestationTitle from '../../components/DeforestationTitle';
+import CustomCursor from '../../controls/CustomCursor';
+import DeforestationModel from '../../components/DeforestationModel';
 
 const Deforestation = () => {
   const [targetPosition, setTargetPosition] = useState(
@@ -24,13 +27,13 @@ const Deforestation = () => {
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       <Navbar />
       <Canvas
-        frameloop="demand" // Renderiza solo cuando algo cambia
+        frameloop="demand"
         shadows
         camera={{
           position: [-14.2, 3.59, 60.27],
           fov: 75,
         }}
-        style={{ background: 'transparent' }}
+        style={{ background: 'transparent', cursor: 'none' }}
       >
         <CameraDeforestation
           targetPosition={targetPosition}
@@ -58,6 +61,7 @@ const Deforestation = () => {
             saturation={0}
             fade
           />
+          <CustomCursor />
         </Suspense>
         <ambientLight intensity={0.5} />
         <directionalLight
@@ -76,56 +80,6 @@ const Deforestation = () => {
         <pointLight position={[-2, 8, 3]} intensity={0.8} />
       </Canvas>
     </div>
-  );
-};
-
-const DeforestationModel = () => {
-  const { scene } = useGLTF('/models/deforestation.glb');
-
-  useEffect(() => {
-    scene.position.set(30, -10, 0); // Ajusta la posición del modelo
-  }, [scene]);
-
-  // Forzar la actualización una vez que el modelo esté listo
-  useFrame((state) => state.invalidate());
-
-  return <primitive object={scene} />;
-};
-
-const DeforestationTitle = ({ setTargetPosition, setTargetLookAt }) => {
-  const moveCameraToNewTarget = () => {
-    setTargetPosition(
-      new THREE.Vector3(98.45, 2.85, 133.23)
-    );
-    setTargetLookAt(
-      new THREE.Vector3(25.69, -15.25, 150.73)
-    );
-    console.log('Camera target updated');
-  };
-
-  return (
-    <Text3D
-      font="/fonts/bebas-neue-regular.json"
-      size={10}
-      height={2}
-      curveSegments={12}
-      bevelEnabled
-      bevelThickness={0.5}
-      bevelSize={0.3}
-      bevelOffset={0}
-      bevelSegments={5}
-      position={[-50, -10, 0]}
-      onClick={moveCameraToNewTarget}
-    >
-      LA DEFORESTACIÓN
-      <meshStandardMaterial
-        color="#1b5e20"
-        metalness={0.7}
-        roughness={0.8}
-        depthWrite
-        transparent={false}
-      />
-    </Text3D>
   );
 };
 
