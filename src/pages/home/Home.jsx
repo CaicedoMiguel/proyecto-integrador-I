@@ -1,4 +1,6 @@
-import React, { Suspense, useEffect, useRef } from 'react';
+'use client';
+
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   OrbitControls,
@@ -8,13 +10,33 @@ import {
   Html,
   Text3D,
   Cloud,
-  Environment,
 } from '@react-three/drei';
 import * as THREE from 'three';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 
+const CameraAnimation = () => {
+  const [animationComplete, setAnimationComplete] = useState(false);
+
+  useFrame(({ clock, camera }) => {
+    if (!animationComplete) {
+      const t = Math.min(1, clock.getElapsedTime() * 0.5);
+      const newPosition = new THREE.Vector3(0, 30, 250).lerp(new THREE.Vector3(0, 30, 70), t);
+      camera.position.copy(newPosition);
+
+      if (t === 1) {
+        setAnimationComplete(true);
+      }
+    }
+  });
+
+  return <OrbitControls enableZoom={true} maxDistance={300} minDistance={50} />;
+};
+
 const Home = () => {
+  const [showDescription, setShowDescription] = useState(false);
   const textContainerRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (textContainerRef.current) {
@@ -22,35 +44,47 @@ const Home = () => {
       setTimeout(() => {
         textContainerRef.current.style.transition = 'opacity 2s ease-in-out';
         textContainerRef.current.style.opacity = 1;
-      }, 2000); // Aparece después de 2 segundos
+      }, 2000);
     }
   }, []);
+
+  const handleTitleClick = () => {
+    setShowDescription(!showDescription);
+  };
+
+  const handleButtonClick = () => {
+    navigate('/deforestation');
+  };
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       <Navbar />
       <Canvas
         shadows
-        camera={{ position: [0, 30, 100], fov: 70 }}
-        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
-        style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 1, opacity: 0.8 }}
+        camera={{ position: [0, 30, 250], fov: 70 }}
+        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, outputColorSpace: THREE.SRGBColorSpace }}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 1,
+          opacity: 0.8,
+        }}
       >
-        <Suspense fallback={
-          <Html center>
-            <div>Cargando...</div>
-          </Html>
-        }>
-          {/* Modelo Tierra Santa */}
+        <Suspense
+          fallback={
+            <Html center>
+              <div>Cargando...</div>
+            </Html>
+          }
+        >
           <TierraSantaModel />
-          
-          {/* Título Tierra Santa */}
-          <TierraSantaTitle initial />
-
-          {/* Ambiente y Cielo */}
-          {/* <Environment preset="night" /> Cambié a un entorno nocturno */}
+          <TierraSantaTitle initial onClick={handleTitleClick} />
           <Sky
             distance={450000}
-            sunPosition={[0, -1, -1]} // Mueve el sol por debajo del horizonte para un efecto nocturno
+            sunPosition={[0, -1, -1]}
             inclination={0}
             azimuth={0.1}
             mieCoefficient={0.01}
@@ -61,7 +95,7 @@ const Home = () => {
           <Stars
             radius={300}
             depth={60}
-            count={7000} // Aumenté el conteo de estrellas para que se vea más lleno
+            count={7000}
             factor={10}
             saturation={0}
             fade
@@ -70,86 +104,85 @@ const Home = () => {
           <CloudGroup />
         </Suspense>
 
-        {/* Iluminación */}
-        <ambientLight intensity={0.2} /> {/* Luz ambiental reducida para el entorno nocturno */}
-        <directionalLight position={[10, 20, 5]} intensity={0.5} castShadow /> {/* Iluminación más suave */}
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[10, 20, 5]} intensity={0.5} castShadow />
         <pointLight position={[-20, 20, 10]} intensity={1} />
-
-        {/* Controles de Órbita */}
-        <OrbitControls enableZoom={true} maxDistance={250} minDistance={50} />
+        <CameraAnimation />
       </Canvas>
 
-      {/* Texto en Canvas semi transparente */}
-      <div
-        ref={textContainerRef}
+      {showDescription && (
+        <div
+          ref={textContainerRef}
+          style={{
+            position: 'absolute',
+            bottom: '10%',
+            left: '10%',
+            padding: '20px',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: 'white',
+            textAlign: 'center',
+            borderRadius: '10px',
+            zIndex: 2,
+            opacity: 1,
+          }}
+        >
+          es una aplicación web informativa<br />
+          sobre el medio ambiente mediante<br />
+          modelos y objetos en 3D. <br /> <br />
+          Nuestra misión es brindar el conocimiento adecuado<br />
+          necesario para cuidar y proteger nuestro<br />
+          medio ambiente, haciendo que nuestro<br />
+          planeta siga siendo esa TIERRA maravillosa.
+        </div>
+      )}
+
+      <button
+        onClick={handleButtonClick}
         style={{
           position: 'absolute',
-          bottom: '10%', // Mueve el texto a la parte inferior
-          left: '10%', // Ajusta el texto hacia la izquierda
-          padding: '20px',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semi transparente
-          color: 'white',
-          textAlign: 'center',
-          borderRadius: '10px',
-          zIndex: 2,
-          opacity: 0, // Inicia invisible
+          bottom: '20%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: '15px 40px',
+          backgroundColor: '#FFFFFF',
+          color: '#4CAF50',
+          border: '2px solid #4CAF50',
+          borderRadius: '30px',
+          fontSize: '20px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          zIndex: 3,
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
+          boxShadow: '0 8px 15px rgba(0, 0, 0, 0.2)',
+          textShadow: '0px 0px 10px rgba(76, 175, 80, 0.8)',
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = 'translateX(-50%) scale(1.1)';
+          e.target.style.boxShadow = '0 12px 20px rgba(76, 175, 80, 0.5)';
+          e.target.style.backgroundColor = '#F0F0F0';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = 'translateX(-50%) scale(1)';
+          e.target.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+          e.target.style.backgroundColor = '#FFFFFF';
         }}
       >
-        TIERRA SANTA <br />
-        es una aplicacion web informativa<br />
-        sobre el medio ambiente <br />
-        mediante modelos y objetos en 3D.<br /> <br />
-        Nuestra mision es <br />
-        birndarle al usuario el conocimiento adecuado<br />
-        que se necesita para cuidar y <br />
-        proteger nuestro medio ambiente haciendo<br />
-        que nuestro planeta siga siendo esa<br />
-        TIERRA maravillosa<br />
-
-        </div>
+        Comienza la Aventura
+      </button>
     </div>
-    );
+  );
 };
 
-// Componente del Modelo Tierra Santa
 const TierraSantaModel = () => {
   const { scene } = useGLTF('/models/scene3D.glb', true);
   scene.position.set(0, -30, 0);
   scene.scale.set(15, 15, 15);
 
-  // Se eliminó la rotación del modelo
-
   return <primitive object={scene} />;
 };
 
-// Componente del Título Tierra Santa
-const TierraSantaTitle = ({ initial }) => {
+const TierraSantaTitle = ({ initial, onClick }) => {
   const textRef = useRef();
-
-  useEffect(() => {
-    if (initial && textRef.current) {
-      textRef.current.position.set(0, 50, -100);
-      const mixer = new THREE.AnimationMixer(textRef.current);
-      const positionKF = new THREE.VectorKeyframeTrack(
-        ".position",
-        [0, 2],
-        [0, 50, -100, 0, 20, 0]
-      );
-      const clip = new THREE.AnimationClip("titleEntrance", 2, [positionKF]);
-      const action = mixer.clipAction(clip);
-      action.setLoop(THREE.LoopOnce);
-      action.clampWhenFinished = true;
-      action.play();
-
-      const clock = new THREE.Clock();
-      const animate = () => {
-        requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-        mixer.update(delta);
-      };
-      animate();
-    }
-  }, [initial]);
 
   return (
     <Text3D
@@ -164,19 +197,14 @@ const TierraSantaTitle = ({ initial }) => {
       bevelOffset={0}
       bevelSegments={5}
       position={[-50, 20, -10]}
+      onClick={onClick}
     >
       TIERRA SANTA
-      <meshPhongMaterial
-        color="#4CAF50"
-        emissive="#4CAF50"
-        specular="#ffffff"
-        shininess={100}
-      />
+      <meshPhongMaterial color="#4CAF50" />
     </Text3D>
   );
 };
 
-// Componente para un grupo de nubes
 const CloudGroup = () => {
   return (
     <group>
