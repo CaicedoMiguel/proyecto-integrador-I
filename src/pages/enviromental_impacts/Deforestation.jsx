@@ -1,143 +1,207 @@
-import React, { Suspense, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars, Sky } from '@react-three/drei';
-import Navbar from '../../components/Navbar';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for page navigation
-import * as THREE from 'three';
-import CameraDeforestation from '../../controls/CameraDeforestation';
-import DeforestationTitle from '../../components/DeforestationTitle';
-import CustomCursor from '../../controls/CustomCursor';
-import DeforestationModel from '../../components/DeforestationModel';
+// src/pages/Deforestation/Deforestation.jsx
+import React, { Suspense, useState, useCallback } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Stars, Sky } from "@react-three/drei";
+import Navbar from "../../components/Navbar";
+import { useNavigate } from "react-router-dom";
+import * as THREE from "three";
+import CameraDeforestation from "../../controls/CameraDeforestation";
+import DeforestationTitle from "../../components/DeforestationTitle";
+import CustomCursor from "../../controls/CustomCursor";
+import DeforestationModel from "../../components/DeforestationModel";
 
-// Main Deforestation Component
+// Initial camera position and look-at target
+const initialPosition = new THREE.Vector3(-14.2, 3.59, 60.27);
+const initialLookAt = new THREE.Vector3(-8.74, -3.07, 1.32);
+
 const Deforestation = () => {
-  // State to manage the camera's target position
-  const [targetPosition, setTargetPosition] = useState(
-    new THREE.Vector3(-14.2, 3.59, 60.27)
-  );
-
-  // State to manage where the camera is looking
-  const [targetLookAt, setTargetLookAt] = useState(
-    new THREE.Vector3(-8.74, -3.07, 1.32)
-  );
-
-  // Ref for the OrbitControls
-  const controlsRef = useRef();
-
-  // useNavigate hook for routing to other pages
+  const [targetPosition, setTargetPosition] = useState(initialPosition.clone());
+  const [targetLookAt, setTargetLookAt] = useState(initialLookAt.clone());
+  const [showInfoCanvas, setShowInfoCanvas] = useState(false); // Determines if the info canvas is displayed
   const navigate = useNavigate();
 
-  // Logs changes in the camera's target position
-  const handleCameraChange = () => {
-    if (controlsRef.current) {
-      console.log('Camera changed:', controlsRef.current.target);
-    }
-  };
+  /**
+   * Function to move the camera to a new position and display the info canvas.
+   * @param {THREE.Vector3} newPosition - The new camera position.
+   * @param {THREE.Vector3} newLookAt - The new look-at target.
+   */
+  const moveCamera = useCallback((newPosition, newLookAt) => {
+    setTargetPosition(newPosition.clone());
+    setTargetLookAt(newLookAt.clone());
+    setShowInfoCanvas(true);
+    console.log("Camera moved to the new position.");
+  }, []);
 
-  // Navigates to the "Biodiversity" page
-  const handleNextClick = () => {
-    navigate('/biodiversity'); // Navigate to Biodiversity page
-  };
+  /**
+   * Function to reset the camera to its initial position and hide the info canvas.
+   */
+  const resetCamera = useCallback(() => {
+    setTargetPosition(initialPosition.clone());
+    setTargetLookAt(initialLookAt.clone());
+    setShowInfoCanvas(false);
+    console.log("Camera reset to the initial position.");
+  }, []);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       {/* Navbar component */}
       <Navbar />
-      
-      {/* "Siguiente" Button */}
+
+      {/* Button to navigate to the Biodiversity page */}
       <button
-        onClick={handleNextClick} // Trigger page navigation on click
+        onClick={() => navigate("/biodiversity")}
         style={{
-          position: 'absolute',
-          top: '20px',
-          right: '20px',
-          padding: '10px 20px',
-          fontSize: '16px',
-          borderRadius: '8px',
-          border: 'none',
-          backgroundColor: '#4CAF50', // Green background
-          color: 'white', // White text
-          cursor: 'pointer',
-          zIndex: 1000, // Ensures button is above Canvas
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          padding: "10px 20px",
+          fontSize: "16px",
+          borderRadius: "8px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          cursor: "pointer",
+          zIndex: 1000,
         }}
       >
-        Siguiente
+        Next
       </button>
 
-      {/* 3D Scene Canvas */}
+      {/* Info canvas for deforestation */}
+      {showInfoCanvas && (
+        <div
+          style={{
+            position: "absolute",
+            top: "10%",
+            left: "50%",
+            transform: "translate(-50%, 0)",
+            width: "60vw",
+            height: "40vh",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            color: "black",
+            padding: "30px",
+            borderRadius: "20px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          {/* Close button for the canvas */}
+          <button
+            onClick={() => setShowInfoCanvas(false)}
+            style={{
+              position: "absolute",
+              top: "15px",
+              right: "20px",
+              background: "transparent",
+              border: "none",
+              fontSize: "24px",
+              cursor: "pointer",
+              color: "#f44336",
+            }}
+            aria-label="Close"
+          >
+            &times;
+          </button>
+
+          <h2>Deforestation Information</h2>
+          <p>
+            This area has been significantly affected by deforestation, leading to biodiversity loss and local climate changes.
+          </p>
+
+          {/* Navigation buttons */}
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginTop: "30px",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <button
+              onClick={() => navigate("/biodiversity")}
+              style={{
+                padding: "15px 30px",
+                fontSize: "16px",
+                borderRadius: "10px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                cursor: "pointer",
+                border: "none",
+                flex: "1",
+                maxWidth: "200px",
+                height: "50px",
+              }}
+            >
+              Forward
+            </button>
+            <button
+              onClick={resetCamera}
+              style={{
+                padding: "15px 30px",
+                fontSize: "16px",
+                borderRadius: "10px",
+                backgroundColor: "#f44336",
+                color: "white",
+                cursor: "pointer",
+                border: "none",
+                flex: "1",
+                maxWidth: "200px",
+                height: "50px",
+              }}
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 3D Canvas for the Deforestation scene */}
       <Canvas
-        frameloop="demand" // Renders frames on demand for better performance
-        shadows // Enables shadows
+        frameloop="demand"
+        shadows
         camera={{
-          position: [-14.2, 3.59, 60.27], // Initial camera position
-          fov: 75, // Field of view
+          position: initialPosition.toArray(),
+          fov: 75,
         }}
-        style={{ background: 'transparent', cursor: 'none' }} // Canvas style
+        style={{ background: "transparent", cursor: "none" }}
       >
-        {/* Custom Camera Controls */}
         <CameraDeforestation
           targetPosition={targetPosition}
           targetLookAt={targetLookAt}
+          moveCamera={moveCamera}
+          resetCamera={resetCamera}
         />
-
-        {/* Orbit Controls for interactive camera movement */}
-        <OrbitControls ref={controlsRef} onChange={handleCameraChange} />
-
-        {/* Suspense wraps lazily loaded components */}
         <Suspense fallback={null}>
-          {/* 3D Model representing deforestation */}
           <DeforestationModel />
-
-          {/* Title component to set camera targets */}
-          <DeforestationTitle
-            setTargetPosition={setTargetPosition}
-            setTargetLookAt={setTargetLookAt}
-          />
-
-          {/* Sky settings for realistic lighting */}
+          <DeforestationTitle moveCamera={moveCamera} />
           <Sky
-            sunPosition={[100, 20, 100]} // Position of the sun
-            turbidity={10} // Atmospheric haze
-            rayleigh={2} // Scattering intensity
-            mieCoefficient={0.005} // Particulate scattering
-            mieDirectionalG={0.8} // Directional scattering
+            sunPosition={[100, 20, 100]}
+            turbidity={10}
+            rayleigh={2}
+            mieCoefficient={0.005}
+            mieDirectionalG={0.8}
           />
-
-          {/* Starry night effect */}
-          <Stars
-            radius={300} // Size of the star field
-            depth={50} // Distribution depth
-            count={2000} // Number of stars
-            factor={7} // Star size multiplier
-            saturation={0} // No color saturation
-            fade // Smooth edges for stars
-          />
-
-          {/* Custom cursor for the scene */}
+          <Stars radius={300} depth={50} count={2000} factor={7} saturation={0} fade />
           <CustomCursor />
         </Suspense>
-
-        {/* Ambient light for general illumination */}
         <ambientLight intensity={0.5} />
-
-        {/* Directional light to simulate sunlight */}
         <directionalLight
-          position={[5, 15, 2]} // Light position
-          intensity={1.5} // Brightness
-          castShadow // Enables shadows
-          shadow-mapSize={[2048, 2048]} // Shadow map resolution
+          position={[5, 15, 2]}
+          intensity={1.5}
+          castShadow
+          shadow-mapSize={[2048, 2048]}
         />
-
-        {/* Spot light for focused illumination */}
         <spotLight
-          position={[0, 15, 5]} // Position of the spot light
-          angle={0.6} // Light cone angle
-          penumbra={1} // Softness of edges
-          intensity={1.2} // Brightness
-          castShadow // Enables shadows
+          position={[0, 15, 5]}
+          angle={0.6}
+          penumbra={1}
+          intensity={1.2}
+          castShadow
         />
-
-        {/* Point light for localized lighting */}
         <pointLight position={[-2, 8, 3]} intensity={0.8} />
       </Canvas>
     </div>
