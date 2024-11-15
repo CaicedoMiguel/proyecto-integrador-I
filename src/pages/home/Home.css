@@ -28,12 +28,12 @@
 
 @font-face {
     font-family: BebasNue-Regular;
-    src: url("fonts/BebasNue-Regular");
+    src: url("fonts/bebas-neue-regular");
 }
 .titulo{
     position: absolute;
     z-index: 9;
     top: 100px;
     left: 380px;
-    font-family: "BebasNue-Regular" ;
+    font-family: "bebas-neue-regular" ;
 }
