@@ -63,7 +63,7 @@ const Deforestation = () => {
           zIndex: 1000,
         }}
       >
-        Next
+        Explora la Biodiversidad
       </button>
 
       {/* Info canvas for deforestation */}
@@ -71,21 +71,22 @@ const Deforestation = () => {
         <div
           style={{
             position: "absolute",
-            top: "10%",
+            top: "50%",
             left: "50%",
-            transform: "translate(-50%, 0)",
-            width: "60vw",
-            height: "40vh",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            color: "black",
-            padding: "30px",
+            transform: "translate(-50%, -50%)",
+            width: "70vw",
+            maxWidth: "800px",
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            color: "#333",
+            padding: "40px",
             borderRadius: "20px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
+            fontFamily: "'Arial', sans-serif",
           }}
         >
           {/* Close button for the canvas */}
@@ -93,22 +94,40 @@ const Deforestation = () => {
             onClick={() => setShowInfoCanvas(false)}
             style={{
               position: "absolute",
-              top: "15px",
+              top: "20px",
               right: "20px",
               background: "transparent",
               border: "none",
               fontSize: "24px",
               cursor: "pointer",
-              color: "#f44336",
+              color: "#666",
+              transition: "color 0.3s ease",
             }}
+            onMouseOver={(e) => (e.target.style.color = "#f44336")}
+            onMouseOut={(e) => (e.target.style.color = "#666")}
             aria-label="Close"
           >
-            &times;
+            ×
           </button>
 
-          <h2>Deforestation Information</h2>
-          <p>
-            This area has been significantly affected by deforestation, leading to biodiversity loss and local climate changes.
+          <h2 style={{ fontSize: "28px", marginBottom: "20px", color: "#2c3e50" }}>
+            La Deforestación
+          </h2>
+          <p
+            style={{
+              fontSize: "18px",
+              lineHeight: "1.6",
+              textAlign: "center",
+              marginBottom: "30px",
+            }}
+          >
+            La deforestación amenaza la biodiversidad y acelera el cambio climático
+            al destruir hábitats vitales y reducir los pulmones verdes de nuestro
+            planeta. Cada árbol talado significa menos oxígeno, mayor emisión de
+            carbono y pérdida de especies únicas. Es crucial adoptar prácticas
+            sostenibles y proteger nuestros bosques para asegurar un futuro
+            saludable para las próximas generaciones. Actuar ahora es
+            responsabilidad de todos.
           </p>
 
           {/* Navigation buttons */}
@@ -116,7 +135,6 @@ const Deforestation = () => {
             style={{
               display: "flex",
               gap: "20px",
-              marginTop: "30px",
               width: "100%",
               justifyContent: "center",
             }}
@@ -126,34 +144,40 @@ const Deforestation = () => {
               style={{
                 padding: "15px 30px",
                 fontSize: "16px",
-                borderRadius: "10px",
+                borderRadius: "50px",
                 backgroundColor: "#4CAF50",
                 color: "white",
                 cursor: "pointer",
                 border: "none",
-                flex: "1",
-                maxWidth: "200px",
-                height: "50px",
+                transition: "background-color 0.3s ease",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
               }}
+              onMouseOver={(e) =>
+                (e.target.style.backgroundColor = "#45a049")
+              }
+              onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
             >
-              Forward
+              Siguiente
             </button>
             <button
               onClick={resetCamera}
               style={{
                 padding: "15px 30px",
                 fontSize: "16px",
-                borderRadius: "10px",
+                borderRadius: "50px",
                 backgroundColor: "#f44336",
                 color: "white",
                 cursor: "pointer",
                 border: "none",
-                flex: "1",
-                maxWidth: "200px",
-                height: "50px",
+                transition: "background-color 0.3s ease",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
               }}
+              onMouseOver={(e) =>
+                (e.target.style.backgroundColor = "#d32f2f")
+              }
+              onMouseOut={(e) => (e.target.style.backgroundColor = "#f44336")}
             >
-              Back
+              Regresa
             </button>
           </div>
         </div>
@@ -185,7 +209,14 @@ const Deforestation = () => {
             mieCoefficient={0.005}
             mieDirectionalG={0.8}
           />
-          <Stars radius={300} depth={50} count={2000} factor={7} saturation={0} fade />
+          <Stars
+            radius={300}
+            depth={50}
+            count={2000}
+            factor={7}
+            saturation={0}
+            fade
+          />
           <CustomCursor />
         </Suspense>
         <ambientLight intensity={0.5} />
