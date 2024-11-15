@@ -2,6 +2,7 @@ import React, { Suspense, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Sky } from '@react-three/drei';
 import Navbar from '../../components/Navbar';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import * as THREE from 'three';
 import CameraDeforestation from '../../controls/CameraDeforestation';
 import DeforestationTitle from '../../components/DeforestationTitle';
@@ -16,6 +17,7 @@ const Deforestation = () => {
     new THREE.Vector3(-8.74, -3.07, 1.32)
   );
   const controlsRef = useRef();
+  const navigate = useNavigate(); // Hook para navegación
 
   const handleCameraChange = () => {
     if (controlsRef.current) {
@@ -23,9 +25,32 @@ const Deforestation = () => {
     }
   };
 
+  const handleNextClick = () => {
+    navigate('/biodiversity'); // Navega a la página Biodiversity
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       <Navbar />
+      {/* Botón "Siguiente" */}
+      <button
+        onClick={handleNextClick}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '8px',
+          border: 'none',
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          cursor: 'pointer',
+          zIndex: 1000, // Asegura que el botón esté sobre el Canvas
+        }}
+      >
+        Siguiente
+      </button>
       <Canvas
         frameloop="demand"
         shadows
