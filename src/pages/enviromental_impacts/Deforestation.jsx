@@ -86,7 +86,7 @@ const Deforestation = () => {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
-            fontFamily: "'Arial', sans-serif",
+            fontFamily: "'bebas-neue-regular', sans-serif",
           }}
         >
           {/* Close button for the canvas */}
