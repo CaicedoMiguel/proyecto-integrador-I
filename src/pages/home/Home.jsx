@@ -146,13 +146,13 @@ const Home = () => {
             opacity: 1,
           }}
         >
-          Tierra Santa is an informative web application<br />
-          about the environment using<br />
-          3D models and objects.<br /> <br />
-          Our mission is to provide the proper knowledge<br />
-          to care for and protect our<br />
-          environment, keeping our planet<br />
-          as a wonderful EARTH.
+          Tierra Santa es una aplicación web informativa<br />
+          sobre el medio ambiente mediante<br />
+          modelos y objetos en 3D. <br /> <br />
+          Nuestra misión es brindar el conocimiento adecuado y <br />
+          necesario para cuidar y proteger nuestro<br />
+          medioambiente, haciendo que nuestro<br />
+          planeta siga siendo esa TIERRA maravillosa.
         </div>
       )}
 
