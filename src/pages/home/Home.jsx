@@ -15,54 +15,68 @@ import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 
+// Component to handle camera animation when the page loads
 const CameraAnimation = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
 
+  // Updates camera position gradually until the animation is complete
   useFrame(({ clock, camera }) => {
     if (!animationComplete) {
-      const t = Math.min(1, clock.getElapsedTime() * 0.5);
+      const t = Math.min(1, clock.getElapsedTime() * 0.5); // Time-based interpolation
       const newPosition = new THREE.Vector3(0, 30, 250).lerp(new THREE.Vector3(0, 30, 70), t);
       camera.position.copy(newPosition);
 
       if (t === 1) {
-        setAnimationComplete(true);
+        setAnimationComplete(true); // Stops animation once complete
       }
     }
   });
 
+  // Adds orbit controls to enable camera movement by the user
   return <OrbitControls enableZoom={true} maxDistance={300} minDistance={50} />;
 };
 
+// Main Home component
 const Home = () => {
-  const [showDescription, setShowDescription] = useState(false);
-  const textContainerRef = useRef();
-  const navigate = useNavigate();
+  const [showDescription, setShowDescription] = useState(false); // State to show/hide the description
+  const textContainerRef = useRef(); // Ref for text container animations
+  const navigate = useNavigate(); // React Router navigation hook
 
+  // Effect to handle fade-in animation for the description box
   useEffect(() => {
     if (textContainerRef.current) {
-      textContainerRef.current.style.opacity = 0;
+      textContainerRef.current.style.opacity = 0; // Initial opacity
       setTimeout(() => {
-        textContainerRef.current.style.transition = 'opacity 2s ease-in-out';
-        textContainerRef.current.style.opacity = 1;
+        textContainerRef.current.style.transition = 'opacity 2s ease-in-out'; // Smooth transition
+        textContainerRef.current.style.opacity = 1; // Fade-in effect
       }, 2000);
     }
   }, []);
 
+  // Toggles the description box visibility
   const handleTitleClick = () => {
     setShowDescription(!showDescription);
   };
 
+  // Navigates to the deforestation section
   const handleButtonClick = () => {
     navigate('/deforestation');
   };
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+      {/* Navigation bar */}
       <Navbar />
+
+      {/* 3D scene canvas */}
       <Canvas
         shadows
         camera={{ position: [0, 30, 250], fov: 70 }}
-        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, outputColorSpace: THREE.SRGBColorSpace }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          outputColorSpace: THREE.SRGBColorSpace,
+        }}
         style={{
           width: '100%',
           height: '100%',
@@ -73,13 +87,15 @@ const Home = () => {
           opacity: 0.8,
         }}
       >
+        {/* Suspense fallback for loading */}
         <Suspense
           fallback={
             <Html center>
-              <div>Cargando...</div>
+              <div>Loading...</div>
             </Html>
           }
         >
+          {/* 3D model and elements */}
           <TierraSantaModel />
           <TierraSantaTitle initial onClick={handleTitleClick} />
           <Sky
@@ -104,12 +120,16 @@ const Home = () => {
           <CloudGroup />
         </Suspense>
 
+        {/* Lighting in the scene */}
         <ambientLight intensity={0.2} />
         <directionalLight position={[10, 20, 5]} intensity={0.5} castShadow />
         <pointLight position={[-20, 20, 10]} intensity={1} />
+
+        {/* Camera animation */}
         <CameraAnimation />
       </Canvas>
 
+      {/* Description box */}
       {showDescription && (
         <div
           ref={textContainerRef}
@@ -126,16 +146,17 @@ const Home = () => {
             opacity: 1,
           }}
         >
-          Tierra Santa es una aplicación web informativa<br />
-          sobre el medio ambiente mediante<br />
-          modelos y objetos en 3D. <br /> <br />
-          Nuestra misión es brindar el conocimiento adecuado y <br />
-          necesario para cuidar y proteger nuestro<br />
-          medioambiente, haciendo que nuestro<br />
-          planeta siga siendo esa TIERRA maravillosa.
+          Tierra Santa is an informative web application<br />
+          about the environment using<br />
+          3D models and objects.<br /> <br />
+          Our mission is to provide the proper knowledge<br />
+          to care for and protect our<br />
+          environment, keeping our planet<br />
+          as a wonderful EARTH.
         </div>
       )}
 
+      {/* Interactive button */}
       <button
         onClick={handleButtonClick}
         style={{
@@ -167,24 +188,27 @@ const Home = () => {
           e.target.style.backgroundColor = '#FFFFFF';
         }}
       >
-        Comienza la Aventura
+        Comenzar Aventura
       </button>
     </div>
   );
 };
 
+// Component to load and display the main 3D model
 const TierraSantaModel = () => {
-  const { scene } = useGLTF('/models/scene3D.glb', true);
-  scene.position.set(0, -30, 0);
-  scene.scale.set(15, 15, 15);
+  const { scene } = useGLTF('/models/scene3D.glb', true); // Loads the 3D model
+  scene.position.set(0, -30, 0); // Positions the model
+  scene.scale.set(15, 15, 15); // Scales the model
 
   return <primitive object={scene} />;
 };
 
+// Component to display and handle the title interaction
 const TierraSantaTitle = ({ initial, onClick }) => {
   const textRef = useRef();
   const [hovered, setHovered] = useState(false);
 
+  // Updates title material based on hover state
   useEffect(() => {
     if (textRef.current) {
       textRef.current.material.color.set(hovered ? '#FFFF00' : '#4CAF50');
@@ -205,9 +229,9 @@ const TierraSantaTitle = ({ initial, onClick }) => {
       bevelOffset={0}
       bevelSegments={5}
       position={[-50, 20, -10]}
-      onPointerOver={() => setHovered(true)} // Detecta cuando el mouse está encima
-      onPointerOut={() => setHovered(false)} // Detecta cuando el mouse se mueve fuera
-      onClick={onClick}
+      onPointerOver={() => setHovered(true)} // Detects hover
+      onPointerOut={() => setHovered(false)} // Detects hover exit
+      onClick={onClick} // Handles click events
     >
       TIERRA SANTA
       <meshPhongMaterial color="#4CAF50" emissive="#000000" emissiveIntensity={0.5} />
@@ -215,6 +239,7 @@ const TierraSantaTitle = ({ initial, onClick }) => {
   );
 };
 
+// Component to group and render clouds in the scene
 const CloudGroup = () => {
   return (
     <group>
