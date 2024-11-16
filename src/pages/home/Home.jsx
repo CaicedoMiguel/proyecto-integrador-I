@@ -14,6 +14,7 @@ import {
 import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import Model from '../../components/Model';
 
 // Component to handle camera animation when the page loads
 const CameraAnimation = () => {
@@ -96,7 +97,7 @@ const Home = () => {
           }
         >
           {/* 3D model and elements */}
-          <TierraSantaModel />
+          <Model />
           <TierraSantaTitle initial onClick={handleTitleClick} />
           <Sky
             distance={450000}
@@ -194,14 +195,6 @@ const Home = () => {
   );
 };
 
-// Component to load and display the main 3D model
-const TierraSantaModel = () => {
-  const { scene } = useGLTF('/models/scene3D.glb', true); // Loads the 3D model
-  scene.position.set(0, -30, 0); // Positions the model
-  scene.scale.set(15, 15, 15); // Scales the model
-
-  return <primitive object={scene} />;
-};
 
 // Component to display and handle the title interaction
 const TierraSantaTitle = ({ initial, onClick }) => {
