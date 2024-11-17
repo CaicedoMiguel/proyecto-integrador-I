@@ -7,6 +7,7 @@ import Navbar from '../../components/Navbar';
 import BiodiversityTittle from '../../components/BiodiversityTittle';
 import { useNavigate } from 'react-router-dom';
 import LostBiodiversity from '../../components/LostBiodiversity';
+import LightsDeforestation from '../../components/LightsDeforestation';
 
 const Biodiversity = () => {
 
@@ -53,6 +54,7 @@ const Biodiversity = () => {
         <Suspense fallback={null}>
           <LostBiodiversity />
           <BiodiversityTittle initial onClick={handleTitleClick} /> 
+          <LightsDeforestation />
         </Suspense>
         <Sky
             sunPosition={[100, 20, 100]}
@@ -69,18 +71,6 @@ const Biodiversity = () => {
             saturation={0}
             fade
           />
-        <ambientLight intensity={0.2} />
-        <directionalLight 
-        position={[5, 7, 2]} intensity={2} castShadow />
-        <spotLight
-        position={[0, 7, 5]}
-        angle={0.6}
-        penumbra={1}
-        intensity={1.5}
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-      />
-        <pointLight position={[-2, 5, 3]} intensity={0.5} castShadow/>
         <OrbitControls 
         minAzimuthAngle={-Math.PI / 8} // Limita la rotación horizontal (izquierda)
         maxAzimuthAngle={Math.PI / 8}   // Limita la rotación horizontal (derecha)
