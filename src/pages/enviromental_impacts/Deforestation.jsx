@@ -11,6 +11,8 @@ import CustomCursor from "../../controls/CustomCursor";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import './styles.css'; // Importar la hoja de estilos
+import { Physics } from '@react-three/rapier';
+
 
 /**
  * Definición de posiciones de la cámara fuera del componente para evitar recrearlas en cada render
@@ -48,7 +50,7 @@ const texts = [
   // Paso 0: Posición inicial (Título)
   {
     title: "Bienvenido a la Exploración de la Deforestación",
-    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación, tambien puedes usar las flechas izquierda o derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. Diviertete!",
+    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación, tambien puedes usar las flechas izquierda y derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. Diviertete!",
     isClickable: true, // Indica que se puede hacer clic para avanzar
   },
   // Paso 1: La Deforestación
@@ -247,7 +249,10 @@ const Deforestation = () => {
           isModalOpen={showInfoCanvas} // Pasar la prop aquí
         />
         <Suspense fallback={null}>
-          <LostDeforestation />
+        <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}> 
+        <LostDeforestation />
+        {/* <Debug color="black" scale={1.1}> */} {/* Descomenta esto para visualizar los cuerpos de física */}</Physics>
+          
           <DeforestationTitle />
           <Sky
             sunPosition={[100, 20, 100]}
