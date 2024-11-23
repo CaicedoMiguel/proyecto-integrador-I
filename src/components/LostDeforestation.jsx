@@ -1,6 +1,5 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier';
 
 const LostDeforestation = (props) => {
@@ -8,12 +7,37 @@ const LostDeforestation = (props) => {
     const { nodes, materials,animations } = useGLTF('models/deforestation.glb');
     const { actions } = useAnimations(animations, deforestationRef);
     console.log(actions);
-    
+    const [fallenTrees, setFallenTrees] = useState([]);
 
+    const handleTreeClick = (event, treeName) => {
+      event.stopPropagation();
+      if (!fallenTrees.includes(treeName)) {
+        setFallenTrees(prevState => [...prevState, treeName]);
+      }
+    };
+  
+    const isTreeFallen = (treeName) => fallenTrees.includes(treeName);
+  
+    const TreeRigidBody = ({ treeName, position, rotation, scale, children }) => (
+      <RigidBody
+        type={isTreeFallen(treeName) ? "dynamic" : "fixed"}
+        mass={5}
+        position={position}
+        rotation={rotation}
+        scale={scale}
+        colliders="hull"
+        restitution={0.2}
+        friction={1}
+      >
+        <group onClick={(event) => handleTreeClick(event, treeName)}>
+          {children}
+        </group>
+      </RigidBody>
+    );
+  
     return (
       <group ref={deforestationRef} {...props} dispose={null} position={[30, -10, 0]}>
         <group name="Scene">
-          {/* Piso como cuerpo estático */}
           <RigidBody type="fixed" colliders="trimesh">
             <mesh
               name="Plane"
@@ -23,61 +47,38 @@ const LostDeforestation = (props) => {
               material={materials['Material.001']}
               position={[0, -5.101, 36.979]}
               scale={[115.932, 169.274, 174.736]}
-              
             />
           </RigidBody>
   
-          {/* Árbol 1: Sphere005 dentro del grupo Esqueleto */}
-          <RigidBody
-            type="Dynamic"
-            mass={5}
-            position={[-26.261, -2.186, 152.126]}
-            colliders="hull"
-            restitution={0.2}
-            friction={1}
+          <TreeRigidBody
+            treeName="Sphere005"
+            position={[-26.507, 2.958, 153.338]}
+            scale={[0.871, 10.988, 0.871]}
           >
-            <group
-              name="Esqueleto"
-              rotation={[-2.747, -1, 3.065]}
-              scale={21.822}
-            >
-              <group
-                name="Sphere005"
-                position={[-0.011, 0.236, 0.056]}
-                rotation={[0.108, 0.158, 0.284]}
-                scale={[0.04, 0.504, 0.04]}
-              >
-                <mesh
-                  name="Sphere007"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Sphere007.geometry}
-                  material={materials['wood.001']}
-                />
-                <mesh
-                  name="Sphere007_1"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Sphere007_1.geometry}
-                  material={materials['leaves.001']}
-                />
-              </group>
-              <group name="Hueso">
-                <group name="Hueso001" position={[0, 0.5, 0]} />
-              </group>
+            <group name="Sphere005">
+              <mesh
+                name="Sphere007"
+                castShadow
+                receiveShadow
+                geometry={nodes.Sphere007.geometry}
+                material={materials['wood.001']}
+              />
+              <mesh
+                name="Sphere007_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Sphere007_1.geometry}
+                material={materials['leaves.001']}
+              />
             </group>
-          </RigidBody>
+          </TreeRigidBody>
   
-          {/* Árbol 2: Sphere001 */}
-          <RigidBody
-            type="Dynamic"
-            mass={5}
+          <TreeRigidBody
+            treeName="Sphere001"
             position={[-0.045, 1.393, 189.518]}
-            colliders="hull"
-            restitution={0.2}
-            friction={1}
+            scale={[0.871, 10.988, 0.871]}
           >
-            <group name="Sphere001" scale={[0.871, 10.988, 0.871]}>
+            <group name="Sphere001">
               <mesh
                 name="Sphere001_1"
                 castShadow
@@ -93,18 +94,14 @@ const LostDeforestation = (props) => {
                 material={materials['leaves.001']}
               />
             </group>
-          </RigidBody>
+          </TreeRigidBody>
   
-          {/* Árbol 3: Sphere025 */}
-          <RigidBody
-            type="Dynamic"
-            mass={5}
+          <TreeRigidBody
+            treeName="Sphere025"
             position={[6.574, -0.317, 149.039]}
-            colliders="hull"
-            restitution={0.2}
-            friction={1}
+            scale={[0.871, 10.988, 0.871]}
           >
-            <group name="Sphere025" scale={[0.871, 10.988, 0.871]}>
+            <group name="Sphere025">
               <mesh
                 name="Sphere031"
                 castShadow
@@ -120,22 +117,15 @@ const LostDeforestation = (props) => {
                 material={materials['leaves.001']}
               />
             </group>
-          </RigidBody>
+          </TreeRigidBody>
   
-          {/* Árbol 4: Sphere017 */}
-          <RigidBody
-            type="Dynamic"
-            mass={5}
+          <TreeRigidBody
+            treeName="Sphere017"
             position={[-16.792, 4.165, 175.988]}
-            colliders="hull"
-            restitution={0.2}
-            friction={1}
+            rotation={[0, 1.021, 0]}
+            scale={[0.871, 10.988, 0.871]}
           >
-            <group
-              name="Sphere017"
-              rotation={[0, 1.021, 0]}
-              scale={[0.871, 10.988, 0.871]}
-            >
+            <group name="Sphere017">
               <mesh
                 name="Sphere028"
                 castShadow
@@ -151,7 +141,7 @@ const LostDeforestation = (props) => {
                 material={materials['leaves.001']}
               />
             </group>
-          </RigidBody>
+          </TreeRigidBody>
   
           {/* Otros objetos de la escena sin físicas */}
           <mesh

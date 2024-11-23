@@ -129,22 +129,24 @@ const TierraSanta = () => {
     };
 
     const onDocumentClick = () => {
-      if (animationPhase === 0) {
-        animationPhase = 1;
-        clock.start();
-        navigate('/home');
-      }
+      navigateToHome();
     };
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const progress = Math.min(scrollPosition / maxScroll, 1);
+      console.log(`Scroll Position: ${scrollPosition}, Max Scroll: ${maxScroll}, Progress: ${progress}`);
       setScrollProgress(progress);
 
-      if (progress >= 1) {
-        navigate('/home');
+      if (progress >= 0.99) {
+        navigateToHome();
       }
+    };
+
+    const navigateToHome = () => {
+      console.log("Navigating to /home");
+      navigate('/home');
     };
 
     const animate = () => {
@@ -263,7 +265,7 @@ const TierraSanta = () => {
         }}
         aria-label="Animación interactiva de Tierra Santa"
       />
-      <div style={{ height: '300vh' }} />
+      <div style={{ height: '500vh' }} />
     </>
   );
 };
