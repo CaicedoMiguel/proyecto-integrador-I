@@ -12,7 +12,7 @@ import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import './styles.css'; // Importar la hoja de estilos
 import { Physics } from '@react-three/rapier';
-
+import Raccon from "../../components/RacconModel";
 
 /**
  * Definición de posiciones de la cámara fuera del componente para evitar recrearlas en cada render
@@ -251,6 +251,7 @@ const Deforestation = () => {
         <Suspense fallback={null}>
         <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}> 
         <LostDeforestation />
+        <Raccon position={[30, -11, 13]}/>
         {/* <Debug color="black" scale={1.1}> */} {/* Descomenta esto para visualizar los cuerpos de física */}</Physics>
           
           <DeforestationTitle />
