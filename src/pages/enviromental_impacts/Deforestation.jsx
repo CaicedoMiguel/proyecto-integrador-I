@@ -175,6 +175,22 @@ const Deforestation = () => {
       {/* Incluir el Navbar aquí */}
       <Navbar />
 
+      {/* Botón siempre visible */}
+      <div className="button-container">
+        <button
+          onClick={() => {
+            handleButtonPress();
+            navigate("/biodiversity");
+          }}
+          onMouseDown={handleButtonPress}
+          onMouseUp={() => setIsButtonPressed(false)}
+          onMouseLeave={() => setIsButtonPressed(false)}
+          className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
+        >
+          Explora la Biodiversidad
+        </button>
+      </div>
+
       <Canvas
         frameloop="always"
         shadows
@@ -194,22 +210,6 @@ const Deforestation = () => {
             <LostDeforestation />
             <Dog position={[30, -13, 13]} />
           </Physics>
-          <Html fullscreen style={{ pointerEvents: 'none' }}>
-            <div className="button-container">
-              <button
-                onClick={() => {
-                  handleButtonPress();
-                  navigate("/biodiversity");
-                }}
-                onMouseDown={handleButtonPress}
-                onMouseUp={() => setIsButtonPressed(false)}
-                onMouseLeave={() => setIsButtonPressed(false)}
-                className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
-              >
-                Explora la Biodiversidad
-              </button>
-            </div>
-          </Html>
           <DeforestationTitle />
           <Sky
             sunPosition={[100, 20, 100]}
@@ -231,6 +231,7 @@ const Deforestation = () => {
         <LightsDeforestation />
       </Canvas>
 
+      {/* Modales */}
       {currentStep === 0 && (
         <div
           onClick={nextStep}
