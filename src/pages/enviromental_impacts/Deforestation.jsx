@@ -11,6 +11,7 @@ import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
 import './styles.css';
+import Navbar from '../../components/Navbar';
 
 
 // Camera positions and steps defined as constants
@@ -171,6 +172,9 @@ const Deforestation = () => {
 
   return (
     <div className="deforestation-container">
+      {/* Incluir el Navbar aquí */}
+      <Navbar />
+
       <Canvas
         frameloop="always"
         shadows
@@ -246,6 +250,8 @@ const Deforestation = () => {
           ref={modalRef}
           tabIndex={0}
           className="info-modal"
+          role="dialog" // Agregar rol para accesibilidad
+          aria-modal="true"
         >
           <button
             onClick={() => {
@@ -275,20 +281,20 @@ const Deforestation = () => {
             )}
 
             {currentStep < STEPS.length - 1 ? (
-          <button
-            onClick={nextStep}
-            className="nav-button next-button"
-          >
-            Siguiente
-          </button>
-        ) : (
-          <button
-          onClick={() => navigate("/biodiversity")}
-            className="nav-button finish-button"
-        >
-            Finalizar
-    </button>
-  )}
+              <button
+                onClick={nextStep}
+                className="nav-button next-button"
+              >
+                Siguiente
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/biodiversity")}
+                className="nav-button finish-button"
+              >
+                Finalizar
+              </button>
+            )}
 
             <button
               onClick={resetCamera}
@@ -304,4 +310,3 @@ const Deforestation = () => {
 };
 
 export default Deforestation;
-
