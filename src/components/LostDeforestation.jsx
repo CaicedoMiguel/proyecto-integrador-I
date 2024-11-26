@@ -50,7 +50,7 @@ const LostDeforestation = (props) => {
             />
           </RigidBody>
 
-<RigidBody type="fixed" colliders="hull">
+<RigidBody type="fixed" colliders="ball">
   <group
     name="stump_2005"
     position={[14.408, -3.454, 169.232]}
@@ -74,7 +74,7 @@ const LostDeforestation = (props) => {
   </group>
 </RigidBody>
 
-<RigidBody type="fixed" colliders="hull">
+<RigidBody type="fixed" colliders="ball">
   <mesh
     name="Sphere002"
     castShadow

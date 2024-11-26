@@ -9,8 +9,9 @@ import DeforestationTitle from "../../components/DeforestationTitle";
 import CustomCursor from "../../controls/CustomCursor";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
-import Cat from "../../components/CatModel";
+import Dog from "../../components/DogModel";
 import './styles.css';
+
 
 // Camera positions and steps defined as constants
 const CAMERA_POSITIONS = [
@@ -171,7 +172,7 @@ const Deforestation = () => {
   return (
     <div className="deforestation-container">
       <Canvas
-        frameloop="demand"
+        frameloop="always"
         shadows
         camera={cameraProps}
         style={{ background: "transparent" }}
@@ -187,7 +188,7 @@ const Deforestation = () => {
         <Suspense fallback={null}>
           <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}>
             <LostDeforestation />
-            <Cat position={[30, -13, 13]} />
+            <Dog position={[30, -13, 13]} />
           </Physics>
           <Html fullscreen style={{ pointerEvents: 'none' }}>
             <div className="button-container">
