@@ -1,7 +1,7 @@
 // src/pages/Deforestation.jsx
-import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
+import React, { Suspense, useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Stars, Sky } from "@react-three/drei";
+import { Stars, Sky, OrbitControls } from "@react-three/drei";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
@@ -12,11 +12,9 @@ import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import './styles.css'; // Importar la hoja de estilos
 import { Physics } from '@react-three/rapier';
-import Raccon from "../../components/RacconModel";
+import Cat from "../../components/CatModel";
 
-/**
- * Definición de posiciones de la cámara fuera del componente para evitar recrearlas en cada render
- */
+// Definición de posiciones de la cámara y textos fuera del componente para evitar recrearlos en cada render
 const cameraPositions = [
   // Paso 0: Posición inicial (Título)
   {
@@ -30,27 +28,26 @@ const cameraPositions = [
   },
   // Paso 2: La Sensibilización
   {
-    position: new THREE.Vector3(50, 10, 80),
-    lookAt: new THREE.Vector3(0, 0, 0),
+    position: new THREE.Vector3(77.34154334345368,-2.6468275771793213, 220.49287339767233),
+    lookAt: new THREE.Vector3(-5.723287859275314,-12.093047405869553,-12.732195097274296),
   },
   // Paso 3: Soluciones a la Deforestación
   {
-    position: new THREE.Vector3(100, 20, 150),
-    lookAt: new THREE.Vector3(10, -5, 20),
+    position: new THREE.Vector3(115.65618342706782, 4.300917195859684, 81.6113805558299),
+    lookAt: new THREE.Vector3(93.38266673088074, -5.518344414133743, 56.07500598020611),
   },
   // Paso 4: ¡Juega y Aprende!
   {
-    position: new THREE.Vector3(120, 30, 180),
-    lookAt: new THREE.Vector3(20, -10, 30),
+    position: new THREE.Vector3(52.53859280193333, 3.15010345942333, 111.65783993430324),
+    lookAt: new THREE.Vector3(30.947823498215268, -4.468295888068112, 136.13396587114272),
   },
 ];
 
-// Arreglo de textos para cada paso
 const texts = [
   // Paso 0: Posición inicial (Título)
   {
     title: "Bienvenido a la Exploración de la Deforestación",
-    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación, tambien puedes usar las flechas izquierda y derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. Diviertete!",
+    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación. También puedes usar las flechas izquierda y derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. ¡Diviértete!",
     isClickable: true, // Indica que se puede hacer clic para avanzar
   },
   // Paso 1: La Deforestación
@@ -86,6 +83,7 @@ const Deforestation = () => {
   const [showInfoCanvas, setShowInfoCanvas] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
+  const controlsRef = useRef();
 
   const modalRef = useRef(null); // Referencia al modal
   const isFirstRender = useRef(true); // Indicador de primera carga
@@ -100,7 +98,7 @@ const Deforestation = () => {
       }
       return prevStep;
     });
-  }, [texts.length]);
+  }, []);
 
   /**
    * Función para retroceder al paso anterior.
@@ -129,13 +127,13 @@ const Deforestation = () => {
    * useEffect para sincronizar la posición de la cámara con el paso actual.
    */
   useEffect(() => {
-    console.log(`currentStep changed to: ${currentStep}`);
+    console.log(`currentStep cambiado a: ${currentStep}`);
 
     if (isFirstRender.current) {
       // En la primera renderización, no mostrar el modal
       isFirstRender.current = false;
       setShowInfoCanvas(false);
-      // En el paso 0, targetPosition ya está set en posición0
+      // En el paso 0, targetPosition ya está establecido en posición0
     } else {
       if (currentStep < cameraPositions.length) {
         const { position, lookAt } = cameraPositions[currentStep];
@@ -153,20 +151,20 @@ const Deforestation = () => {
    * @param {KeyboardEvent} event - El evento de teclado.
    */
   const handleKeyDown = useCallback((event) => {
-    console.log(`Key pressed: ${event.code}, showInfoCanvas: ${showInfoCanvas}, currentStep: ${currentStep}`);
+    console.log(`Tecla presionada: ${event.code}, showInfoCanvas: ${showInfoCanvas}, currentStep: ${currentStep}`);
 
     if (showInfoCanvas) { // Si el modal está abierto
       switch (event.code) {
         case "ArrowRight":
-          console.log("ArrowRight pressed");
+          console.log("ArrowRight presionada");
           nextStep();
           break;
         case "ArrowLeft":
-          console.log("ArrowLeft pressed");
+          console.log("ArrowLeft presionada");
           prevStep();
           break;
         case "Escape":
-          console.log("Escape pressed");
+          console.log("Escape presionada");
           resetCamera();
           break;
         default:
@@ -174,7 +172,7 @@ const Deforestation = () => {
       }
     } else { // Si el modal no está abierto
       if (event.code === "ArrowRight") {
-        console.log("ArrowRight pressed - avanzar al siguiente paso");
+        console.log("ArrowRight presionada - avanzar al siguiente paso");
         nextStep();
         setShowInfoCanvas(true); // Mostrar el modal al avanzar
       }
@@ -206,26 +204,28 @@ const Deforestation = () => {
     }
   }, [showInfoCanvas]);
 
+  // Memoizar los valores de la cámara para evitar recreaciones innecesarias
+  const cameraProps = useMemo(() => ({
+    position: cameraPositions[0].position.toArray(),
+    fov: 75,
+  }), []);
+
+  const handleCameraChange = () => {
+    // Obtiene el objetivo actual de la cámara (target) cuando OrbitControls cambia
+    if (controlsRef.current) {
+      console.log(controlsRef);
+    }
+  };
+
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+    <div className="deforestation-container">
       {/* Componente Navbar */}
       <Navbar />
 
       {/* Botón para navegar a la página de Biodiversidad */}
       <button
         onClick={() => navigate("/biodiversity")}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          borderRadius: "8px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          cursor: "pointer",
-          zIndex: 1000,
-        }}
+        className="navigate-button"
       >
         Explora la Biodiversidad
       </button>
@@ -234,12 +234,10 @@ const Deforestation = () => {
       <Canvas
         frameloop="demand"
         shadows
-        camera={{
-          position: cameraPositions[0].position.toArray(),
-          fov: 75,
-        }}
+        camera={cameraProps}
         style={{ background: "transparent" }}
       >
+        {/* <OrbitControls ref={controlsRef} onChange={handleCameraChange} /> */}
         <CameraDeforestation
           targetPosition={targetPosition}
           targetLookAt={targetLookAt}
@@ -249,10 +247,11 @@ const Deforestation = () => {
           isModalOpen={showInfoCanvas} // Pasar la prop aquí
         />
         <Suspense fallback={null}>
-        <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}> 
-        <LostDeforestation />
-        <Raccon position={[30, -11, 13]}/>
-        {/* <Debug color="black" scale={1.1}> */} {/* Descomenta esto para visualizar los cuerpos de física */}</Physics>
+          <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}>
+            <LostDeforestation />
+            <Cat position={[30, -13, 13]} />
+            {/* <Debug color="black" scale={1.1}> */} {/* Descomenta esto para visualizar los cuerpos de física */}
+          </Physics>
           
           <DeforestationTitle />
           <Sky
@@ -279,20 +278,12 @@ const Deforestation = () => {
       {currentStep === 0 && (
         <div
           onClick={nextStep}
-          className="modal-paso0" // Aplicar la clase CSS
+          className="modal-paso0"
         >
-          <h2 style={{ fontSize: "28px", marginBottom: "10px", color: "#2c3e50" }}>
+          <h2 className="modal-title">
             {texts[currentStep].title}
           </h2>
-          <p style={{ fontSize: "16px", color: "#555", marginBottom: "20px" }}></p>
-          <p
-            style={{
-              fontSize: "18px",
-              lineHeight: "1.6",
-              textAlign: "center",
-              marginBottom: "30px",
-            }}
-          >
+          <p className="modal-content">
             {texts[currentStep].content}
           </p>
         </div>
@@ -303,26 +294,7 @@ const Deforestation = () => {
         <div
           ref={modalRef}
           tabIndex={0} // Hace que el div sea enfocables
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "70vw",
-            maxWidth: "800px",
-            backgroundColor: "rgba(255, 255, 255, 0.95)",
-            color: "#333",
-            padding: "40px",
-            borderRadius: "20px",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            fontFamily: "'bebas-neue-regular', sans-serif",
-            outline: "none", // Opcional: elimina el contorno al enfocar
-          }}
+          className="info-modal"
         >
           {/* Botón de cierre para el modal */}
           <button
@@ -330,65 +302,27 @@ const Deforestation = () => {
               setShowInfoCanvas(false);
               // No reiniciar currentStep para permitir la navegación con los botones
             }}
-            style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              background: "transparent",
-              border: "none",
-              fontSize: "24px",
-              cursor: "pointer",
-              color: "#666",
-              transition: "color 0.3s ease",
-            }}
-            onMouseOver={(e) => (e.target.style.color = "#f44336")}
-            onMouseOut={(e) => (e.target.style.color = "#666")}
+            className="close-button"
             aria-label="Cerrar"
           >
             ×
           </button>
 
           {/* Contenido dinámico basado en el paso actual */}
-          <h2 style={{ fontSize: "28px", marginBottom: "20px", color: "#2c3e50" }}>
+          <h2 className="modal-title">
             {texts[currentStep].title}
           </h2>
-          <p
-            style={{
-              fontSize: "18px",
-              lineHeight: "1.6",
-              textAlign: "center",
-              marginBottom: "30px",
-            }}
-          >
+          <p className="modal-content">
             {texts[currentStep].content}
           </p>
 
           {/* Botones de navegación */}
-          <div
-            style={{
-              display: "flex",
-              gap: "20px",
-              width: "100%",
-              justifyContent: "center",
-            }}
-          >
+          <div className="navigation-buttons">
             {/* Botón Anterior */}
             {currentStep > 0 && (
               <button
                 onClick={prevStep}
-                style={{
-                  padding: "15px 30px",
-                  fontSize: "16px",
-                  borderRadius: "50px",
-                  backgroundColor: "#f44336",
-                  color: "white",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#f44336")}
+                className="nav-button prev-button"
               >
                 Anterior
               </button>
@@ -398,19 +332,7 @@ const Deforestation = () => {
             {currentStep < texts.length - 1 ? (
               <button
                 onClick={nextStep}
-                style={{
-                  padding: "15px 30px",
-                  fontSize: "16px",
-                  borderRadius: "50px",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = "#45a049")}
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
+                className="nav-button next-button"
               >
                 Siguiente
               </button>
@@ -418,19 +340,7 @@ const Deforestation = () => {
               // Botón Finalizar que navega al juego
               <button
                 onClick={() => navigate("/juego")}
-                style={{
-                  padding: "15px 30px",
-                  fontSize: "16px",
-                  borderRadius: "50px",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = "#45a049")}
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
+                className="nav-button finish-button"
               >
                 Finalizar
               </button>
@@ -439,19 +349,7 @@ const Deforestation = () => {
             {/* Botón Resetear Cámara */}
             <button
               onClick={resetCamera}
-              style={{
-                padding: "15px 30px",
-                fontSize: "16px",
-                borderRadius: "50px",
-                backgroundColor: "#f44336",
-                color: "white",
-                cursor: "pointer",
-                border: "none",
-                transition: "background-color 0.3s ease",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              }}
-              onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
-              onMouseOut={(e) => (e.target.style.backgroundColor = "#f44336")}
+              className="nav-button reset-button"
             >
               Regresa
             </button>

@@ -1,4 +1,29 @@
-/* styles.css */
+/* Contenedor principal */
+.deforestation-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+/* Botón de navegación a Biodiversidad */
+.navigate-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.navigate-button:hover {
+  background-color: #45a049;
+}
 
 .modal-paso0 {
     position: absolute;
@@ -31,3 +56,104 @@
     }
   }
   
+  /* Modal de Información */
+.info-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70vw;
+  max-width: 800px;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  font-family: 'bebas-neue-regular', sans-serif;
+  outline: none;
+}
+
+.info-modal:focus {
+  outline: none;
+}
+
+/* Título del Modal */
+.modal-title {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+/* Contenido del Modal */
+.modal-content {
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Botones de Navegación */
+.navigation-buttons {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.nav-button {
+  padding: 15px 30px;
+  font-size: 16px;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.prev-button {
+  background-color: #f44336;
+}
+
+.prev-button:hover {
+  background-color: #d32f2f;
+}
+
+.next-button, .finish-button {
+  background-color: #4CAF50;
+}
+
+.next-button:hover, .finish-button:hover {
+  background-color: #45a049;
+}
+
+.reset-button {
+  background-color: #f44336;
+}
+
+.reset-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Botón de Cierre */
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.close-button:hover {
+  color: #f44336;
+}
