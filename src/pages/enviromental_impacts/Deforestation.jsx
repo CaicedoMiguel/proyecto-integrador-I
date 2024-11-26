@@ -172,7 +172,7 @@ const Deforestation = () => {
   return (
     <div className="deforestation-container">
       <Canvas
-        frameloop="demand"
+        frameloop="always"
         shadows
         camera={cameraProps}
         style={{ background: "transparent" }}
