@@ -5,68 +5,108 @@
   position: relative;
 }
 
-/* Botón de navegación a Biodiversidad */
-.navigate-button {
+/* Contenedor del botón 3D para posicionarlo en la parte superior derecha */
+.button-container {
   position: absolute;
   top: 20px;
   right: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 8px;
-  background-color: #4CAF50;
+  padding-right: 60px; /* Increased from 20px to 60px */
+  pointer-events: none;
+}
+
+/* Botón de navegación a Biodiversidad 3D */
+.navigate-button-3d {
+  padding: 15px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #4CAF50, #45a049);
   color: white;
   cursor: pointer;
-  z-index: 1000;
-  border: none;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-family: 'bebas-neue-regular', sans-serif;
+  pointer-events: auto;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
-.navigate-button:hover {
-  background-color: #45a049;
+.navigate-button-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%) rotate(45deg);
+  transition: transform 0.3s ease;
 }
 
+.navigate-button-3d:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+.navigate-button-3d:hover::before {
+  transform: translateX(100%) rotate(45deg);
+}
+
+.navigate-button-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navigate-button-3d.pressed {
+  transform: scale(0.95) translateY(2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal para el Paso 0 */
 .modal-paso0 {
-    position: absolute;
-    top: 30%; /* Ajustado para posicionar el modal más arriba */
-    left: 50%;
-    transform: translate(-50%, -30%); /* Ajustado para mantener la alineación vertical */
-    width: 70vw;
-    max-width: 800px;
-    background-color: rgba(255, 255, 255, 0.95);
-    color: #333;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    font-family: 'bebas-neue-regular', sans-serif;
-    cursor: pointer;
-    outline: none;
-    transition: top 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  width: 60vw; /* Reduced from 70vw */
+  max-width: 700px; /* Reduced from 800px */
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 30px; /* Reduced from 40px */
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  font-family: 'bebas-neue-regular', sans-serif;
+  cursor: pointer;
+  outline: none;
+  transition: top 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .modal-paso0 {
+    top: 20%;
+    transform: translate(-50%, -20%);
+    padding: 20px;
   }
-  
-  @media (max-width: 600px) {
-    .modal-paso0 {
-      top: 20%;
-      transform: translate(-50%, -20%);
-      padding: 20px;
-    }
-  }
-  
-  /* Modal de Información */
+}
+
+/* Modal de Información */
 .info-modal {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 70vw;
-  max-width: 800px;
+  width: 60vw; /* Reduced from 70vw */
+  max-width: 700px; /* Reduced from 800px */
   background-color: rgba(255, 255, 255, 0.95);
   color: #333;
-  padding: 40px;
+  padding: 30px; /* Reduced from 40px */
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -84,7 +124,7 @@
 
 /* Título del Modal */
 .modal-title {
-  font-size: 28px;
+  font-size: 24px; /* Reduced from 28px */
   margin-bottom: 20px;
   color: #2c3e50;
   text-align: center;
@@ -92,7 +132,7 @@
 
 /* Contenido del Modal */
 .modal-content {
-  font-size: 18px;
+  font-size: 16px; /* Reduced from 18px */
   line-height: 1.6;
   text-align: center;
   margin-bottom: 30px;
@@ -157,3 +197,4 @@
 .close-button:hover {
   color: #f44336;
 }
+
