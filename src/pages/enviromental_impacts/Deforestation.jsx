@@ -274,20 +274,20 @@ const Deforestation = () => {
             )}
 
             {currentStep < STEPS.length - 1 ? (
-              <button
-                onClick={nextStep}
-                className="nav-button next-button"
-              >
-                Siguiente
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate("/juego")}
-                className="nav-button finish-button"
-              >
-                Finalizar
-              </button>
-            )}
+          <button
+            onClick={nextStep}
+            className="nav-button next-button"
+          >
+            Siguiente
+          </button>
+        ) : (
+          <button
+          onClick={() => navigate("/biodiversity")}
+            className="nav-button finish-button"
+        >
+            Finalizar
+    </button>
+  )}
 
             <button
               onClick={resetCamera}
