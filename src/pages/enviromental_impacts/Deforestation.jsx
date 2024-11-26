@@ -40,7 +40,7 @@ const CAMERA_POSITIONS = [
 const STEPS = [
   {
     title: "Bienvenido a la Exploración de la Deforestación",
-    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación. También puedes usar las flechas izquierda y derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. ¡Diviértete!",
+    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación. También puedes usar las flechas izquierda y derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. ¡Diviértete! y no olvides saludar al lomito haciendo click ",
     isClickable: true,
   },
   {
@@ -172,7 +172,7 @@ const Deforestation = () => {
   return (
     <div className="deforestation-container">
       <Canvas
-        frameloop="always"
+        frameloop="demand"
         shadows
         camera={cameraProps}
         style={{ background: "transparent" }}
