@@ -50,7 +50,7 @@ const LostDeforestation = (props) => {
             />
           </RigidBody>
 
-          <RigidBody type="fixed" colliders="trimesh">
+<RigidBody type="fixed" colliders="hull">
   <group
     name="stump_2005"
     position={[14.408, -3.454, 169.232]}
@@ -73,11 +73,24 @@ const LostDeforestation = (props) => {
     />
   </group>
 </RigidBody>
+
+<RigidBody type="fixed" colliders="hull">
+  <mesh
+    name="Sphere002"
+    castShadow
+    receiveShadow
+    geometry={nodes.Sphere002.geometry}
+    material={materials.wood}
+    position={[-5.947, 4.177, 152.23]}
+    scale={[0.871, 10.988, 0.871]}
+  />
+</RigidBody>
   
           <TreeRigidBody
             treeName="Sphere005"
             position={[-26.507, 2.958, 153.338]}
             scale={[0.871, 10.988, 0.871]}
+            colliderType="hull"
           >
             <group name="Sphere005">
               <mesh
@@ -101,6 +114,7 @@ const LostDeforestation = (props) => {
             treeName="Sphere001"
             position={[-0.045, 1.393, 189.518]}
             scale={[0.871, 10.988, 0.871]}
+            colliderType="hull"
           >
             <group name="Sphere001">
               <mesh
@@ -124,6 +138,7 @@ const LostDeforestation = (props) => {
             position={[-16.792, 4.165, 175.988]}
             rotation={[0, 1.021, 0]}
             scale={[0.871, 10.988, 0.871]}
+            colliderType="hull"
           >
             <group name="Sphere017">
               <mesh
@@ -144,78 +159,78 @@ const LostDeforestation = (props) => {
           </TreeRigidBody>
 
           <group
-          name="stump_2004"
-          position={[2.523, -1.56, 78.002]}
-          rotation={[-Math.PI, 0.312, -Math.PI]}
-          scale={1.644}>
+          name="Sphere012"
+          position={[-1.599, 3.45, 126.626]}
+          rotation={[0.095, 0, 0]}
+          scale={[0.871, 7.729, 0.871]}>
           <mesh
-            name="Plane004"
+            name="Sphere010"
             castShadow
             receiveShadow
-            geometry={nodes.Plane004.geometry}
-            material={materials['Material.002']}
-          />
-          <mesh
-            name="Plane004_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.Plane004_1.geometry}
-            material={materials['Material.004']}
-          />
-          <mesh
-            name="Plane004_2"
-            castShadow
-            receiveShadow
-            geometry={nodes.Plane004_2.geometry}
-            material={materials.Grass}
-          />
-          <mesh
-            name="Plane004_3"
-            castShadow
-            receiveShadow
-            geometry={nodes.Plane004_3.geometry}
-            material={materials.Rock}
-          />
-          <mesh
-            name="Plane004_4"
-            castShadow
-            receiveShadow
-            geometry={nodes.Plane004_4.geometry}
+            geometry={nodes.Sphere010.geometry}
             material={materials.wood}
           />
           <mesh
-            name="Plane004_5"
+            name="Sphere010_1"
             castShadow
             receiveShadow
-            geometry={nodes.Plane004_5.geometry}
+            geometry={nodes.Sphere010_1.geometry}
+            material={materials.Grass}
+          />
+          <mesh
+            name="Sphere010_2"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_2.geometry}
+            material={materials.Rock}
+          />
+          <mesh
+            name="Sphere010_3"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_3.geometry}
             material={materials.Flowers03}
           />
           <mesh
-            name="Plane004_6"
+            name="Sphere010_4"
             castShadow
             receiveShadow
-            geometry={nodes.Plane004_6.geometry}
+            geometry={nodes.Sphere010_4.geometry}
             material={materials.Flowers01}
           />
           <mesh
-            name="Plane004_7"
+            name="Sphere010_5"
             castShadow
             receiveShadow
-            geometry={nodes.Plane004_7.geometry}
+            geometry={nodes.Sphere010_5.geometry}
             material={materials.leaves}
           />
           <mesh
-            name="Plane004_8"
+            name="Sphere010_6"
             castShadow
             receiveShadow
-            geometry={nodes.Plane004_8.geometry}
+            geometry={nodes.Sphere010_6.geometry}
+            material={materials['Material.002']}
+          />
+          <mesh
+            name="Sphere010_7"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_7.geometry}
+            material={materials['Material.004']}
+          />
+          <mesh
+            name="Sphere010_8"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_8.geometry}
             material={materials['wood.001']}
           />
           <mesh
-            name="Plane004_9"
+            name="Sphere010_9"
             castShadow
             receiveShadow
-            geometry={nodes.Plane004_9.geometry}
+            geometry={nodes.Sphere010_9.geometry}
             material={materials['leaves.001']}
           />
         </group>
