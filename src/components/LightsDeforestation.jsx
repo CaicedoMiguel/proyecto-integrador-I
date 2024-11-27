@@ -20,8 +20,8 @@ const LightsDeforestation = () => {
         shadow-camera-right={200}
         shadow-camera-top={200}
         shadow-camera-bottom={-200}
-        shadow-radius={4} // Suaviza las sombras
-        shadow-bias={-0.0001} // Evita artefactos en las sombras
+        shadow-radius={4} 
+        shadow-bias={-0.0001} 
       />
 
       {/* Luz Ambiental para iluminar las sombras suavemente */}

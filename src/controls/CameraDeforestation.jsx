@@ -2,78 +2,55 @@
 import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import * as THREE from "three";
 
 /**
  * CameraDeforestation component.
- * Manages the camera's movement and target for the deforestation scene, with interactive controls.
+ * Maneja el movimiento de la cámara y el objetivo para la escena de deforestación, con controles interactivos.
  *
  * @param {Object} props
- * @param {THREE.Vector3} props.targetPosition - The target position to move the camera towards.
- * @param {THREE.Vector3} props.targetLookAt - The target point the camera should look at.
- * @param {Function} props.moveCamera - Function to set a new camera position and target.
- * @param {Function} props.resetCamera - Function to reset the camera to its initial state.
+ * @param {THREE.Vector3} props.targetPosition - La posición objetivo hacia la cual mover la cámara.
+ * @param {THREE.Vector3} props.targetLookAt - El punto objetivo al que la cámara debe mirar.
+ * @param {Function} props.nextStep - Función para avanzar al siguiente paso.
+ * @param {Function} props.prevStep - Función para retroceder al paso anterior.
+ * @param {Function} props.resetCamera - Función para reiniciar la cámara a su estado inicial.
+ * @param {boolean} props.isModalOpen - Indica si el modal está actualmente abierto.
  */
 const CameraDeforestation = ({
   targetPosition,
   targetLookAt,
-  moveCamera,
+  nextStep,
+  prevStep,
   resetCamera,
+  isModalOpen,
 }) => {
-  const controlsRef = useRef(); // Reference for the OrbitControls
-  const cameraRef = useRef(); // Reference for the camera object
+  const controlsRef = useRef(); // Referencia para los OrbitControls
+  const cameraRef = useRef(); // Referencia para el objeto de la cámara
 
   /**
-   * Initializes the camera reference after the controls are mounted.
+   * Inicializa la referencia de la cámara después de montar los controles.
    */
   useEffect(() => {
     if (controlsRef.current) {
-      cameraRef.current = controlsRef.current.object; // Assigns the camera object from OrbitControls
+      cameraRef.current = controlsRef.current.object;
+      console.log('Camera initialized:', cameraRef.current.position);
+      controlsRef.current.enableKeys = false; // Deshabilitar las teclas predeterminadas de OrbitControls
+      controlsRef.current.enabled = !isModalOpen; // Deshabilita completamente los controles cuando el modal está abierto
     }
-  }, []);
+  }, [isModalOpen]);
 
   /**
-   * Handles keyboard events for controlling the camera.
-   */
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      switch (event.code) {
-        case "ArrowUp":
-          // Move the camera to a new position and target when ArrowUp is pressed
-          const newPosition = new THREE.Vector3(98.45, 2.85, 133.23);
-          const newLookAt = new THREE.Vector3(25.69, -15.25, 150.73);
-          moveCamera(newPosition, newLookAt);
-          break;
-        case "ArrowDown":
-          // Reset the camera when ArrowDown is pressed
-          resetCamera();
-          break;
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    // Cleanup listener on component unmount
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [moveCamera, resetCamera]);
-
-  /**
-   * Updates the camera's position and look-at target on each frame.
-   * Smoothly interpolates the current position and target towards the desired values.
+   * Actualiza la posición de la cámara y el objetivo en cada frame.
+   * Interpola suavemente la posición y el objetivo actuales hacia los valores deseados.
    */
   useFrame(() => {
     if (controlsRef.current && cameraRef.current) {
-      // Interpolate the camera position towards the target position
+      // Interpola la posición de la cámara hacia la posición objetivo
       cameraRef.current.position.lerp(targetPosition, 0.05);
 
-      // Interpolate the OrbitControls' target towards the target look-at point
+      // Interpola el objetivo de los OrbitControls hacia el punto objetivo
       controlsRef.current.target.lerp(targetLookAt, 0.05);
 
-      // Update the OrbitControls
+      // Actualiza los OrbitControls
       controlsRef.current.update();
     }
   });

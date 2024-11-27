@@ -1,262 +1,216 @@
-import React, { Suspense, useState, useCallback } from "react";
+import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Stars, Sky } from "@react-three/drei";
-import Navbar from "../../components/Navbar";
+import { Stars, Sky, Html } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
+import { Physics } from '@react-three/rapier';
 import CameraDeforestation from "../../controls/CameraDeforestation";
 import DeforestationTitle from "../../components/DeforestationTitle";
 import CustomCursor from "../../controls/CustomCursor";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
+import Dog from "../../components/DogModel";
+import './styles.css';
+import Navbar from '../../components/Navbar';
 
-// Initial camera position and look-at target
-const initialPosition = new THREE.Vector3(-14.2, 3.59, 60.27);
-const initialLookAt = new THREE.Vector3(-8.74, -3.07, 1.32);
+
+// Camera positions and steps defined as constants
+const CAMERA_POSITIONS = [
+  {
+    position: new THREE.Vector3(-14.2, 3.59, 60.27),
+    lookAt: new THREE.Vector3(-8.74, -3.07, 1.32),
+  },
+  {
+    position: new THREE.Vector3(98.45, 2.85, 133.23),
+    lookAt: new THREE.Vector3(25.69, -15.25, 150.73),
+  },
+  {
+    position: new THREE.Vector3(77.34154334345368, -2.6468275771793213, 220.49287339767233),
+    lookAt: new THREE.Vector3(-5.723287859275314, -12.093047405869553, -12.732195097274296),
+  },
+  {
+    position: new THREE.Vector3(115.65618342706782, 4.300917195859684, 81.6113805558299),
+    lookAt: new THREE.Vector3(93.38266673088074, -5.518344414133743, 56.07500598020611),
+  },
+  {
+    position: new THREE.Vector3(52.53859280193333, 3.15010345942333, 111.65783993430324),
+    lookAt: new THREE.Vector3(30.947823498215268, -4.468295888068112, 136.13396587114272),
+  },
+];
+
+const STEPS = [
+  {
+    title: "Bienvenido a la Exploración de la Deforestación",
+    content: "Haz clic en la pantalla para comenzar y aprender más sobre la deforestación. También puedes usar las flechas izquierda y derecha del teclado para desplazarte, y la tecla escape para volver a comenzar. ¡Diviértete! y no olvides saludar al lomito haciendo click ",
+    isClickable: true,
+  },
+  {
+    title: "La Deforestación",
+    content: "La deforestación amenaza la biodiversidad y acelera el cambio climático al destruir hábitats vitales y reducir los pulmones verdes de nuestro planeta. Cada árbol talado significa menos oxígeno, mayor emisión de carbono y pérdida de especies únicas. Es crucial adoptar prácticas sostenibles y proteger nuestros bosques para asegurar un futuro saludable para las próximas generaciones. Actuar ahora es responsabilidad de todos.",
+  },
+  {
+    title: "La Sensibilización",
+    content: "La sensibilización es clave para combatir la deforestación. Al educar y concienciar a las comunidades sobre el valor de los bosques y los efectos devastadores de su pérdida, fomentamos acciones responsables y sostenibles. Participa en iniciativas locales, apoya prácticas ecológicas y comparte información para inspirar a otros a proteger nuestro planeta.",
+  },
+  {
+    title: "Soluciones a la Deforestación",
+    content: "Existen múltiples soluciones para enfrentar la deforestación, tales como la reforestación, la implementación de prácticas agrícolas sostenibles, la creación de reservas naturales y la promoción de políticas ambientales estrictas. La tecnología también juega un papel crucial mediante el monitoreo satelital y el uso de drones para detectar actividades ilegales. La colaboración internacional y el apoyo a las comunidades locales son esenciales para el éxito de estas iniciativas.",
+  },
+  {
+    title: "¡Juega y Aprende!",
+    content: "Participa en nuestro juego interactivo para aprender más sobre la deforestación y cómo puedes contribuir a la preservación de los bosques. Desafía tus conocimientos, toma decisiones estratégicas y descubre cómo tus acciones pueden marcar la diferencia. ¡Diviértete mientras haces del mundo un lugar mejor!",
+    isGame: true,
+  },
+];
 
 const Deforestation = () => {
-  const [targetPosition, setTargetPosition] = useState(initialPosition.clone());
-  const [targetLookAt, setTargetLookAt] = useState(initialLookAt.clone());
-  const [showInfoCanvas, setShowInfoCanvas] = useState(false); // Determines if the info canvas is displayed
-  const [currentStep, setCurrentStep] = useState(0); // New state for tracking the current step
+  const [targetPosition, setTargetPosition] = useState(CAMERA_POSITIONS[0].position.clone());
+  const [targetLookAt, setTargetLookAt] = useState(CAMERA_POSITIONS[0].lookAt.clone());
+  const [showInfoCanvas, setShowInfoCanvas] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
+  const controlsRef = useRef();
+  const modalRef = useRef(null);
+  const isFirstRender = useRef(true);
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
 
-  // Array of texts for each step
-  const texts = [
-    {
-      title: "La Deforestación",
-      content:
-        "La deforestación amenaza la biodiversidad y acelera el cambio climático al destruir hábitats vitales y reducir los pulmones verdes de nuestro planeta. Cada árbol talado significa menos oxígeno, mayor emisión de carbono y pérdida de especies únicas. Es crucial adoptar prácticas sostenibles y proteger nuestros bosques para asegurar un futuro saludable para las próximas generaciones. Actuar ahora es responsabilidad de todos.",
-    },
-    {
-      title: "La Sensibilización",
-      content:
-        "La sensibilización es clave para combatir la deforestación. Al educar y concienciar a las comunidades sobre el valor de los bosques y los efectos devastadores de su pérdida, fomentamos acciones responsables y sostenibles. Participa en iniciativas locales, apoya prácticas ecológicas y comparte información para inspirar a otros a proteger nuestro planeta.",
-    },
-  ];
-
-  /**
-   * Function to move the camera to a new position and display the info canvas.
-   * @param {THREE.Vector3} newPosition - The new camera position.
-   * @param {THREE.Vector3} newLookAt - The new look-at target.
-   */
-  const moveCamera = useCallback((newPosition, newLookAt) => {
-    setTargetPosition(newPosition.clone());
-    setTargetLookAt(newLookAt.clone());
-    setShowInfoCanvas(true);
-    setCurrentStep(0); // Reset to the first step when opening the canvas
-    console.log("Camera moved to the new position.");
+  const nextStep = useCallback(() => {
+    setCurrentStep((prevStep) => {
+      if (prevStep < STEPS.length - 1) {
+        return prevStep + 1;
+      }
+      return prevStep;
+    });
   }, []);
 
-  /**
-   * Function to reset the camera to its initial position and hide the info canvas.
-   */
+  const prevStep = useCallback(() => {
+    setCurrentStep((prevStep) => {
+      if (prevStep > 0) {
+        return prevStep - 1;
+      }
+      return prevStep;
+    });
+  }, []);
+
   const resetCamera = useCallback(() => {
-    setTargetPosition(initialPosition.clone());
-    setTargetLookAt(initialLookAt.clone());
+    setTargetPosition(CAMERA_POSITIONS[0].position.clone());
+    setTargetLookAt(CAMERA_POSITIONS[0].lookAt.clone());
     setShowInfoCanvas(false);
-    setCurrentStep(0); // Reset the current step
-    console.log("Camera reset to the initial position.");
+    setCurrentStep(0);
+    console.log("Cámara reiniciada a la posición inicial.");
   }, []);
+
+  useEffect(() => {
+    console.log(`currentStep cambiado a: ${currentStep}`);
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      setShowInfoCanvas(false);
+    } else {
+      if (currentStep < CAMERA_POSITIONS.length) {
+        const { position, lookAt } = CAMERA_POSITIONS[currentStep];
+        setTargetPosition(position.clone());
+        setTargetLookAt(lookAt.clone());
+        setShowInfoCanvas(currentStep !== 0);
+      }
+    }
+  }, [currentStep]);
+
+  const handleKeyDown = useCallback((event) => {
+    console.log(`Tecla presionada: ${event.code}, showInfoCanvas: ${showInfoCanvas}, currentStep: ${currentStep}`);
+
+    if (showInfoCanvas) {
+      switch (event.code) {
+        case "ArrowRight":
+          console.log("ArrowRight presionada");
+          nextStep();
+          break;
+        case "ArrowLeft":
+          console.log("ArrowLeft presionada");
+          prevStep();
+          break;
+        case "Escape":
+          console.log("Escape presionada");
+          resetCamera();
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (event.code === "ArrowRight") {
+        console.log("ArrowRight presionada - avanzar al siguiente paso");
+        nextStep();
+        setShowInfoCanvas(true);
+      }
+    }
+  }, [showInfoCanvas, nextStep, prevStep, resetCamera, currentStep]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  useEffect(() => {
+    if (showInfoCanvas && modalRef.current) {
+      setTimeout(() => {
+        modalRef.current.focus();
+      }, 0);
+    }
+  }, [showInfoCanvas]);
+
+  const cameraProps = {
+    position: CAMERA_POSITIONS[0].position.toArray(),
+    fov: 75,
+  };
+
+  const handleButtonPress = () => {
+    setIsButtonPressed(true);
+    setTimeout(() => setIsButtonPressed(false), 150);
+  };
 
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      {/* Navbar component */}
+    <div className="deforestation-container">
+      {/* Incluir el Navbar aquí */}
       <Navbar />
 
-      {/* Button to navigate to the Biodiversity page */}
-      <button
-        onClick={() => navigate("/biodiversity")}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          borderRadius: "8px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          cursor: "pointer",
-          zIndex: 1000,
-        }}
-      >
-        Explora la Biodiversidad
-      </button>
-
-      {/* Info canvas for deforestation */}
-      {showInfoCanvas && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "70vw",
-            maxWidth: "800px",
-            backgroundColor: "rgba(255, 255, 255, 0.95)",
-            color: "#333",
-            padding: "40px",
-            borderRadius: "20px",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            fontFamily: "'bebas-neue-regular', sans-serif",
+      {/* Botón siempre visible */}
+      <div className="button-container">
+        <button
+          onClick={() => {
+            handleButtonPress();
+            navigate("/biodiversity");
           }}
+          onMouseDown={handleButtonPress}
+          onMouseUp={() => setIsButtonPressed(false)}
+          onMouseLeave={() => setIsButtonPressed(false)}
+          className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
         >
-          {/* Close button for the canvas */}
-          <button
-            onClick={() => setShowInfoCanvas(false)}
-            style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              background: "transparent",
-              border: "none",
-              fontSize: "24px",
-              cursor: "pointer",
-              color: "#666",
-              transition: "color 0.3s ease",
-            }}
-            onMouseOver={(e) => (e.target.style.color = "#f44336")}
-            onMouseOut={(e) => (e.target.style.color = "#666")}
-            aria-label="Close"
-          >
-            ×
-          </button>
+          Explora la Biodiversidad
+        </button>
+      </div>
 
-          {/* Dynamic content based on currentStep */}
-          <h2 style={{ fontSize: "28px", marginBottom: "20px", color: "#2c3e50" }}>
-            {texts[currentStep].title}
-          </h2>
-          <p
-            style={{
-              fontSize: "18px",
-              lineHeight: "1.6",
-              textAlign: "center",
-              marginBottom: "30px",
-            }}
-          >
-            {texts[currentStep].content}
-          </p>
-
-          {/* Navigation buttons */}
-          <div
-            style={{
-              display: "flex",
-              gap: "20px",
-              width: "100%",
-              justifyContent: "center",
-            }}
-          >
-            {/* Back button */}
-            {currentStep > 0 && (
-              <button
-                onClick={() => setCurrentStep(currentStep - 1)}
-                style={{
-                  padding: "15px 30px",
-                  fontSize: "16px",
-                  borderRadius: "50px",
-                  backgroundColor: "#f44336",
-                  color: "white",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#f44336")}
-              >
-                Anterior
-              </button>
-            )}
-
-            {/* Next or Finalize button */}
-            {currentStep < texts.length - 1 ? (
-              <button
-                onClick={() => setCurrentStep(currentStep + 1)}
-                style={{
-                  padding: "15px 30px",
-                  fontSize: "16px",
-                  borderRadius: "50px",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = "#45a049")}
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
-              >
-                Siguiente
-              </button>
-            ) : (
-              // Modified Finalize button
-              <button
-                onClick={() => navigate("/biodiversity")}
-                style={{
-                  padding: "15px 30px",
-                  fontSize: "16px",
-                  borderRadius: "50px",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = "#45a049")}
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
-              >
-                Finalizar
-              </button>
-            )}
-
-            {/* Reset Camera Button */}
-            <button
-              onClick={resetCamera}
-              style={{
-                padding: "15px 30px",
-                fontSize: "16px",
-                borderRadius: "50px",
-                backgroundColor: "#f44336",
-                color: "white",
-                cursor: "pointer",
-                border: "none",
-                transition: "background-color 0.3s ease",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              }}
-              onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
-              onMouseOut={(e) => (e.target.style.backgroundColor = "#f44336")}
-            >
-              Regresa
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 3D Canvas for the Deforestation scene */}
       <Canvas
-        frameloop="demand"
+        frameloop="always"
         shadows
-        camera={{
-          position: initialPosition.toArray(),
-          fov: 75,
-        }}
-        style={{ background: "transparent", cursor: "none" }}
+        camera={cameraProps}
+        style={{ background: "transparent" }}
       >
         <CameraDeforestation
           targetPosition={targetPosition}
           targetLookAt={targetLookAt}
-          moveCamera={moveCamera}
+          nextStep={nextStep}
+          prevStep={prevStep}
           resetCamera={resetCamera}
+          isModalOpen={showInfoCanvas}
         />
         <Suspense fallback={null}>
-          <LostDeforestation />
-          <DeforestationTitle moveCamera={moveCamera} />
+          <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}>
+            <LostDeforestation />
+            <Dog position={[30, -13, 13]} />
+          </Physics>
+          <DeforestationTitle />
           <Sky
             sunPosition={[100, 20, 100]}
             turbidity={10}
@@ -276,6 +230,82 @@ const Deforestation = () => {
         </Suspense>
         <LightsDeforestation />
       </Canvas>
+
+      {/* Modales */}
+      {currentStep === 0 && (
+        <div
+          onClick={nextStep}
+          className="modal-paso0"
+        >
+          <h2 className="modal-title">
+            {STEPS[currentStep].title}
+          </h2>
+          <p className="modal-content">
+            {STEPS[currentStep].content}
+          </p>
+        </div>
+      )}
+
+      {showInfoCanvas && currentStep >= 1 && currentStep < STEPS.length && (
+        <div
+          ref={modalRef}
+          tabIndex={0}
+          className="info-modal"
+          role="dialog" // Agregar rol para accesibilidad
+          aria-modal="true"
+        >
+          <button
+            onClick={() => {
+              setShowInfoCanvas(false);
+            }}
+            className="close-button"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+
+          <h2 className="modal-title">
+            {STEPS[currentStep].title}
+          </h2>
+          <p className="modal-content">
+            {STEPS[currentStep].content}
+          </p>
+
+          <div className="navigation-buttons">
+            {currentStep > 0 && (
+              <button
+                onClick={prevStep}
+                className="nav-button prev-button"
+              >
+                Anterior
+              </button>
+            )}
+
+            {currentStep < STEPS.length - 1 ? (
+              <button
+                onClick={nextStep}
+                className="nav-button next-button"
+              >
+                Siguiente
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/biodiversity")}
+                className="nav-button finish-button"
+              >
+                Finalizar
+              </button>
+            )}
+
+            <button
+              onClick={resetCamera}
+              className="nav-button reset-button"
+            >
+              Regresa
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,11 +5,13 @@ import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Biodiversity from "./pages/enviromental_impacts/Biodiversity";
 import Deforestation from "./pages/enviromental_impacts/Deforestation";
+import TierraSanta from "./components/tierra-santa";
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<TierraSanta />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
