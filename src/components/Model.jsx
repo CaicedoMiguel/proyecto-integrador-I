@@ -9,7 +9,7 @@ const Model = (props) => {
   const group = useRef()
 
   // Cargar el modelo GLTF, incluyendo nodos, materiales y animaciones
-  const { nodes, materials, animations } = useGLTF("./public/models/scene3D.glb")
+  const { nodes, materials, animations } = useGLTF("./models/scene3D.glb")
 
   // Inicializar las animaciones usando la referencia del grupo
   const { actions } = useAnimations(animations, group)
