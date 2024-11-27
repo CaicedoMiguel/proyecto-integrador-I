@@ -10,7 +10,7 @@ import CustomCursor from "../../controls/CustomCursor";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
-import './styles.css';
+import './Styles.css';
 import Navbar from '../../components/Navbar';
 
 
