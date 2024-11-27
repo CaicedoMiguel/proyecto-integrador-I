@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, useAnimations, Html } from '@react-three/drei';
-import { RigidBody } from '@react-three/rapier';
+// import { RigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
 
 const Dog = (props) => {

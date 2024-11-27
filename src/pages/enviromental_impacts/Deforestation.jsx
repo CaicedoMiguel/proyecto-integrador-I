@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Stars, Sky, Html } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
-import { Physics } from '@react-three/rapier';
+// import { Physics } from '@react-three/rapier';
 import CameraDeforestation from "../../controls/CameraDeforestation";
 import DeforestationTitle from "../../components/DeforestationTitle";
 import CustomCursor from "../../controls/CustomCursor";
