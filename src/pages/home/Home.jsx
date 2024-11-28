@@ -13,6 +13,27 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Model from '../../components/Model';
 
+// Hook personalizado para escalado responsivo
+const useResponsiveScale = (desktopScale, mobileScale) => {
+  const [scale, setScale] = useState(desktopScale);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (window.innerWidth < 768) {
+        setScale(mobileScale);
+      } else {
+        setScale(desktopScale);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [desktopScale, mobileScale]);
+
+  return scale;
+};
+
 // Componente para manejar la animación de la cámara al cargar la página
 const CameraAnimation = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
@@ -99,7 +120,7 @@ const Home = () => {
               <strong>Pérdida de Biodiversidad:</strong> La extinción de especies reduce la resiliencia de los ecosistemas y su capacidad para proporcionar servicios esenciales.<br /><br />
               Es crucial tomar medidas inmediatas para mitigar estos problemas y proteger nuestro planeta para las futuras generaciones.
             </p>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <div style={buttonGroupStyle}>
               <button
                 onClick={handleBackClick}
                 style={buttonStyle}
@@ -108,7 +129,7 @@ const Home = () => {
               </button>
               <button
                 onClick={() => setShowDescription(false)}
-                style={{...buttonStyle, backgroundColor: '#f44336'}}
+                style={{ ...buttonStyle, backgroundColor: '#f44336' }}
               >
                 Cerrar
               </button>
@@ -192,6 +213,7 @@ const Home = () => {
   );
 };
 
+// Estilos Responsivos
 const containerStyle = {
   width: '100vw',
   height: '100vh',
@@ -199,9 +221,12 @@ const containerStyle = {
   margin: 0,
   padding: 0,
   overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
 };
 
 const canvasStyle = {
+  flex: 1,
   width: '100%',
   height: '100%',
   display: 'block',
@@ -212,7 +237,8 @@ const canvasStyle = {
 const descriptionBoxStyle = {
   position: 'fixed',
   bottom: '10%',
-  left: '10%',
+  left: '5%',
+  right: '5%',
   padding: '20px',
   backgroundColor: 'rgba(0, 0, 0, 0.7)',
   color: 'white',
@@ -220,13 +246,16 @@ const descriptionBoxStyle = {
   borderRadius: '10px',
   zIndex: 2,
   opacity: 1,
-  maxWidth: '300px',
+  maxWidth: '600px',
+  width: '90%',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+  overflowY: 'auto',
+  maxHeight: '70vh',
 };
 
 const adventureButtonStyle = {
   position: 'fixed',
-  bottom: '20%',
+  bottom: '5%',
   left: '50%',
   transform: 'translateX(-50%)',
   padding: '15px 40px',
@@ -234,7 +263,7 @@ const adventureButtonStyle = {
   color: '#4CAF50',
   border: '2px solid #4CAF50',
   borderRadius: '30px',
-  fontSize: '20px',
+  fontSize: '1.2rem',
   fontWeight: 'bold',
   cursor: 'pointer',
   zIndex: 3,
@@ -250,13 +279,23 @@ const buttonStyle = {
   border: 'none',
   borderRadius: '5px',
   cursor: 'pointer',
-  fontSize: '16px',
+  fontSize: '1rem',
   minWidth: '100px',
 };
 
+const buttonGroupStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginTop: '20px',
+  flexWrap: 'wrap',
+  gap: '10px',
+};
+
+// Componente del Título con Responsividad
 const TierraSantaTitle = ({ initial, onClick }) => {
   const textRef = useRef();
   const [hovered, setHovered] = useState(false);
+  const scale = useResponsiveScale(1, 0.7); // Escala menor en móviles
 
   useEffect(() => {
     if (textRef.current) {
@@ -269,15 +308,15 @@ const TierraSantaTitle = ({ initial, onClick }) => {
     <Text3D
       ref={textRef}
       font="/fonts/bebas-neue-regular.json"
-      size={10}
-      height={2}
+      size={10 * scale}
+      height={2 * scale}
       curveSegments={12}
       bevelEnabled
-      bevelThickness={0.5}
-      bevelSize={0.3}
+      bevelThickness={0.5 * scale}
+      bevelSize={0.3 * scale}
       bevelOffset={0}
       bevelSegments={5}
-      position={[-50, 20, -10]}
+      position={[-50 * scale, 20 * scale, -10 * scale]}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       onClick={onClick}
@@ -288,15 +327,33 @@ const TierraSantaTitle = ({ initial, onClick }) => {
   );
 };
 
+// Componente CloudGroup actualizado
 const CloudGroup = () => {
+  // Ajustar la escala en función del tamaño de la pantalla
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (window.innerWidth < 768) {
+        setScale(0.8); // Escala más pequeña para dispositivos móviles
+      } else {
+        setScale(1); // Escala normal para escritorio
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
   return (
-    <group>
+    <group scale={[scale, scale, scale]}>
       <Cloud position={[-40, 60, -100]} speed={0.2} opacity={0.5} />
       <Cloud position={[40, 70, -80]} speed={0.1} opacity={0.7} />
       <Cloud position={[0, 80, -90]} speed={0.3} opacity={0.6} />
+      {/* Añade más nubes si es necesario */}
     </group>
   );
 };
 
 export default Home;
-

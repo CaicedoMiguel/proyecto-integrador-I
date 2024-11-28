@@ -3,16 +3,15 @@
   width: 100vw;
   height: 100vh;
   position: relative;
-  overflow: hidden; /* Asegura que los elementos no se desborden */
-}
+  overflow: hidden; 
 
 /* Contenedor del botón siempre visible */
 .button-container {
   position: absolute;
   top: 20px;
-  right: 10px; /* Reducido de 20px a 10px para moverlo más a la derecha */
-  padding-right: 0px; /* Eliminado o reducido para evitar espacio adicional */
-  z-index: 1001; /* Asegura que el botón esté por encima de otros elementos */
+  right: 10px; 
+  padding-right: 0px; 
+  z-index: 1001; 
 }
 
 /* Botón de navegación a Biodiversidad 3D */
@@ -70,7 +69,7 @@
 /* Modal para el Paso 0 */
 .modal-paso0 {
   position: absolute;
-  top: 30%;
+  top: 10%;
   left: 50%;
   transform: translate(-50%, -30%);
   width: 60vw; /* Reduced from 70vw */
@@ -102,7 +101,7 @@
 /* Modal de Información */
 .info-modal {
   position: absolute;
-  top: 50%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 60vw; /* Reduced from 70vw */
