@@ -4,6 +4,7 @@
   height: 100vh;
   position: relative;
   overflow: hidden; 
+}
 
 /* Contenedor del botón siempre visible */
 .button-container {
