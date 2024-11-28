@@ -1,4 +1,3 @@
-// Deforestation.jsx
 import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, Sky, Html } from "@react-three/drei";
@@ -6,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { Physics } from '@react-three/rapier';
 import { useSwipeable } from "react-swipeable";
-
-// Importación de componentes 3D y controles
 import CameraDeforestation from "../../controls/CameraDeforestation";
 import DeforestationTitle from "../../components/DeforestationTitle";
 import CustomCursor from "../../controls/CustomCursor";
@@ -15,9 +12,9 @@ import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
 import Navbar from '../../components/Navbar';
-import './Styles.css'; // Importación de estilos CSS
+import './Styles.css'; 
 
-// Definición de las posiciones de la cámara
+
 const CAMERA_POSITIONS = [
   {
     position: new THREE.Vector3(-14.2, 3.59, 60.27),

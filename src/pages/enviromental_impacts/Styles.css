@@ -3,16 +3,15 @@
   width: 100vw;
   height: 100vh;
   position: relative;
-  overflow: hidden; /* Asegura que los elementos no se desborden */
-}
+  overflow: hidden; 
 
 /* Contenedor del botón siempre visible */
 .button-container {
   position: absolute;
   top: 20px;
-  right: 10px; /* Reducido de 20px a 10px para moverlo más a la derecha */
-  padding-right: 0px; /* Eliminado o reducido para evitar espacio adicional */
-  z-index: 1001; /* Asegura que el botón esté por encima de otros elementos */
+  right: 10px; 
+  padding-right: 0px; 
+  z-index: 1001; 
 }
 
 /* Botón de navegación a Biodiversidad 3D */
