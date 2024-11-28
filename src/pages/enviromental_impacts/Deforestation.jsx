@@ -3,17 +3,18 @@ import { Canvas } from "@react-three/fiber";
 import { Stars, Sky, Html } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
-// import { Physics } from '@react-three/rapier';
+import { Physics } from '@react-three/rapier';
+import { useSwipeable } from "react-swipeable";
 import CameraDeforestation from "../../controls/CameraDeforestation";
 import DeforestationTitle from "../../components/DeforestationTitle";
 import CustomCursor from "../../controls/CustomCursor";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
-import './styles.css';
+import Navbar from '../../components/Navbar';
+import './Styles.css'; 
 
 
-// Camera positions and steps defined as constants
 const CAMERA_POSITIONS = [
   {
     position: new THREE.Vector3(-14.2, 3.59, 60.27),
@@ -37,6 +38,7 @@ const CAMERA_POSITIONS = [
   },
 ];
 
+// Definición de los pasos informativos
 const STEPS = [
   {
     title: "Bienvenido a la Exploración de la Deforestación",
@@ -62,17 +64,49 @@ const STEPS = [
   },
 ];
 
+// Hook personalizado para detectar el tamaño de la ventana
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState({
+    width: undefined,
+    height: undefined,
+  });
+
+  useEffect(() => {
+    // Handler para actualizar el tamaño
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    // Añadir evento de listener
+    window.addEventListener("resize", handleResize);
+
+    // Llamar handler inicialmente
+    handleResize();
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowSize;
+};
+
+// Definición del Componente Deforestation
 const Deforestation = () => {
   const [targetPosition, setTargetPosition] = useState(CAMERA_POSITIONS[0].position.clone());
   const [targetLookAt, setTargetLookAt] = useState(CAMERA_POSITIONS[0].lookAt.clone());
   const [showInfoCanvas, setShowInfoCanvas] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
-  const controlsRef = useRef();
   const modalRef = useRef(null);
   const isFirstRender = useRef(true);
   const [isButtonPressed, setIsButtonPressed] = useState(false);
+  const size = useWindowSize();
+  const isMobile = size.width <= 600;
 
+  // Funciones para navegar entre los pasos
   const nextStep = useCallback(() => {
     setCurrentStep((prevStep) => {
       if (prevStep < STEPS.length - 1) {
@@ -99,6 +133,7 @@ const Deforestation = () => {
     console.log("Cámara reiniciada a la posición inicial.");
   }, []);
 
+  // Manejo de cambios en el paso actual
   useEffect(() => {
     console.log(`currentStep cambiado a: ${currentStep}`);
 
@@ -115,6 +150,7 @@ const Deforestation = () => {
     }
   }, [currentStep]);
 
+  // Manejo de eventos de teclado
   const handleKeyDown = useCallback((event) => {
     console.log(`Tecla presionada: ${event.code}, showInfoCanvas: ${showInfoCanvas}, currentStep: ${currentStep}`);
 
@@ -144,6 +180,7 @@ const Deforestation = () => {
     }
   }, [showInfoCanvas, nextStep, prevStep, resetCamera, currentStep]);
 
+  // Añadir y limpiar el listener de teclado
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -151,6 +188,7 @@ const Deforestation = () => {
     };
   }, [handleKeyDown]);
 
+  // Foco en el modal cuando se abre
   useEffect(() => {
     if (showInfoCanvas && modalRef.current) {
       setTimeout(() => {
@@ -159,18 +197,56 @@ const Deforestation = () => {
     }
   }, [showInfoCanvas]);
 
+  // Propiedades de la cámara ajustadas según el dispositivo
   const cameraProps = {
     position: CAMERA_POSITIONS[0].position.toArray(),
-    fov: 75,
+    fov: isMobile ? 60 : 75,
   };
 
+  // Manejo de presión del botón
   const handleButtonPress = () => {
     setIsButtonPressed(true);
     setTimeout(() => setIsButtonPressed(false), 150);
   };
 
+  // Manejo de gestos de swipe
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (!isMobile) return;
+      nextStep();
+    },
+    onSwipedRight: () => {
+      if (!isMobile) return;
+      prevStep();
+    },
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
+  });
+
   return (
-    <div className="deforestation-container">
+    <div className="deforestation-container" {...handlers}>
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Botón de Navegación */}
+      <div className="button-container">
+        {!isMobile && (
+          <button
+            onClick={() => {
+              handleButtonPress();
+              navigate("/biodiversity");
+            }}
+            onMouseDown={handleButtonPress}
+            onMouseUp={() => setIsButtonPressed(false)}
+            onMouseLeave={() => setIsButtonPressed(false)}
+            className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
+          >
+            Explora la Biodiversidad
+          </button>
+        )}
+      </div>
+
+      {/* Canvas 3D */}
       <Canvas
         frameloop="always"
         shadows
@@ -188,24 +264,8 @@ const Deforestation = () => {
         <Suspense fallback={null}>
           <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}>
             <LostDeforestation />
-            <Dog position={[30, -13, 13]} />
+            {!isMobile && <Dog position={[30, -13, 13]} />}
           </Physics>
-          <Html fullscreen style={{ pointerEvents: 'none' }}>
-            <div className="button-container">
-              <button
-                onClick={() => {
-                  handleButtonPress();
-                  navigate("/biodiversity");
-                }}
-                onMouseDown={handleButtonPress}
-                onMouseUp={() => setIsButtonPressed(false)}
-                onMouseLeave={() => setIsButtonPressed(false)}
-                className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
-              >
-                Explora la Biodiversidad
-              </button>
-            </div>
-          </Html>
           <DeforestationTitle />
           <Sky
             sunPosition={[100, 20, 100]}
@@ -222,11 +282,12 @@ const Deforestation = () => {
             saturation={0}
             fade
           />
-          <CustomCursor />
+          {!isMobile && <CustomCursor />}
         </Suspense>
         <LightsDeforestation />
       </Canvas>
 
+      {/* Modal Paso 0 */}
       {currentStep === 0 && (
         <div
           onClick={nextStep}
@@ -241,11 +302,14 @@ const Deforestation = () => {
         </div>
       )}
 
+      {/* Modal de Información */}
       {showInfoCanvas && currentStep >= 1 && currentStep < STEPS.length && (
         <div
           ref={modalRef}
           tabIndex={0}
           className="info-modal"
+          role="dialog"
+          aria-modal="true"
         >
           <button
             onClick={() => {
@@ -275,20 +339,20 @@ const Deforestation = () => {
             )}
 
             {currentStep < STEPS.length - 1 ? (
-          <button
-            onClick={nextStep}
-            className="nav-button next-button"
-          >
-            Siguiente
-          </button>
-        ) : (
-          <button
-          onClick={() => navigate("/biodiversity")}
-            className="nav-button finish-button"
-        >
-            Finalizar
-    </button>
-  )}
+              <button
+                onClick={nextStep}
+                className="nav-button next-button"
+              >
+                Siguiente
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/biodiversity")}
+                className="nav-button finish-button"
+              >
+                Finalizar
+              </button>
+            )}
 
             <button
               onClick={resetCamera}
@@ -297,6 +361,14 @@ const Deforestation = () => {
               Regresa
             </button>
           </div>
+
+          {/* Botones adicionales para navegación táctil */}
+          {isMobile && (
+            <div className="mobile-navigation-buttons">
+              <button onClick={prevStep} className="nav-button prev-button">◀ Anterior</button>
+              <button onClick={nextStep} className="nav-button next-button">Siguiente ▶</button>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -304,4 +376,3 @@ const Deforestation = () => {
 };
 
 export default Deforestation;
-

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei'
-// import { RigidBody } from '@react-three/rapier';
+import { RigidBody } from '@react-three/rapier';
 
 const LostDeforestation = (props) => {
     const deforestationRef = useRef();

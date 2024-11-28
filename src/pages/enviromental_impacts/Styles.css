@@ -3,15 +3,16 @@
   width: 100vw;
   height: 100vh;
   position: relative;
+  overflow: hidden; 
 }
 
-/* Contenedor del botón 3D para posicionarlo en la parte superior derecha */
+/* Contenedor del botón siempre visible */
 .button-container {
   position: absolute;
   top: 20px;
-  right: 20px;
-  padding-right: 60px; /* Increased from 20px to 60px */
-  pointer-events: none;
+  right: 10px; 
+  padding-right: 0px; 
+  z-index: 1001; 
 }
 
 /* Botón de navegación a Biodiversidad 3D */
@@ -31,6 +32,7 @@
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
+  z-index: 1001; /* Asegura que el botón esté por encima */
 }
 
 .navigate-button-3d::before {
@@ -64,10 +66,11 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+
 /* Modal para el Paso 0 */
 .modal-paso0 {
   position: absolute;
-  top: 30%;
+  top: 10%;
   left: 50%;
   transform: translate(-50%, -30%);
   width: 60vw; /* Reduced from 70vw */
@@ -99,7 +102,7 @@
 /* Modal de Información */
 .info-modal {
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 60vw; /* Reduced from 70vw */
@@ -197,4 +200,3 @@
 .close-button:hover {
   color: #f44336;
 }
-

@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unknown-property */
+// /* eslint-disable react/no-unknown-property */
 // eslint-disable-next-line no-unused-vars
 import React, { Suspense, useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
@@ -8,6 +8,8 @@ import BiodiversityTittle from "../../components/BiodiversityTittle";
 import { useNavigate } from "react-router-dom";
 import LostBiodiversity from "../../components/LostBiodiversity";
 import LightsDeforestation from "../../components/LightsDeforestation";
+import { Physics } from "@react-three/rapier";
+import Cow from "../../components/CowModel";
 
 const Biodiversity = () => {
   const [showDescription, setShowDescription] = useState(false);
@@ -63,7 +65,7 @@ const Biodiversity = () => {
             backgroundColor: "#4CAF50",
             color: "white",
             cursor: "pointer",
-            zIndex: 9, // Asegura que el botón esté sobre el Canvas
+            zIndex: 9, // Asegura que el botón esté sobre el Canvas //position={[18, -3, 87]}
           }}
         >
           Anterior
@@ -71,6 +73,9 @@ const Biodiversity = () => {
         <Canvas shadows camera={{ position: [30, 5, 160], fov: 60 }}>
           <Suspense fallback={null}>
             <BiodiversityTittle initial onClick={handleTitleClick} />
+            <Physics debug={false}>
+              <Cow scale={[5, 5, 5]} rotation={[0, 3.8, 0]} /> 
+            </Physics>
             <LostBiodiversity />
             <LightsDeforestation />
           </Suspense>

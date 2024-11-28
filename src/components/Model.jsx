@@ -1,24 +1,49 @@
 /* eslint-disable react/no-unknown-property */
 // eslint-disable-next-line no-unused-vars
-import React, { useRef } from 'react'
-import { useGLTF,  } from '@react-three/drei'
+import React, { useRef, useEffect } from 'react'
+import { useGLTF, useAnimations } from '@react-three/drei'
+import * as THREE from 'three'
 
 const Model = (props) => {
-  const { nodes, materials } = useGLTF("./models/scene3D.glb")
+  // Crear una referencia para el grupo principal
+  const group = useRef()
+
+  // Cargar el modelo GLTF, incluyendo nodos, materiales y animaciones
+  const { nodes, materials, animations } = useGLTF("./models/scene3D.glb")
+
+  // Inicializar las animaciones usando la referencia del grupo
+  const { actions } = useAnimations(animations, group)
+
+  useEffect(() => {
+    if (actions && Object.keys(actions).length > 0) {
+      // Listar las animaciones disponibles en la consola
+      console.log("Animaciones disponibles:", Object.keys(actions))
+
+      // Reproducir la primera animación disponible
+      const firstAction = Object.values(actions)[0]
+      firstAction.play()
+
+      // Configurar el bucle de la animación para que se repita infinitamente
+      firstAction.setLoop(THREE.LoopRepeat, Infinity)
+    }
+  }, [actions])
 
   return (
     <group
+      ref={group} // Asignar la referencia al grupo principal
       {...props}
       dispose={null}
-      position={[0, -30, 0]} // Sets the position of the model
-      scale={[15, 15, 15]}    // Sets the scale of the model
+      position={[0, -30, 0]} // Establece la posición del modelo
+      scale={[15, 15, 15]}    // Establece la escala del modelo
     >
       <group name="Scene">
         <group
           name="Birds1"
           position={[0.087, 0.631, 0.44]}
           rotation={[Math.PI / 2, 0, -1.215]}
-          scale={0.001}>
+          scale={0.001}
+        >
+          {/* Mallas de Birds1 */}
           <mesh
             name="Mesh"
             castShadow
@@ -90,6 +115,8 @@ const Model = (props) => {
             material={materials.yellow3}
           />
         </group>
+
+        {/* Otras mallas y grupos */}
         <mesh
           name="_Racoon_v1_L3PolySphere_1"
           castShadow
@@ -370,21 +397,12 @@ const Model = (props) => {
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
-        <mesh
-          name="Racoon2"
-          castShadow
-          receiveShadow
-          geometry={nodes.Racoon2.geometry}
-          material={materials['_Racoon_v1_L3:_Racoon_v2.001']}
-          position={[-1.766, 1.366, 1.661]}
-          rotation={[0, 0.195, 0]}
-          scale={0.01}
-        />
       </group>
     </group>
   )
-};
+}
 
-export default Model;
+export default Model
 
+// Precargar el modelo GLTF para mejorar el rendimiento
 useGLTF.preload('./public/models/scene3D.glb')
