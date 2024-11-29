@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 // eslint-disable-next-line no-unused-vars
 import React, { useCallback, useRef, useState } from "react";
-// import ReactDOM from 'react-dom';
 import { useGLTF, Html } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 
@@ -35,7 +34,7 @@ const LostBiodiversity = (props) => {
   const rTreesRef = useRef();
 
   const handleTree = useCallback(() => {
-    console.log("¡El árbol fue derribado!");
+    // console.log("¡El árbol fue derribado!");
     // Aplicar un impulso al árbol (direccionado hacia abajo y un poco hacia adelante)
     if (rTreesRef.current) {
       rTreesRef.current.applyImpulse({ x: 0, y: -10, z: 5 }, true);

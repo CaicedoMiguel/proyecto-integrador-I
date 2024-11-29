@@ -70,7 +70,7 @@ const Biodiversity = () => {
             backgroundColor: "#4CAF50",
             color: "white",
             cursor: "pointer",
-            zIndex: 9, // Asegura que el botón esté sobre el Canvas //position={[18, -3, 87]}
+            zIndex: 9, // Asegura que el botón esté sobre el Canvas
           }}
         >
           Anterior
@@ -78,7 +78,7 @@ const Biodiversity = () => {
         <Canvas shadows camera={{ position: [30, 5, 160], fov: 60 }}>
           <Suspense fallback={null}>
             <BiodiversityTittle initial onClick={handleTitleClick} />
-            <Physics debug={true}>
+            <Physics>
               <Cow scale={[5, 5, 5]} rotation={[0, 3.8, 0]} /> 
               <LostBiodiversity />
             </Physics>
