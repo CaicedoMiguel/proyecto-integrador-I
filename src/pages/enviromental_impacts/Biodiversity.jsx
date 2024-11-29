@@ -2,7 +2,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { Suspense, useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Sky, Stars } from "@react-three/drei";
+import { Html, OrbitControls, Sky, Stars } from "@react-three/drei";
 import Navbar from "../../components/Navbar";
 import BiodiversityTittle from "../../components/BiodiversityTittle";
 import { useNavigate } from "react-router-dom";
@@ -14,8 +14,13 @@ import Cow from "../../components/CowModel";
 const Biodiversity = () => {
   const [showDescription, setShowDescription] = useState(false);
   const [showAwareness, setShowAwareness] = useState(false); // Estado para la ventana de sensibilización
+  const [showHelps, setShowHelps] = useState(false);
   const textContainerRef = useRef();
   const navigate = useNavigate();
+
+  const handleHelp = () =>{
+    setShowHelps(!showHelps);
+  }
 
   const handleTitleClick = () => {
     setShowDescription(!showDescription);
@@ -103,6 +108,43 @@ const Biodiversity = () => {
             enablePan={false}
             enableRotate={true}
           />
+          <Html>
+            <div>
+              <a href="#"
+              onClick={handleHelp}
+              style={{
+                position:"absolute",
+                top:"220px",
+                left:"580px",
+                transform: "translate(10%, 10%)",
+              }}>
+                <img src="/src/assets/signoInterrogacion.svg" alt="Ayudas" 
+                style={{
+                  width:"60px",
+                }}
+                />
+              </a>
+            {showHelps && (
+            <div
+            style={{
+              position: "absolute",
+              backgroundColor: "rgba(239, 244, 239, 0.2)",
+              fontWeight: "bold",
+              width: "300px",
+              padding: "5px",
+              top: "90px",
+              left: "280px",
+            }}
+            >
+            <p>Mensaje de sensibilización con la tecla (A)
+            o haciendo click algunos arboles cortados <br />
+            Mensaje de soluciones haciendo click en algunos arboles <br />
+            Mensaje sobre la perdidad de biodiversidad haciendo click en el titulo.
+            </p>
+            </div>
+            )}
+            </div>
+          </Html>
         </Canvas>
 
         {showDescription && (
