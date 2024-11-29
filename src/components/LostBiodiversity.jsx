@@ -1,8 +1,9 @@
 /* eslint-disable react/no-unknown-property */
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 // import ReactDOM from 'react-dom';
 import { useGLTF, Html } from "@react-three/drei";
+import { RigidBody } from "@react-three/rapier";
 
 const LostBiodiversity = (props) => {
   const { nodes, materials } = useGLTF("/models/perdida-biodiversidad.glb");
@@ -27,10 +28,27 @@ const LostBiodiversity = (props) => {
     setShowSolutions(false);
   };
 
+  const handleObjeto = (e) => {
+    console.log("nombre del objeto", e.object.name); 
+  }
+
+  const rTreesRef = useRef();
+
+  const handleTree = useCallback(() => {
+    console.log("¡El árbol fue derribado!");
+    // Aplicar un impulso al árbol (direccionado hacia abajo y un poco hacia adelante)
+    if (rTreesRef.current) {
+      rTreesRef.current.applyImpulse({ x: 0, y: -10, z: 5 }, true);
+    }
+  }, []);
+  
+
   return (
     <>
+     
       <group {...props} dispose={null}>
         <group name="Scene">
+          <RigidBody type="fixed">
           <mesh
             name="Plane"
             castShadow
@@ -40,6 +58,7 @@ const LostBiodiversity = (props) => {
             position={[0, -5.101, 36.979]}
             scale={[135.026, 169.274, 162.182]}
           />
+           </RigidBody>
           <group
             name="rock022"
             position={[85.932, -4.163, 68.797]}
@@ -60,13 +79,16 @@ const LostBiodiversity = (props) => {
               geometry={nodes.rock013_1.geometry}
               material={materials.Grass}
             />
+            <RigidBody colliders="trimesh" type="dynamic" ref={rTreesRef}>  
             <mesh
-              name="rock013_2"
+              name="rock013_2" //tronco sin rama
               castShadow
               receiveShadow
               geometry={nodes.rock013_2.geometry}
               material={materials.wood}
+              onClick={handleTree}
             />
+            </RigidBody>
             <mesh
               name="rock013_3"
               castShadow
@@ -80,6 +102,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.rock013_4.geometry}
               material={materials.Flowers01}
+              onClick={handleObjeto}
             />
             <mesh
               name="rock013_5"
@@ -87,6 +110,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.rock013_5.geometry}
               material={materials.leaves}
+              onClick={handleObjeto}
             />
             <mesh
               name="rock013_6" //arbol cortado
@@ -102,6 +126,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.rock013_7.geometry}
               material={materials["Material.004"]}
+              onClick={handleObjeto}
             />
             <mesh
               name="rock013_8"
@@ -109,6 +134,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.rock013_8.geometry}
               material={materials["Material.003"]}
+              onClick={handleObjeto}
             />
             <mesh
               name="rock013_9" //arbol
@@ -119,11 +145,12 @@ const LostBiodiversity = (props) => {
               onClick={handleSolutions}
             />
             <mesh
-              name="rock013_10"
+              name="rock013_10" //arbol con rama
               castShadow
               receiveShadow
               geometry={nodes.rock013_10.geometry}
               material={materials["Material.006"]}
+              onClick={handleObjeto}
             />
             <mesh
               name="rock013_11"
@@ -131,6 +158,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.rock013_11.geometry}
               material={materials["wood.001"]}
+              
             />
             <mesh
               name="rock013_12"
@@ -138,7 +166,9 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.rock013_12.geometry}
               material={materials["leaves.001"]}
+              
             />
+          
           </group>
           <group
             name="stump_2004"
@@ -153,6 +183,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane004.geometry}
               material={materials["Material.002"]}
+              
             />
             <mesh
               name="Plane004_1"
@@ -160,6 +191,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane004_1.geometry}
               material={materials["Material.004"]}
+              
             />
           </group>
           <group
@@ -175,6 +207,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane007.geometry}
               material={materials["Material.002"]}
+              
             />
             <mesh
               name="Plane007_1"
@@ -182,6 +215,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane007_1.geometry}
               material={materials["Material.004"]}
+              
             />
           </group>
           <mesh
@@ -207,6 +241,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane011.geometry}
               material={materials["Material.002"]}
+              
             />
             <mesh
               name="Plane011_1"
@@ -214,6 +249,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane011_1.geometry}
               material={materials["Material.004"]}
+              
             />
           </group>
           <group
@@ -221,13 +257,15 @@ const LostBiodiversity = (props) => {
             position={[-36.879, -6.943, 35.663]}
             scale={[0.777, 0.949, 0.949]}
             onClick={(e) => e.stopPropagation()}
-          >
+          > 
+          <RigidBody type="kinematic">
             <mesh
               name="Plane024" //arbol
               castShadow
               receiveShadow
               geometry={nodes.Plane024.geometry}
               material={materials["Material.003"]}
+              onClick={handleTree}
             />
             <mesh
               name="Plane024_1" //arbol
@@ -235,7 +273,9 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Plane024_1.geometry}
               material={materials["Material.005"]}
+              onClick={handleTree}
             />
+            </RigidBody>
           </group>
           <group
             name="Sphere004"
@@ -249,13 +289,15 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Sphere034.geometry}
               material={materials["wood.001"]}
+              
             />
             <mesh
-              name="Sphere034_1"
+              name="Sphere034_1" //pino
               castShadow
               receiveShadow
               geometry={nodes.Sphere034_1.geometry}
               material={materials["leaves.001"]}
+              onClick={handleObjeto}
             />
           </group>
           <group
@@ -270,6 +312,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Sphere036.geometry}
               material={materials["wood.001"]}
+              
             />
             <mesh
               name="Sphere036_1" //pino
@@ -292,6 +335,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Sphere042.geometry}
               material={materials["wood.001"]}
+              
             />
             <mesh
               name="Sphere042_1"
@@ -299,6 +343,7 @@ const LostBiodiversity = (props) => {
               receiveShadow
               geometry={nodes.Sphere042_1.geometry}
               material={materials["leaves.001"]}
+              
             />
           </group>
           <group
@@ -366,7 +411,7 @@ const LostBiodiversity = (props) => {
           </group>
         </group>
       </group>
-
+                      
       {/* Ventana de sensibilización */}
       {showAwareness && (
         <Html

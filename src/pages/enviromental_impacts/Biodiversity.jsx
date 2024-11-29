@@ -78,10 +78,10 @@ const Biodiversity = () => {
         <Canvas shadows camera={{ position: [30, 5, 160], fov: 60 }}>
           <Suspense fallback={null}>
             <BiodiversityTittle initial onClick={handleTitleClick} />
-            <Physics debug={false}>
+            <Physics debug={true}>
               <Cow scale={[5, 5, 5]} rotation={[0, 3.8, 0]} /> 
+              <LostBiodiversity />
             </Physics>
-            <LostBiodiversity />
             <LightsDeforestation />
           </Suspense>
           <Sky
