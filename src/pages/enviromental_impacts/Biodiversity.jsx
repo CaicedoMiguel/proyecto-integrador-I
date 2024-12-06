@@ -10,6 +10,7 @@ import LostBiodiversity from "../../components/LostBiodiversity";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import { Physics } from "@react-three/rapier";
 import Cow from "../../components/CowModel";
+import VideoBiodiversidad from "../../components/VideoBiodiversidad";
 
 const Biodiversity = () => {
   const [showDescription, setShowDescription] = useState(false);
@@ -82,6 +83,7 @@ const Biodiversity = () => {
               <Cow scale={[5, 5, 5]} rotation={[0, 3.8, 0]} /> 
               <LostBiodiversity />
             </Physics>
+            <VideoBiodiversidad name="screen" position={[60, 50, 40]} scale={20} />
             <LightsDeforestation />
           </Suspense>
           <Sky
