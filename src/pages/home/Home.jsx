@@ -178,9 +178,10 @@ const Home = () => {
           />
           <CloudGroup />
         </Suspense>
-        <ambientLight intensity={0.2} />
-        <directionalLight position={[10, 20, 5]} intensity={0.5} castShadow />
-        <pointLight position={[-20, 20, 10]} intensity={1} />
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 20, 5]} intensity={3} castShadow />
+        <pointLight position={[-20, 20, 10]} intensity={2} />
+        <hemisphereLight intensity={0.6} position={[0, 1, 0]} />
         <CameraAnimation />
       </Canvas>
 
@@ -351,7 +352,7 @@ const CloudGroup = () => {
       <Cloud position={[-40, 60, -100]} speed={0.2} opacity={0.5} />
       <Cloud position={[40, 70, -80]} speed={0.1} opacity={0.7} />
       <Cloud position={[0, 80, -90]} speed={0.3} opacity={0.6} />
-      {/* Añade más nubes si es necesario */}
+    
     </group>
   );
 };
