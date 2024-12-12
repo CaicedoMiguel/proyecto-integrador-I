@@ -13,7 +13,7 @@ import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
 import Navbar from '../../components/Navbar';
 import './Styles.css'; 
-
+import { EffectComposer, Bloom, Vignette, DepthOfField } from "@react-three/postprocessing";
 
 const CAMERA_POSITIONS = [
   {
@@ -283,6 +283,13 @@ const Deforestation = () => {
             fade
           />
           {!isMobile && <CustomCursor />}
+
+          {/* Postprocesado */}
+          <EffectComposer>
+            <Bloom intensity={0.8} luminanceThreshold={0.2} luminanceSmoothing={0.9} />
+            <Vignette eskil={false} offset={0.1} darkness={0.7} />
+          </EffectComposer>
+
         </Suspense>
         <LightsDeforestation />
       </Canvas>
