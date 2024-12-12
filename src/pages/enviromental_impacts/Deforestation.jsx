@@ -11,9 +11,10 @@ import CustomCursor from "../../controls/CustomCursor";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/navbar/Navbar';
 import './Styles.css'; 
 import { EffectComposer, Bloom, Vignette, DepthOfField } from "@react-three/postprocessing";
+
 
 const CAMERA_POSITIONS = [
   {

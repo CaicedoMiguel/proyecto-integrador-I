@@ -9,37 +9,43 @@ const Login = () => {
   const { user, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
   const navigate = useNavigate();
 
-  // useEffect for observing authentication state and setting the background
-  useEffect(() => {
-    if (user) {
-      const newUser = {
-        email: user.email,
-        name: user.displayName,
-        photo: user.photoURL,
-      };
-      userDAO.createUser(newUser);
-      navigate("/Modelado3D");
-    }
-  }, [user, navigate]);
-
-  // useEffect to navigate to the home page when a user logs in
+  // Observa el estado de autenticación al montar el componente
   useEffect(() => {
     observeAuthState();
   }, [observeAuthState]);
 
-  // Handles Google login action using useCallback for memoization
+  // Maneja la creación de usuario y la redirección tras el login
+  useEffect(() => {
+    const handleUser = async () => {
+      if (user) {
+        const newUser = {
+          email: user.email,
+          name: user.displayName,
+          photo: user.photoURL,
+        };
+        const result = await userDAO.createUser(newUser, user.uid);
+        if (result.success) {
+          // Redirige al usuario a la página "home" después de iniciar sesión
+          navigate("/home");
+        } else {
+          console.log(result.error);
+        }
+      }
+    };
+    handleUser();
+  }, [user, navigate]);
+
+  // Maneja la acción de login con Google
   const handleLogin = useCallback(() => {
     loginGoogleWithPopUp();
   }, [loginGoogleWithPopUp]);
 
-  // If the user is already logged in, return null to avoid showing the login form
+  // Si el usuario ya está autenticado, no mostrar el formulario de login
   if (user) {
     return null;
   }
 
-  // The main JSX layout for the login form
   return (
-    <>
     <div className="wrapper">
       {error && (
         <div className="error-message">
@@ -47,34 +53,35 @@ const Login = () => {
           <button onClick={clearError}>Clear error</button>
         </div>
       )}
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="login-form">
         <h1>Login</h1>
         <div className="input-box">
-          <input type="text" placeholder="Username" required />
+          <input type="text" placeholder="Username" required disabled />
           <FaRegUserCircle className="icon" />
         </div>
         <div className="input-box">
-          <input type="password" placeholder="Password" required />
+          <input type="password" placeholder="Password" required disabled />
           <FaLock className="icon" />
         </div>
 
         <div className="remember-forgot">
           <label>
-            <input type="checkbox" /> Remember me
+            <input type="checkbox" disabled /> Remember me
           </label>
           <a href="#"> Forgot password </a>
         </div>
 
-        <button type="submit">login</button>
+        <button type="submit" disabled>Login</button>
 
-        <button type="button" onClick={handleLogin}>sign in with google account</button>
+        <button type="button" onClick={handleLogin} className="google-login-button">
+          Sign in with Google Account
+        </button>
 
         <div className="register-link">
-          <p> Don t have an account? <a href="#"> Register </a></p>
+          <p>Don't have an account? <a href="#"> Register </a></p>
         </div>
       </form>
     </div>
-    </>
   );
 };
 

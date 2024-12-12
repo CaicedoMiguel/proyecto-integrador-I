@@ -10,7 +10,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/navbar/Navbar';
 import Model from '../../components/Model';
 
 // Hook personalizado para escalado responsivo

@@ -1,0 +1,31 @@
+.quiz-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.quiz-container, .quiz-completed {
+  max-width: 600px;
+  width: 100%;
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.quiz-container h2, .quiz-completed h2 {
+  text-align: center;
+}
+
+.description {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.score {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+}
