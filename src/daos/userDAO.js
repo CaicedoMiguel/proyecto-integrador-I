@@ -1,5 +1,3 @@
-// src/daos/userDAO.js
-
 import {
   collection,
   doc,
@@ -11,12 +9,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase.config";
 
-/**
- * UserDAO Class
- * 
- * Esta clase proporciona métodos para interactuar con la base de datos Firestore
- * específicamente para gestionar documentos de usuarios en la colección "users".
- */
 class UserDAO {
   constructor() {
     this.collectionRef = collection(db, "users");
@@ -45,12 +37,12 @@ class UserDAO {
           quizProgress: {
             currentScenario: 0,
             correctAnswers: 0,
-            totalAttempts: 0,
-            failedAttempts: 0,
+            totalQuizAttempts: 0,
+            failedQuizAttempts: 0,
+            maxScore: 0,
             isQuizCompleted: false,
             isGameOver: false,
           },
-          score: 0, // Inicializar la puntuación
           rewards: [],
         });
         console.log("Documento creado con ID: ", userId);
@@ -94,10 +86,12 @@ class UserDAO {
       await updateDoc(userRef, {
         "quizProgress.currentScenario": progressData.currentScenario,
         "quizProgress.correctAnswers": progressData.correctAnswers,
-        "quizProgress.totalAttempts": progressData.totalAttempts,
-        "quizProgress.failedAttempts": progressData.failedAttempts,
+        "quizProgress.totalQuizAttempts": progressData.totalQuizAttempts,
+        "quizProgress.failedQuizAttempts": progressData.failedQuizAttempts,
+        "quizProgress.maxScore": progressData.maxScore,
         "quizProgress.isQuizCompleted": progressData.isQuizCompleted,
         "quizProgress.isGameOver": progressData.isGameOver,
+        "quizProgress.currentQuizScore": progressData.currentQuizScore,
       });
       console.log("Progreso del quiz actualizado correctamente.");
       return { success: true };
@@ -113,11 +107,9 @@ class UserDAO {
       await updateDoc(userRef, {
         "quizProgress.currentScenario": 0,
         "quizProgress.correctAnswers": 0,
-        "quizProgress.totalAttempts": 0,
-        "quizProgress.failedAttempts": 0,
+        "quizProgress.currentQuizScore": 0,
         "quizProgress.isQuizCompleted": false,
         "quizProgress.isGameOver": false,
-        score: 0,
       });
       console.log("Progreso del quiz reiniciado correctamente.");
       return { success: true };
@@ -127,16 +119,18 @@ class UserDAO {
     }
   }
 
-  async updateUserScore(userId, score) {
+  async updateQuizStats(userId, stats) {
     try {
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        score: score,
+        "quizProgress.totalQuizAttempts": stats.totalQuizAttempts,
+        "quizProgress.failedQuizAttempts": stats.failedQuizAttempts,
+        "quizProgress.maxScore": stats.maxScore,
       });
-      console.log("Puntuación del usuario actualizada correctamente.");
+      console.log("Estadísticas del quiz actualizadas correctamente.");
       return { success: true };
     } catch (error) {
-      console.error("Error al actualizar la puntuación del usuario: ", error);
+      console.error("Error al actualizar las estadísticas del quiz: ", error);
       return { success: false, error };
     }
   }
@@ -160,16 +154,19 @@ class UserDAO {
       const userDoc = await getDoc(doc(db, "users", userId));
       if (userDoc.exists()) {
         const quizProgress = userDoc.data().quizProgress || {};
-        const completeQuizProgress = {
-          currentScenario: quizProgress.currentScenario || 0,
-          correctAnswers: quizProgress.correctAnswers || 0,
-          totalAttempts: quizProgress.totalAttempts || 0,
-          failedAttempts: quizProgress.failedAttempts || 0,
-          isQuizCompleted: quizProgress.isQuizCompleted || false,
-          isGameOver: quizProgress.isGameOver || false,
-          score: userDoc.data().score || 0, // Incluir la puntuación
+        return { 
+          success: true, 
+          data: {
+            currentScenario: quizProgress.currentScenario || 0,
+            correctAnswers: quizProgress.correctAnswers || 0,
+            totalQuizAttempts: quizProgress.totalQuizAttempts || 0,
+            failedQuizAttempts: quizProgress.failedQuizAttempts || 0,
+            maxScore: quizProgress.maxScore || 0,
+            isQuizCompleted: quizProgress.isQuizCompleted || false,
+            isGameOver: quizProgress.isGameOver || false,
+            currentQuizScore: quizProgress.currentQuizScore || 0,
+          }
         };
-        return { success: true, data: completeQuizProgress };
       } else {
         return { success: false, data: null };
       }
@@ -181,3 +178,4 @@ class UserDAO {
 }
 
 export default new UserDAO();
+

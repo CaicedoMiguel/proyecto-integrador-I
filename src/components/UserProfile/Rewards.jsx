@@ -5,8 +5,11 @@ import userDAO from "../../daos/userDAO";
 const Rewards = () => {
   const { user } = useAuthStore();
   const [rewards, setRewards] = useState([]);
-  const [quizStats, setQuizStats] = useState({ totalAttempts: 0, failedAttempts: 0 });
-  const [score, setScore] = useState(0);
+  const [quizStats, setQuizStats] = useState({
+    totalQuizAttempts: 0,
+    failedQuizAttempts: 0,
+    maxScore: 0
+  });
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -22,13 +25,13 @@ const Rewards = () => {
       const res = await userDAO.getQuizProgress(user.uid);
       if (res.success && res.data) {
         setQuizStats({
-          totalAttempts: res.data.totalAttempts || 0,
-          failedAttempts: res.data.failedAttempts || 0,
+          totalQuizAttempts: res.data.totalQuizAttempts || 0,
+          failedQuizAttempts: res.data.failedQuizAttempts || 0,
+          maxScore: res.data.maxScore || 0
         });
-        setScore(res.data.score || 0);
-        console.log("Progreso del quiz:", res.data);
+        console.log("Estadísticas del quiz:", res.data);
       } else {
-        console.log("No se pudo obtener el progreso del quiz.");
+        console.log("No se pudieron obtener las estadísticas del quiz.");
       }
 
       const userRes = await userDAO.getUserById(user.uid);
@@ -82,7 +85,6 @@ const Rewards = () => {
         </div>
       )}
 
-      {/* Información del Usuario */}
       <div style={{
         backgroundColor: 'white',
         borderRadius: '8px',
@@ -107,17 +109,17 @@ const Rewards = () => {
           <div style={{ textAlign: 'center' }}>
             <span style={{ fontSize: '24px' }}>🎯</span>
             <p style={{ margin: '8px 0', color: '#666' }}>Intentos totales</p>
-            <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{quizStats.totalAttempts}</p>
+            <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{quizStats.totalQuizAttempts}</p>
           </div>
           <div style={{ textAlign: 'center' }}>
             <span style={{ fontSize: '24px' }}>❌</span>
-            <p style={{ margin: '8px 0', color: '#666' }}>Intentos fallidos</p>
-            <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{quizStats.failedAttempts}</p>
+            <p style={{ margin: '8px 0', color: '#666' }}>Quices perdidos</p>
+            <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{quizStats.failedQuizAttempts}</p>
           </div>
           <div style={{ textAlign: 'center' }}>
             <span style={{ fontSize: '24px' }}>🏅</span>
-            <p style={{ margin: '8px 0', color: '#666' }}>Puntuación Total</p>
-            <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{score} puntos</p>
+            <p style={{ margin: '8px 0', color: '#666' }}>Puntuación Máxima</p>
+            <p style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>{quizStats.maxScore} puntos</p>
           </div>
         </div>
       </div>

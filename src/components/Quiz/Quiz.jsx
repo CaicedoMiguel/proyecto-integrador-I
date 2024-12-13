@@ -1,5 +1,3 @@
-// src/components/Quiz/Quiz.js
-
 import React, { useState, useEffect } from "react";
 import "./Quiz.css";
 import InteractiveScene from "./InteractiveScene";
@@ -7,29 +5,24 @@ import userDAO from "../../daos/userDAO";
 import useAuthStore from "../../stores/use-auth-store";
 import { motion, AnimatePresence } from "framer-motion";
 
-/**
- * Función para calcular una única recompensa basada en la cantidad de respuestas correctas.
- * @param {number} correctAnswers - Número de respuestas correctas.
- * @returns {Array} - Array con una única recompensa obtenida o vacío si no se cumple ningún criterio.
- */
 const calculateRewards = (correctAnswers) => {
   if (correctAnswers === 5) {
     return [{
-      type: "Gold Badge",
+      type: "Medalla de Oro",
       image: "/images/rewards/gold.jpg",
       description: "¡Felicidades! Has acertado 5 preguntas.",
       earnedAt: new Date().toISOString(),
     }];
   } else if (correctAnswers === 4) {
     return [{
-      type: "Silver Badge",
+      type: "Medalla de Plata",
       image: "/images/rewards/silver.jpg",
       description: "Has acertado 4 preguntas.",
       earnedAt: new Date().toISOString(),
     }];
   } else if (correctAnswers === 3) {
     return [{
-      type: "Bronze Badge",
+      type: "Medalla de Bronce",
       image: "/images/rewards/bronze.jpg",
       description: "Has acertado 3 preguntas.",
       earnedAt: new Date().toISOString(),
@@ -38,7 +31,6 @@ const calculateRewards = (correctAnswers) => {
   return [];
 };
 
-// Escenarios con imágenes, 5 preguntas, cada acierto suma 20 puntos.
 const scenarios = [
   {
     description: "¿Cuál de estos elementos ayuda a la reforestación?",
@@ -82,12 +74,6 @@ const scenarios = [
   },
 ];
 
-/**
- * Quiz Component
- * 
- * Este componente maneja la lógica del quiz, incluyendo la presentación de preguntas,
- * el manejo de respuestas, y la actualización del progreso del quiz en Firestore.
- */
 const Quiz = ({ onCorrectAnswersChange }) => {
   const { user } = useAuthStore();
   const [currentScenario, setCurrentScenario] = useState(0);
@@ -95,163 +81,149 @@ const Quiz = ({ onCorrectAnswersChange }) => {
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [newReward, setNewReward] = useState(null);
-  const [totalAttempts, setTotalAttempts] = useState(0);
-  const [failedAttempts, setFailedAttempts] = useState(0);
-  const [score, setScore] = useState(0);
+  const [quizStats, setQuizStats] = useState({
+    totalQuizAttempts: 0,
+    failedQuizAttempts: 0,
+    maxScore: 0
+  });
+  const [currentQuizScore, setCurrentQuizScore] = useState(0);
 
-  // Cargar el progreso del usuario al iniciar el componente
   useEffect(() => {
     const loadQuizProgress = async () => {
       if (user) {
         const progress = await userDAO.getQuizProgress(user.uid);
-        console.log("Progreso del quiz:", progress); // Log para depuración
+        console.log("Progreso del quiz:", progress);
         if (progress.success && progress.data) {
           setCurrentScenario(progress.data.currentScenario || 0);
           setCorrectAnswers(progress.data.correctAnswers || 0);
           setIsQuizCompleted(progress.data.isQuizCompleted || false);
           setIsGameOver(progress.data.isGameOver || false);
-          setTotalAttempts(progress.data.totalAttempts || 0);
-          setFailedAttempts(progress.data.failedAttempts || 0);
-          setScore(progress.data.score || 0);
-          // Notificar al padre el número de respuestas correctas inicial
+          setQuizStats({
+            totalQuizAttempts: progress.data.totalQuizAttempts || 0,
+            failedQuizAttempts: progress.data.failedQuizAttempts || 0,
+            maxScore: progress.data.maxScore || 0
+          });
+          setCurrentQuizScore(progress.data.currentQuizScore || 0);
           if (onCorrectAnswersChange) {
             onCorrectAnswersChange(progress.data.correctAnswers || 0);
           }
         } else {
-          setCurrentScenario(0);
-          setCorrectAnswers(0);
-          setIsQuizCompleted(false);
-          setIsGameOver(false);
-          setTotalAttempts(0);
-          setFailedAttempts(0);
-          setScore(0);
-          // Notificar al padre el número de respuestas correctas inicial (0)
-          if (onCorrectAnswersChange) {
-            onCorrectAnswersChange(0);
-          }
+          resetQuizState();
         }
       }
     };
     loadQuizProgress();
   }, [user, onCorrectAnswersChange]);
 
-  // Guardar el progreso cada vez que cambia
   useEffect(() => {
     const saveQuizProgress = async () => {
       if (user) {
         await userDAO.updateQuizProgress(user.uid, {
           currentScenario,
           correctAnswers,
-          totalAttempts,
-          failedAttempts,
           isQuizCompleted,
           isGameOver,
+          totalQuizAttempts: quizStats.totalQuizAttempts,
+          failedQuizAttempts: quizStats.failedQuizAttempts,
+          maxScore: quizStats.maxScore,
+          currentQuizScore
         });
         console.log("Progreso del quiz guardado:", {
           currentScenario,
           correctAnswers,
-          totalAttempts,
-          failedAttempts,
           isQuizCompleted,
           isGameOver,
-        }); // Log para depuración
+          totalQuizAttempts: quizStats.totalQuizAttempts,
+          failedQuizAttempts: quizStats.failedQuizAttempts,
+          maxScore: quizStats.maxScore,
+          currentQuizScore
+        });
       }
     };
     saveQuizProgress();
-  }, [currentScenario, correctAnswers, totalAttempts, failedAttempts, isQuizCompleted, isGameOver, user]);
+  }, [currentScenario, correctAnswers, isQuizCompleted, isGameOver, quizStats, currentQuizScore, user]);
 
-  // Notificar al padre cada vez que correctAnswers cambia
   useEffect(() => {
     if (onCorrectAnswersChange) {
-      console.log("Respuestas correctas cambiaron a:", correctAnswers); // Log para depuración
+      console.log("Respuestas correctas cambiaron a:", correctAnswers);
       onCorrectAnswersChange(correctAnswers);
     }
   }, [correctAnswers, onCorrectAnswersChange]);
 
-  /**
-   * Maneja la acción del usuario al seleccionar una respuesta.
-   * @param {boolean} isCorrect - Indica si la respuesta fue correcta.
-   */
   const handleAction = async (isCorrect) => {
-    console.log("Acción recibida. ¿Correcto?:", isCorrect); // Log para depuración
+    console.log("Acción recibida. ¿Correcto?:", isCorrect);
     let updatedCorrectAnswers = correctAnswers;
-    let updatedTotalAttempts = totalAttempts + 1;
-    let updatedFailedAttempts = failedAttempts;
+    let updatedCurrentQuizScore = currentQuizScore;
 
     if (isCorrect) {
       updatedCorrectAnswers += 1;
-    } else {
-      updatedFailedAttempts += 1;
+      updatedCurrentQuizScore += 20;
     }
 
     setCorrectAnswers(updatedCorrectAnswers);
-    setTotalAttempts(updatedTotalAttempts);
-    setFailedAttempts(updatedFailedAttempts);
+    setCurrentQuizScore(updatedCurrentQuizScore);
 
-    // Actualizar la puntuación en tiempo real
-    const currentScore = updatedCorrectAnswers * 20;
-    setScore(currentScore);
-    console.log("Respuestas correctas actualizadas:", updatedCorrectAnswers); // Log para depuración
-    console.log("Puntuación actualizada:", currentScore); // Log para depuración
+    console.log("Respuestas correctas actualizadas:", updatedCorrectAnswers);
+    console.log("Puntuación actualizada:", updatedCurrentQuizScore);
 
     const nextScenario = currentScenario + 1;
 
     if (nextScenario < scenarios.length) {
       setCurrentScenario(nextScenario);
     } else {
-      // Ha completado todas las preguntas
-      if (updatedCorrectAnswers >= 3) {
-        const obtainedRewards = calculateRewards(updatedCorrectAnswers);
-        console.log("Recompensas obtenidas:", obtainedRewards); // Log para depuración
-
-        // Guardar la puntuación final en Firestore
-        await userDAO.updateUserScore(user.uid, currentScore);
-
-        // Guardar recompensas en Firestore
-        for (const reward of obtainedRewards) {
-          await userDAO.addUserReward(user.uid, reward);
-        }
-
-        // Mostrar la recompensa obtenida con animación
-        if (obtainedRewards.length > 0) {
-          setNewReward(obtainedRewards[0]); // Solo una recompensa
-        }
-
-        // Ajustar el estado del quiz a completado
-        setIsQuizCompleted(true);
-      } else {
-        // Menos de 3 respuestas correctas => Game Over
-        await userDAO.updateUserScore(user.uid, currentScore);
-        setIsGameOver(true);
-      }
+      await finishQuiz(updatedCorrectAnswers, updatedCurrentQuizScore);
     }
   };
 
-  /**
-   * Cierra el popup de recompensa.
-   */
+  const finishQuiz = async (finalCorrectAnswers, finalScore) => {
+    const quizPassed = finalCorrectAnswers >= 3;
+    const updatedStats = {
+      ...quizStats,
+      totalQuizAttempts: quizStats.totalQuizAttempts + 1,
+      failedQuizAttempts: quizPassed ? quizStats.failedQuizAttempts : quizStats.failedQuizAttempts + 1,
+      maxScore: Math.max(quizStats.maxScore, finalScore)
+    };
+
+    setQuizStats(updatedStats);
+    setIsQuizCompleted(quizPassed);
+    setIsGameOver(!quizPassed);
+
+    if (quizPassed) {
+      const obtainedRewards = calculateRewards(finalCorrectAnswers);
+      console.log("Recompensas obtenidas:", obtainedRewards);
+
+      for (const reward of obtainedRewards) {
+        await userDAO.addUserReward(user.uid, reward);
+      }
+
+      if (obtainedRewards.length > 0) {
+        setNewReward(obtainedRewards[0]);
+      }
+    }
+
+    await userDAO.updateQuizStats(user.uid, updatedStats);
+  };
+
   const handleCloseReward = () => {
     setNewReward(null);
   };
 
-  /**
-   * Reinicia el quiz y el progreso del usuario.
-   */
+  const resetQuizState = () => {
+    setCurrentScenario(0);
+    setCorrectAnswers(0);
+    setIsQuizCompleted(false);
+    setIsGameOver(false);
+    setNewReward(null);
+    setCurrentQuizScore(0);
+    if (onCorrectAnswersChange) {
+      onCorrectAnswersChange(0);
+    }
+  };
+
   const handleRestartQuiz = async () => {
     if (user) {
-      setCurrentScenario(0);
-      setCorrectAnswers(0);
-      setIsQuizCompleted(false);
-      setIsGameOver(false);
-      setNewReward(null);
-      setTotalAttempts(0);
-      setFailedAttempts(0);
-      setScore(0); // Reiniciar la puntuación
-
+      resetQuizState();
       await userDAO.resetQuizProgress(user.uid);
-      if (onCorrectAnswersChange) {
-        onCorrectAnswersChange(0);
-      }
     }
   };
 
@@ -259,23 +231,17 @@ const Quiz = ({ onCorrectAnswersChange }) => {
     return <p>Por favor, inicia sesión para participar en el quiz.</p>;
   }
 
-  // Asegurarse de que currentScenario está dentro del rango
   const isValidScenario = currentScenario >= 0 && currentScenario < scenarios.length;
   const currentScenarioData = isValidScenario ? scenarios[currentScenario] : null;
 
-  // En lugar de retornar diferentes bloques con condicionales sin el popup,
-  // vamos a mostrar el popup siempre al final y usar condicionales parciales.
-
   return (
     <div className="quiz-wrapper">
-
-      {/* Mostrar el contenido principal si no está completado ni en game over */}
       {(!isQuizCompleted && !isGameOver && isValidScenario) && (
         <div className="quiz-container">
           <h2>Pregunta {currentScenario + 1} de {scenarios.length}</h2>
           <p className="description">{currentScenarioData.description}</p>
           <p>Aciertos hasta ahora: {correctAnswers}</p>
-          <p>Puntuación Actual: {score} puntos</p>
+          <p>Puntuación Actual: {currentQuizScore} puntos</p>
           <InteractiveScene
             objects={currentScenarioData.objects}
             onAction={handleAction}
@@ -283,31 +249,34 @@ const Quiz = ({ onCorrectAnswersChange }) => {
         </div>
       )}
 
-      {/* Mostrar Game Over */}
       {isGameOver && (
         <div className="quiz-container">
           <h2>Game Over</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
-          <p>Puntuación obtenida: {score} puntos</p>
+          <p>Puntuación obtenida: {currentQuizScore} puntos</p>
+          <p>Intentos totales de quiz: {quizStats.totalQuizAttempts}</p>
+          <p>Quices perdidos: {quizStats.failedQuizAttempts}</p>
+          <p>Puntuación máxima: {quizStats.maxScore} puntos</p>
           <button onClick={handleRestartQuiz} className="restart-button">
             ¿Quieres volver a jugar?
           </button>
         </div>
       )}
 
-      {/* Mostrar Quiz Completado */}
       {isQuizCompleted && (
         <div className="quiz-completed">
           <h2>¡Quiz Completado!</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
-          <p>Puntuación Total: {score} puntos</p>
+          <p>Puntuación Total: {currentQuizScore} puntos</p>
+          <p>Intentos totales de quiz: {quizStats.totalQuizAttempts}</p>
+          <p>Quices perdidos: {quizStats.failedQuizAttempts}</p>
+          <p>Puntuación máxima: {quizStats.maxScore} puntos</p>
           <button onClick={handleRestartQuiz} className="restart-button">
             ¿Quieres volver a jugar?
           </button>
         </div>
       )}
 
-      {/* Animación de nueva recompensa siempre al final */}
       <AnimatePresence>
         {newReward && (
           <motion.div
