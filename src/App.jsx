@@ -7,7 +7,7 @@ import Biodiversity from "./pages/enviromental_impacts/Biodiversity";
 import Deforestation from "./pages/enviromental_impacts/Deforestation";
 import TierraSanta from "./components/tierra-santa";
 import QuizPage from "./pages/quiz/QuizPage";
-import ProfilePage from "./pages/profile/ProfilePage";
+import ProfilePage from "./pages/profile/profilePage";
 import Navbar from "./components/navbar/Navbar";
 
 function App() {
