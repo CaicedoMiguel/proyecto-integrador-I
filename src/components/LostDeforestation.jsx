@@ -236,12 +236,10 @@ const LostDeforestation = (props) => {
         </group>
         </group>
     </group>
-
-          
-          
     );
   };
   
   export default LostDeforestation;
   
   useGLTF.preload('/models/deforestation.glb');
+

@@ -15,27 +15,29 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/home");
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
-    const handleUser = async () => {
-      if (user) {
-        const newUser = {
-          email: user.email,
-          name: user.displayName,
-          photo: user.photoURL,
-        };
-        const result = await userDAO.createUser(newUser, user.uid);
-        if (result.success) {
+      // Cuando el usuario está logueado (por ejemplo con Google), verifica si existe en la BD
+      const handleUser = async () => {
+        const existingUser = await userDAO.getUserById(user.uid);
+        if (existingUser.success && existingUser.data) {
+          // El usuario ya existe, simplemente navega a /home
           navigate("/home");
         } else {
-          console.error(result.error);
+          // El usuario no existe, créalo
+          const newUser = {
+            email: user.email,
+            name: user.displayName,
+            photo: user.photoURL,
+          };
+          const result = await userDAO.createUser(newUser, user.uid);
+          if (result.success) {
+            navigate("/home");
+          } else {
+            console.error(result.error);
+          }
         }
-      }
-    };
-    handleUser();
+      };
+      handleUser();
+    }
   }, [user, navigate]);
 
   const handleLogin = useCallback(() => {
@@ -47,7 +49,7 @@ const Login = () => {
   }
 
   return (
-    <div className="login-container" style={{backgroundImage: "url('/src/assets/background.jpg')"}}>
+    <div className="login-container" style={{ backgroundImage: "url('/src/assets/background.jpg')" }}>
       <div className="login-card">
         <h1 className="login-title">Welcome Back</h1>
         {error && (
@@ -93,4 +95,3 @@ const Login = () => {
 };
 
 export default Login;
-

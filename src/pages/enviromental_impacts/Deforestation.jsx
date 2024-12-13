@@ -471,3 +471,4 @@ const Deforestation = () => {
 };
 
 export default Deforestation;
+
