@@ -1,5 +1,3 @@
-// src/components/Rewards.js
-
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../../stores/use-auth-store";
 import userDAO from "../../daos/userDAO";
@@ -8,8 +6,8 @@ const Rewards = () => {
   const { user } = useAuthStore();
   const [rewards, setRewards] = useState([]);
   const [quizStats, setQuizStats] = useState({ totalAttempts: 0, failedAttempts: 0 });
-  const [score, setScore] = useState(0); // Nueva variable de estado para la puntuación
-  const [error, setError] = useState(null); // Para manejar errores
+  const [score, setScore] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -21,7 +19,6 @@ const Rewards = () => {
     if (!user) return;
 
     try {
-      // Obtener progreso del quiz
       const res = await userDAO.getQuizProgress(user.uid);
       if (res.success && res.data) {
         setQuizStats({
@@ -29,16 +26,15 @@ const Rewards = () => {
           failedAttempts: res.data.failedAttempts || 0,
         });
         setScore(res.data.score || 0);
-        console.log("Progreso del quiz:", res.data); // Log para depuración
+        console.log("Progreso del quiz:", res.data);
       } else {
         console.log("No se pudo obtener el progreso del quiz.");
       }
 
-      // Obtener recompensas del usuario
       const userRes = await userDAO.getUserById(user.uid);
       if (userRes.success && userRes.data) {
         setRewards(userRes.data.rewards || []);
-        console.log("Recompensas del usuario:", userRes.data.rewards); // Log para depuración
+        console.log("Recompensas del usuario:", userRes.data.rewards);
       } else {
         console.log("No se pudieron obtener las recompensas del usuario.");
       }
@@ -68,7 +64,7 @@ const Rewards = () => {
       borderRadius: '8px',
       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     }}>
-      <p style={{ textAlign: 'center', color: '#666' }}>Inicia sesión para ver tus recompensas y estadísticas.</p>
+      <p style={{ textAlign: 'center', color: '#666' }}>Inicia sesión para ver tu perfil, recompensas y estadísticas.</p>
     </div>
   );
 
@@ -85,6 +81,17 @@ const Rewards = () => {
           <p style={{ textAlign: 'center' }}>{error}</p>
         </div>
       )}
+
+      {/* Información del Usuario */}
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        padding: '16px',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 8px 0' }}>{user.displayName}</h2>
+        <p style={{ fontSize: '16px', color: '#666', margin: 0 }}>{user.email}</p>
+      </div>
 
       <div style={{
         backgroundColor: 'white',
@@ -170,3 +177,4 @@ const Rewards = () => {
 };
 
 export default Rewards;
+
