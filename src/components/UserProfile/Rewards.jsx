@@ -9,6 +9,7 @@ const Rewards = () => {
   const [rewards, setRewards] = useState([]);
   const [quizStats, setQuizStats] = useState({ totalAttempts: 0, failedAttempts: 0 });
   const [score, setScore] = useState(0); // Nueva variable de estado para la puntuación
+  const [error, setError] = useState(null); // Para manejar errores
 
   useEffect(() => {
     if (user) {
@@ -16,32 +17,37 @@ const Rewards = () => {
     }
   }, [user]);
 
-  /**
-   * Función para obtener los datos del usuario, incluyendo progreso del quiz y recompensas.
-   */
   const fetchUserData = async () => {
     if (!user) return;
-    
-    // Obtener progreso del quiz
-    const res = await userDAO.getQuizProgress(user.uid);
-    if (res.success && res.data) {
-      setQuizStats({
-        totalAttempts: res.data.totalAttempts || 0, // Usar totalAttempts directamente
-        failedAttempts: res.data.failedAttempts || 0, // Usar failedAttempts directamente
-      });
-      setScore(res.data.score || 0); // Cargar la puntuación
-    }
-    
-    // Obtener recompensas del usuario
-    const userRes = await userDAO.getUserById(user.uid);
-    if (userRes.success && userRes.data) {
-      setRewards(userRes.data.rewards || []);
+
+    try {
+      // Obtener progreso del quiz
+      const res = await userDAO.getQuizProgress(user.uid);
+      if (res.success && res.data) {
+        setQuizStats({
+          totalAttempts: res.data.totalAttempts || 0,
+          failedAttempts: res.data.failedAttempts || 0,
+        });
+        setScore(res.data.score || 0);
+        console.log("Progreso del quiz:", res.data); // Log para depuración
+      } else {
+        console.log("No se pudo obtener el progreso del quiz.");
+      }
+
+      // Obtener recompensas del usuario
+      const userRes = await userDAO.getUserById(user.uid);
+      if (userRes.success && userRes.data) {
+        setRewards(userRes.data.rewards || []);
+        console.log("Recompensas del usuario:", userRes.data.rewards); // Log para depuración
+      } else {
+        console.log("No se pudieron obtener las recompensas del usuario.");
+      }
+    } catch (error) {
+      console.error("Error al recuperar los datos del usuario:", error);
+      setError("Hubo un problema al cargar tus recompensas y estadísticas. Por favor, intenta de nuevo más tarde.");
     }
   };
 
-  /**
-   * Función para limpiar todas las recompensas del usuario.
-   */
   const handleClearRewards = async () => {
     if (!user) return;
     try {
@@ -54,7 +60,6 @@ const Rewards = () => {
     }
   };
 
-  // Renderizar mensaje si el usuario no está autenticado
   if (!user) return (
     <div style={{
       marginTop: '24px',
@@ -69,7 +74,18 @@ const Rewards = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Sección de Estadísticas del Quiz */}
+      {error && (
+        <div style={{
+          backgroundColor: '#ffe6e6',
+          borderRadius: '8px',
+          padding: '16px',
+          color: '#cc0000',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        }}>
+          <p style={{ textAlign: 'center' }}>{error}</p>
+        </div>
+      )}
+
       <div style={{
         backgroundColor: 'white',
         borderRadius: '8px',
@@ -99,7 +115,6 @@ const Rewards = () => {
         </div>
       </div>
 
-      {/* Sección de Recompensas */}
       <div style={{
         backgroundColor: 'white',
         borderRadius: '8px',
