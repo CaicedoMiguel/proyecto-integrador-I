@@ -30,20 +30,19 @@ const Rewards = () => {
           failedQuizAttempts: res.data.failedQuizAttempts || 0,
           maxScore: res.data.maxScore || 0
         });
-        console.log("Estadísticas del quiz:", res.data);
+        // Progreso del quiz cargado exitosamente
       } else {
-        console.log("No se pudieron obtener las estadísticas del quiz.");
+        // No se pudieron obtener las estadísticas del quiz
       }
 
       const userRes = await userDAO.getUserById(user.uid);
       if (userRes.success && userRes.data) {
         setRewards(userRes.data.rewards || []);
-        console.log("Recompensas del usuario:", userRes.data.rewards);
+        // Recompensas del usuario cargadas exitosamente
       } else {
-        console.log("No se pudieron obtener las recompensas del usuario.");
+        // No se pudieron obtener las recompensas del usuario
       }
     } catch (error) {
-      console.error("Error al recuperar los datos del usuario:", error);
       setError("Hubo un problema al cargar tus recompensas y estadísticas. Por favor, intenta de nuevo más tarde.");
     }
   };
@@ -55,7 +54,6 @@ const Rewards = () => {
       setRewards([]);
       alert("Todas las recompensas han sido borradas.");
     } catch (error) {
-      console.error("Error al borrar las recompensas:", error);
       alert("Hubo un error al borrar las recompensas. Por favor, intenta de nuevo.");
     }
   };
@@ -180,4 +178,3 @@ const Rewards = () => {
 };
 
 export default Rewards;
-

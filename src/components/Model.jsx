@@ -16,9 +16,6 @@ const Model = (props) => {
 
   useEffect(() => {
     if (actions && Object.keys(actions).length > 0) {
-      // Listar las animaciones disponibles en la consola
-      console.log("Animaciones disponibles:", Object.keys(actions))
-
       // Reproducir la primera animación disponible
       const firstAction = Object.values(actions)[0]
       firstAction.play()

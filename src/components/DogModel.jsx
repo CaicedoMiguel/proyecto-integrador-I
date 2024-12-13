@@ -19,7 +19,7 @@ const Dog = (props) => {
         action.setLoop(THREE.LoopRepeat, Infinity);
         action.setEffectiveTimeScale(1);
         action.setEffectiveWeight(1);
-        console.log(`Animación "${names[0]}" iniciada.`);
+        // Animación iniciada exitosamente
       } else {
         console.error(`La acción de animación "${names[0]}" no se encontró.`);
       }

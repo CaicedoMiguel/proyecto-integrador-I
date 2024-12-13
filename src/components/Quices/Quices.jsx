@@ -1,12 +1,10 @@
-// src/components/Quices/Quices.jsx
-
 import React, { useState, useEffect } from "react";
 import "./Quices.css";
 import InteractiveScene from "./InteractiveScene";
 import userDAO from "../../daos/userDAO";
 import useAuthStore from "../../stores/use-auth-store";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom"; // Importa useNavigate
+import { useNavigate } from "react-router-dom"; // Importar useNavigate
 
 const calculateRewards = (correctAnswers) => {
   if (correctAnswers === 5) {
@@ -79,7 +77,7 @@ const scenarios = [
 
 const Quices = ({ onCorrectAnswersChange }) => {
   const { user } = useAuthStore();
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate(); // Inicializar useNavigate
   const [currentScenario, setCurrentScenario] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
@@ -96,7 +94,6 @@ const Quices = ({ onCorrectAnswersChange }) => {
     const loadQuizProgress = async () => {
       if (user) {
         const progress = await userDAO.getQuizProgress(user.uid);
-        console.log("Progreso del quiz:", progress);
         if (progress.success && progress.data) {
           setCurrentScenario(progress.data.currentScenario || 0);
           setCorrectAnswers(progress.data.correctAnswers || 0);
@@ -132,16 +129,6 @@ const Quices = ({ onCorrectAnswersChange }) => {
           maxScore: quizStats.maxScore,
           currentQuizScore
         });
-        console.log("Progreso del quiz guardado:", {
-          currentScenario,
-          correctAnswers,
-          isQuizCompleted,
-          isGameOver,
-          totalQuizAttempts: quizStats.totalQuizAttempts,
-          failedQuizAttempts: quizStats.failedQuizAttempts,
-          maxScore: quizStats.maxScore,
-          currentQuizScore
-        });
       }
     };
     saveQuizProgress();
@@ -149,13 +136,11 @@ const Quices = ({ onCorrectAnswersChange }) => {
 
   useEffect(() => {
     if (onCorrectAnswersChange) {
-      console.log("Respuestas correctas cambiaron a:", correctAnswers);
       onCorrectAnswersChange(correctAnswers);
     }
   }, [correctAnswers, onCorrectAnswersChange]);
 
   const handleAction = async (isCorrect) => {
-    console.log("Acción recibida. ¿Correcto?:", isCorrect);
     let updatedCorrectAnswers = correctAnswers;
     let updatedCurrentQuizScore = currentQuizScore;
 
@@ -166,9 +151,6 @@ const Quices = ({ onCorrectAnswersChange }) => {
 
     setCorrectAnswers(updatedCorrectAnswers);
     setCurrentQuizScore(updatedCurrentQuizScore);
-
-    console.log("Respuestas correctas actualizadas:", updatedCorrectAnswers);
-    console.log("Puntuación actualizada:", updatedCurrentQuizScore);
 
     const nextScenario = currentScenario + 1;
 
@@ -194,7 +176,6 @@ const Quices = ({ onCorrectAnswersChange }) => {
 
     if (quizPassed) {
       const obtainedRewards = calculateRewards(finalCorrectAnswers);
-      console.log("Recompensas obtenidas:", obtainedRewards);
 
       for (const reward of obtainedRewards) {
         await userDAO.addUserReward(user.uid, reward);
@@ -231,9 +212,8 @@ const Quices = ({ onCorrectAnswersChange }) => {
     }
   };
 
-  // Nueva función manejadora para navegar al perfil
-  const handleGoToProfile = () => {
-    navigate("/profile"); // Asegúrate de que esta ruta exista en tu enrutador
+  const handleProfile = () => {
+    navigate("/profile"); // Navegar a la página de perfil
   };
 
   if (!user) {
@@ -258,38 +238,19 @@ const Quices = ({ onCorrectAnswersChange }) => {
         </div>
       )}
 
-      {isGameOver && (
+      {(isGameOver || isQuizCompleted) && (
         <div className="quices-container">
-          <h2>Game Over</h2>
+          <h2>{isGameOver ? "Game Over" : "¡Quiz Completado!"}</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
           <p>Puntuación obtenida: {currentQuizScore} puntos</p>
           <p>Intentos totales de quiz: {quizStats.totalQuizAttempts}</p>
           <p>Quices perdidos: {quizStats.failedQuizAttempts}</p>
           <p>Puntuación máxima: {quizStats.maxScore} puntos</p>
-          <div className="buttons-container"> {/* Contenedor para los botones */}
+          <div className="buttons-container">
             <button onClick={handleRestartQuiz} className="restart-button">
               ¿Quieres volver a jugar?
             </button>
-            <button onClick={handleGoToProfile} className="profile-button">
-              Perfil
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isQuizCompleted && (
-        <div className="quices-completed">
-          <h2>¡Quiz Completado!</h2>
-          <p>Has obtenido {correctAnswers} respuestas correctas.</p>
-          <p>Puntuación Total: {currentQuizScore} puntos</p>
-          <p>Intentos totales de quiz: {quizStats.totalQuizAttempts}</p>
-          <p>Quices perdidos: {quizStats.failedQuizAttempts}</p>
-          <p>Puntuación máxima: {quizStats.maxScore} puntos</p>
-          <div className="buttons-container"> {/* Contenedor para los botones */}
-            <button onClick={handleRestartQuiz} className="restart-button">
-              ¿Quieres volver a jugar?
-            </button>
-            <button onClick={handleGoToProfile} className="profile-button">
+            <button onClick={handleProfile} className="profile-button">
               Perfil
             </button>
           </div>

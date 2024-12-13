@@ -28,14 +28,11 @@ const LostBiodiversity = (props) => {
   };
 
   const handleObjeto = (e) => {
-    console.log("nombre del objeto", e.object.name); 
   }
 
   const rTreesRef = useRef();
 
   const handleTree = useCallback(() => {
-    // console.log("¡El árbol fue derribado!");
-    // Aplicar un impulso al árbol (direccionado hacia abajo y un poco hacia adelante)
     if (rTreesRef.current) {
       rTreesRef.current.applyImpulse({ x: 0, y: -10, z: 5 }, true);
     }
@@ -456,7 +453,7 @@ const LostBiodiversity = (props) => {
             >Cerrar</button>
           </div>
         </Html>
-      )};
+      )}
       
       {/* Ventana de soluciones */}
       {showSolutions && (
@@ -500,7 +497,7 @@ const LostBiodiversity = (props) => {
             >Cerrar</button>
           </div>
         </Html>
-      )};
+      )}
     </>
   );
 };

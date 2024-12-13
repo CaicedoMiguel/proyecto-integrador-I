@@ -32,7 +32,6 @@ const CameraDeforestation = ({
   useEffect(() => {
     if (controlsRef.current) {
       cameraRef.current = controlsRef.current.object;
-      console.log('Camera initialized:', cameraRef.current.position);
       controlsRef.current.enableKeys = false; // Deshabilitar las teclas predeterminadas de OrbitControls
       controlsRef.current.enabled = !isModalOpen; // Deshabilita completamente los controles cuando el modal está abierto
     }

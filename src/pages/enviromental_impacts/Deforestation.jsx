@@ -156,12 +156,9 @@ const Deforestation = () => {
     setShowInfoCanvas(false);
     setCurrentStep(0);
     setShouldTreesFall(false);
-    console.log("Cámara reiniciada a la posición inicial.");
   }, []);
 
   useEffect(() => {
-    console.log(`currentStep cambiado a: ${currentStep}`);
-
     if (isFirstRender.current) {
       isFirstRender.current = false;
       setShowInfoCanvas(false);
@@ -194,20 +191,15 @@ const Deforestation = () => {
   }, [currentStep, isMuted]);
 
   const handleKeyDown = useCallback((event) => {
-    console.log(`Tecla presionada: ${event.code}, showInfoCanvas: ${showInfoCanvas}, currentStep: ${currentStep}`);
-
     if (showInfoCanvas) {
       switch (event.code) {
         case "ArrowRight":
-          console.log("ArrowRight presionada");
           nextStep();
           break;
         case "ArrowLeft":
-          console.log("ArrowLeft presionada");
           prevStep();
           break;
         case "Escape":
-          console.log("Escape presionada");
           resetCamera();
           break;
         default:
@@ -215,12 +207,11 @@ const Deforestation = () => {
       }
     } else {
       if (event.code === "ArrowRight") {
-        console.log("ArrowRight presionada - avanzar al siguiente paso");
         nextStep();
         setShowInfoCanvas(true);
       }
     }
-  }, [showInfoCanvas, nextStep, prevStep, resetCamera, currentStep]);
+  }, [showInfoCanvas, nextStep, prevStep, resetCamera]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
