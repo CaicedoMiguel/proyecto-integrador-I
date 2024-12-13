@@ -1,7 +1,7 @@
 // src/pages/QuizPage/QuizPage.jsx
 
 import React, { useState, useCallback } from "react";
-import Quiz from "../../components/Quiz/Quiz";
+import Quices from "../../components/Quices/Quices";
 import Navbar from '../../components/navbar/Navbar';
 import "./QuizPage.css";
 
@@ -38,7 +38,7 @@ const QuizPage = () => {
     >
       <Navbar />
       <div className="quiz-content">
-        <Quiz onCorrectAnswersChange={handleCorrectAnswersChange} />
+        <Quices onCorrectAnswersChange={handleCorrectAnswersChange} />
       </div>
     </div>
   );

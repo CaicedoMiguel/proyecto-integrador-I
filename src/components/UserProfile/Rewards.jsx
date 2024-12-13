@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../../stores/use-auth-store";
 import userDAO from "../../daos/userDAO";
+import './Rewards.css';
 
 const Rewards = () => {
   const { user } = useAuthStore();

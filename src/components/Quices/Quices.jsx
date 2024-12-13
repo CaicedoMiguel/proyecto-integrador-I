@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Quiz.css";
+import "./Quices.css";
 import InteractiveScene from "./InteractiveScene";
 import userDAO from "../../daos/userDAO";
 import useAuthStore from "../../stores/use-auth-store";
@@ -74,7 +74,7 @@ const scenarios = [
   },
 ];
 
-const Quiz = ({ onCorrectAnswersChange }) => {
+const Quices = ({ onCorrectAnswersChange }) => {
   const { user } = useAuthStore();
   const [currentScenario, setCurrentScenario] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -235,9 +235,9 @@ const Quiz = ({ onCorrectAnswersChange }) => {
   const currentScenarioData = isValidScenario ? scenarios[currentScenario] : null;
 
   return (
-    <div className="quiz-wrapper">
+    <div className="quices-wrapper">
       {(!isQuizCompleted && !isGameOver && isValidScenario) && (
-        <div className="quiz-container">
+        <div className="quices-container">
           <h2>Pregunta {currentScenario + 1} de {scenarios.length}</h2>
           <p className="description">{currentScenarioData.description}</p>
           <p>Aciertos hasta ahora: {correctAnswers}</p>
@@ -250,7 +250,7 @@ const Quiz = ({ onCorrectAnswersChange }) => {
       )}
 
       {isGameOver && (
-        <div className="quiz-container">
+        <div className="quices-container">
           <h2>Game Over</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
           <p>Puntuación obtenida: {currentQuizScore} puntos</p>
@@ -264,7 +264,7 @@ const Quiz = ({ onCorrectAnswersChange }) => {
       )}
 
       {isQuizCompleted && (
-        <div className="quiz-completed">
+        <div className="quices-completed">
           <h2>¡Quiz Completado!</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
           <p>Puntuación Total: {currentQuizScore} puntos</p>
@@ -297,4 +297,4 @@ const Quiz = ({ onCorrectAnswersChange }) => {
   );
 };
 
-export default Quiz;
+export default Quices;
