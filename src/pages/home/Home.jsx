@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
@@ -13,8 +12,9 @@ import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar/Navbar';
 import Model from '../../components/Model';
-import birdsSound from '../../assets/sounds/birds.wav';
 
+// Ruta del archivo de sonido en la carpeta public
+const birdsSound = '/assets/sounds/birds.wav';
 
 // Hook personalizado para escalado responsivo
 const useResponsiveScale = (desktopScale, mobileScale) => {
@@ -169,7 +169,7 @@ const Home = () => {
       <Navbar />
 
       {/* Elemento de audio, sin autoPlay */}
-      <audio ref={audioRef} src={birdsSound} loop muted={true} />
+      <audio ref={audioRef} src="/assets/sounds/birds.wav" loop muted={true} />
 
       <Canvas
         shadows

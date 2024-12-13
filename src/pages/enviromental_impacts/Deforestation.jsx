@@ -15,9 +15,9 @@ import Navbar from '../../components/navbar/Navbar';
 import './Styles.css'; 
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 
-// Importa los archivos de sonido
-import footSound from '../../assets/sounds/foot.wav';
-import deforestationSound from '../../assets/sounds/deforestation.wav';
+// Definir las rutas de los archivos de sonido
+const footSound = "/assets/sounds/foot.wav";
+const deforestationSound = "/assets/sounds/deforestation.wav";
 
 const CAMERA_POSITIONS = [
   {
@@ -440,5 +440,3 @@ const Deforestation = () => {
 };
 
 export default Deforestation;
-//
-
