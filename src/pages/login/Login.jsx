@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/use-auth-store";
 import { FaRegUserCircle, FaLock, FaGoogle } from "react-icons/fa";
+
 import userDAO from "../../daos/userDAO";
 import "./Login.css";
 
@@ -10,34 +11,38 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    observeAuthState();
+    const unsubscribe = observeAuthState();
+    return () => unsubscribe();
   }, [observeAuthState]);
 
   useEffect(() => {
-    if (user) {
-      // Cuando el usuario está logueado (por ejemplo con Google), verifica si existe en la BD
-      const handleUser = async () => {
-        const existingUser = await userDAO.getUserById(user.uid);
-        if (existingUser.success && existingUser.data) {
-          // El usuario ya existe, simplemente navega a /home
-          navigate("/home");
-        } else {
-          // El usuario no existe, créalo
-          const newUser = {
-            email: user.email,
-            name: user.displayName,
-            photo: user.photoURL,
-          };
-          const result = await userDAO.createUser(newUser, user.uid);
-          if (result.success) {
+    const handleUser = async () => {
+      if (user) {
+        try {
+          const existingUser = await userDAO.getUserById(user.uid);
+          if (existingUser.success && existingUser.data) {
             navigate("/home");
           } else {
-            console.error(result.error);
+            const newUser = {
+              email: user.email,
+              name: user.displayName,
+              photo: user.photoURL,
+            };
+            const result = await userDAO.createUser(newUser, user.uid);
+            if (result.success) {
+              navigate("/home");
+            } else {
+              throw new Error("Failed to create user");
+            }
           }
+        } catch (error) {
+          console.error("Error handling user:", error);
+          // Aquí podrías manejar el error, por ejemplo, mostrando un mensaje al usuario
         }
-      };
-      handleUser();
-    }
+      }
+    };
+
+    handleUser();
   }, [user, navigate]);
 
   const handleLogin = useCallback(() => {
@@ -95,3 +100,4 @@ const Login = () => {
 };
 
 export default Login;
+

@@ -1,21 +1,22 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier';
 
-const LostDeforestation = (props) => {
+const LostDeforestation = ({ shouldFall, ...props }) => {
     const deforestationRef = useRef();
-    const { nodes, materials,animations } = useGLTF('models/deforestation.glb');
+    const { nodes, materials, animations } = useGLTF('models/deforestation.glb');
     const { actions } = useAnimations(animations, deforestationRef);
     console.log(actions);
     const [fallenTrees, setFallenTrees] = useState([]);
 
-    const handleTreeClick = (event, treeName) => {
-      event.stopPropagation();
-      if (!fallenTrees.includes(treeName)) {
-        setFallenTrees(prevState => [...prevState, treeName]);
-      }
-    };
-  
+    useEffect(() => {
+        if (shouldFall) {
+            setFallenTrees(["Sphere005", "Sphere001", "Sphere017"]);
+        } else {
+            setFallenTrees([]);
+        }
+    }, [shouldFall]);
+
     const isTreeFallen = (treeName) => fallenTrees.includes(treeName);
   
     const TreeRigidBody = ({ treeName, position, rotation, scale, children }) => (
@@ -29,7 +30,7 @@ const LostDeforestation = (props) => {
         restitution={0.2}
         friction={1}
       >
-        <group onClick={(event) => handleTreeClick(event, treeName)}>
+        <group>
           {children}
         </group>
       </RigidBody>
@@ -50,41 +51,41 @@ const LostDeforestation = (props) => {
             />
           </RigidBody>
 
-<RigidBody type="fixed" colliders="ball">
-  <group
-    name="stump_2005"
-    position={[14.408, -3.454, 169.232]}
-    rotation={[-Math.PI, 0.312, -Math.PI]}
-    scale={1.644}
-  >
-    <mesh
-      name="Plane006"
-      castShadow
-      receiveShadow
-      geometry={nodes.Plane006.geometry}
-      material={materials['Material.002']}
-    />
-    <mesh
-      name="Plane006_1"
-      castShadow
-      receiveShadow
-      geometry={nodes.Plane006_1.geometry}
-      material={materials['Material.004']}
-    />
-  </group>
-</RigidBody>
+          <RigidBody type="fixed" colliders="ball">
+            <group
+              name="stump_2005"
+              position={[14.408, -3.454, 169.232]}
+              rotation={[-Math.PI, 0.312, -Math.PI]}
+              scale={1.644}
+            >
+              <mesh
+                name="Plane006"
+                castShadow
+                receiveShadow
+                geometry={nodes.Plane006.geometry}
+                material={materials['Material.002']}
+              />
+              <mesh
+                name="Plane006_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Plane006_1.geometry}
+                material={materials['Material.004']}
+              />
+            </group>
+          </RigidBody>
 
-<RigidBody type="fixed" colliders="ball">
-  <mesh
-    name="Sphere002"
-    castShadow
-    receiveShadow
-    geometry={nodes.Sphere002.geometry}
-    material={materials.wood}
-    position={[-5.947, 4.177, 152.23]}
-    scale={[0.871, 10.988, 0.871]}
-  />
-</RigidBody>
+          <RigidBody type="fixed" colliders="ball">
+            <mesh
+              name="Sphere002"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere002.geometry}
+              material={materials.wood}
+              position={[-5.947, 4.177, 152.23]}
+              scale={[0.871, 10.988, 0.871]}
+            />
+          </RigidBody>
   
           <TreeRigidBody
             treeName="Sphere005"

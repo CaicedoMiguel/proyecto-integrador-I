@@ -1,4 +1,3 @@
-// src/pages/enviromental_impacts/Deforestation.jsx
 import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stars, Sky } from "@react-three/drei";
@@ -43,7 +42,6 @@ const CAMERA_POSITIONS = [
   },
 ];
 
-// Definición de los pasos informativos
 const STEPS = [
   {
     title: "Bienvenido a la Exploración de la Deforestación",
@@ -69,7 +67,6 @@ const STEPS = [
   },
 ];
 
-// Hook personalizado para detectar el tamaño de la ventana
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
     width: undefined,
@@ -77,7 +74,6 @@ const useWindowSize = () => {
   });
 
   useEffect(() => {
-    // Handler para actualizar el tamaño
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
@@ -85,20 +81,14 @@ const useWindowSize = () => {
       });
     };
 
-    // Añadir evento de listener
     window.addEventListener("resize", handleResize);
-
-    // Llamar handler inicialmente
     handleResize();
-
-    // Cleanup
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return windowSize;
 };
 
-// Definición del Componente Deforestation
 const Deforestation = () => {
   const [targetPosition, setTargetPosition] = useState(CAMERA_POSITIONS[0].position.clone());
   const [targetLookAt, setTargetLookAt] = useState(CAMERA_POSITIONS[0].lookAt.clone());
@@ -110,15 +100,11 @@ const Deforestation = () => {
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const size = useWindowSize();
   const isMobile = size.width <= 600;
-
-  // Estado para el mute
   const [isMuted, setIsMuted] = useState(false);
-
-  // Referencias a los objetos de audio
   const footAudioRef = useRef(new Audio(footSound));
   const deforestationAudioRef = useRef(new Audio(deforestationSound));
+  const [shouldTreesFall, setShouldTreesFall] = useState(false);
 
-  // Inicializar los objetos de audio al montar el componente
   useEffect(() => {
     footAudioRef.current.volume = isMuted ? 0 : 0.5;
     deforestationAudioRef.current.volume = isMuted ? 0 : 0.7;
@@ -126,16 +112,13 @@ const Deforestation = () => {
     deforestationAudioRef.current.preload = 'auto';
   }, [isMuted]);
 
-  // Función para mutear/desmutear
   const toggleMute = () => {
     setIsMuted((prev) => !prev);
   };
 
-  // Funciones para navegar entre los pasos
   const nextStep = useCallback(() => {
     setCurrentStep((prevStep) => {
       if (prevStep < STEPS.length - 1) {
-        // Reproducir foot.wav al avanzar
         if (!footAudioRef.current.paused) {
           footAudioRef.current.currentTime = 0;
         }
@@ -153,7 +136,6 @@ const Deforestation = () => {
   const prevStep = useCallback(() => {
     setCurrentStep((prevStep) => {
       if (prevStep > 0) {
-        // Reproducir foot.wav al retroceder
         if (!footAudioRef.current.paused) {
           footAudioRef.current.currentTime = 0;
         }
@@ -173,10 +155,10 @@ const Deforestation = () => {
     setTargetLookAt(CAMERA_POSITIONS[0].lookAt.clone());
     setShowInfoCanvas(false);
     setCurrentStep(0);
+    setShouldTreesFall(false);
     console.log("Cámara reiniciada a la posición inicial.");
   }, []);
 
-  // Manejo de cambios en el paso actual
   useEffect(() => {
     console.log(`currentStep cambiado a: ${currentStep}`);
 
@@ -190,26 +172,27 @@ const Deforestation = () => {
         setTargetLookAt(lookAt.clone());
         setShowInfoCanvas(currentStep !== 0);
 
-        // Si es el último paso, reproducir deforestation.wav
-        if (currentStep === STEPS.length - 1 && !isMuted) {
-          // Detener foot.wav si está reproduciéndose
-          if (!footAudioRef.current.paused) {
-            footAudioRef.current.pause();
-            footAudioRef.current.currentTime = 0;
+        if (currentStep === STEPS.length - 1) {
+          setShouldTreesFall(true);
+          if (!isMuted) {
+            if (!footAudioRef.current.paused) {
+              footAudioRef.current.pause();
+              footAudioRef.current.currentTime = 0;
+            }
+            if (!deforestationAudioRef.current.paused) {
+              deforestationAudioRef.current.currentTime = 0;
+            }
+            deforestationAudioRef.current.play().catch((error) => {
+              console.error('Error al reproducir deforestation.wav:', error);
+            });
           }
-          // Reproducir deforestation.wav
-          if (!deforestationAudioRef.current.paused) {
-            deforestationAudioRef.current.currentTime = 0;
-          }
-          deforestationAudioRef.current.play().catch((error) => {
-            console.error('Error al reproducir deforestation.wav:', error);
-          });
+        } else {
+          setShouldTreesFall(false);
         }
       }
     }
   }, [currentStep, isMuted]);
 
-  // Manejo de eventos de teclado
   const handleKeyDown = useCallback((event) => {
     console.log(`Tecla presionada: ${event.code}, showInfoCanvas: ${showInfoCanvas}, currentStep: ${currentStep}`);
 
@@ -239,7 +222,6 @@ const Deforestation = () => {
     }
   }, [showInfoCanvas, nextStep, prevStep, resetCamera, currentStep]);
 
-  // Añadir y limpiar el listener de teclado
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -247,7 +229,6 @@ const Deforestation = () => {
     };
   }, [handleKeyDown]);
 
-  // Foco en el modal cuando se abre
   useEffect(() => {
     if (showInfoCanvas && modalRef.current) {
       setTimeout(() => {
@@ -256,19 +237,16 @@ const Deforestation = () => {
     }
   }, [showInfoCanvas]);
 
-  // Propiedades de la cámara ajustadas según el dispositivo
   const cameraProps = {
     position: CAMERA_POSITIONS[0].position.toArray(),
     fov: isMobile ? 60 : 75,
   };
 
-  // Manejo de presión del botón
   const handleButtonPress = () => {
     setIsButtonPressed(true);
     setTimeout(() => setIsButtonPressed(false), 150);
   };
 
-  // Manejo de gestos de swipe
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (!isMobile) return;
@@ -282,7 +260,6 @@ const Deforestation = () => {
     trackMouse: true
   });
 
-  // Limpieza al desmontar (detener sonidos)
   useEffect(() => {
     return () => {
       if (footAudioRef.current) {
@@ -298,10 +275,7 @@ const Deforestation = () => {
 
   return (
     <div className="deforestation-container" {...handlers}>
-      {/* Navbar */}
       <Navbar />
-
-      {/* Botón de Navegación y Botón de Silencio */}
       <div className="button-container">
         {!isMobile && (
           <>
@@ -335,7 +309,6 @@ const Deforestation = () => {
         )}
       </div>
 
-      {/* Canvas 3D */}
       <Canvas
         frameloop="always"
         shadows
@@ -352,7 +325,7 @@ const Deforestation = () => {
         />
         <Suspense fallback={null}>
           <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ restitution: 0.2, friction: 1 }}>
-            <LostDeforestation />
+            <LostDeforestation shouldFall={shouldTreesFall} />
             {!isMobile && <Dog position={[30, -13, 13]} />}
           </Physics>
           <DeforestationTitle />
@@ -373,7 +346,6 @@ const Deforestation = () => {
           />
           {!isMobile && <CustomCursor />}
 
-          {/* Postprocesado */}
           <EffectComposer>
             <Bloom intensity={0.8} luminanceThreshold={0.2} luminanceSmoothing={0.9} />
             <Vignette eskil={false} offset={0.1} darkness={0.7} />
@@ -382,7 +354,6 @@ const Deforestation = () => {
         <LightsDeforestation />
       </Canvas>
 
-      {/* Modal Paso 0 */}
       {currentStep === 0 && (
         <div
           onClick={nextStep}
@@ -397,7 +368,6 @@ const Deforestation = () => {
         </div>
       )}
 
-      {/* Modal de Información */}
       {showInfoCanvas && currentStep >= 1 && currentStep < STEPS.length && (
         <div
           ref={modalRef}
@@ -457,7 +427,6 @@ const Deforestation = () => {
             </button>
           </div>
 
-          {/* Botones adicionales para navegación táctil */}
           {isMobile && (
             <div className="mobile-navigation-buttons">
               <button onClick={prevStep} className="nav-button prev-button">◀ Anterior</button>
