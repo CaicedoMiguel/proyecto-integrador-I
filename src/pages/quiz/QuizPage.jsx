@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import Quiz from "../../components/Quiz/Quiz";
-import Navbar from '../../components/Navbar/Navbar';
+import Navbar from '../../components/navbar/Navbar';
 import "./QuizPage.css";
 
 const QuizPage = () => {
