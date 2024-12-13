@@ -9,7 +9,7 @@ const Cow = (props) => {
     const { actions } = useAnimations(animations, cowRef, );
 
     const [position, setPosition] = useState([18, -5, 87]);
-    const [direction, setDirection] = useState([0.04, 0, 0.04]);
+    const [direction, setDirection] = useState([0.02, 0, 0.02]);
 
     
     useEffect(() => {

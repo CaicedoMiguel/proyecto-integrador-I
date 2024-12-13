@@ -3,7 +3,7 @@
 import React, { Suspense, useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Html, OrbitControls, Sky, Stars } from "@react-three/drei";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/navbar/Navbar";
 import BiodiversityTittle from "../../components/BiodiversityTittle";
 import { useNavigate } from "react-router-dom";
 import LostBiodiversity from "../../components/LostBiodiversity";
