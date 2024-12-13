@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
@@ -10,8 +11,10 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/navbar/Navbar';
 import Model from '../../components/Model';
+import birdsSound from '../../assets/sounds/birds.wav';
+
 
 // Hook personalizado para escalado responsivo
 const useResponsiveScale = (desktopScale, mobileScale) => {
@@ -57,9 +60,13 @@ const CameraAnimation = () => {
 const Home = () => {
   const [showDescription, setShowDescription] = useState(false);
   const [infoStep, setInfoStep] = useState(1);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const textContainerRef = useRef();
   const navigate = useNavigate();
+
+  // Estado para manejar el sonido
+  const [isMuted, setIsMuted] = useState(true);
+  const [soundActivated, setSoundActivated] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (textContainerRef.current) {
@@ -71,9 +78,14 @@ const Home = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
   const handleTitleClick = () => {
     setShowDescription(!showDescription);
-    setHasInteracted(true);
   };
 
   const handleButtonClick = () => {
@@ -86,6 +98,17 @@ const Home = () => {
 
   const handleBackClick = () => {
     setInfoStep((prevStep) => Math.max(prevStep - 1, 1));
+  };
+
+  const activateSound = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = false;
+      audioRef.current.play().catch((err) => {
+        console.warn("No se pudo reproducir el audio:", err);
+      });
+      setIsMuted(false);
+      setSoundActivated(true);
+    }
   };
 
   const renderInfoContent = () => {
@@ -144,6 +167,10 @@ const Home = () => {
   return (
     <div style={containerStyle}>
       <Navbar />
+
+      {/* Elemento de audio, sin autoPlay */}
+      <audio ref={audioRef} src={birdsSound} loop muted={true} />
+
       <Canvas
         shadows
         camera={{ position: [0, 40, 300], fov: 70 }}
@@ -178,9 +205,10 @@ const Home = () => {
           />
           <CloudGroup />
         </Suspense>
-        <ambientLight intensity={0.2} />
-        <directionalLight position={[10, 20, 5]} intensity={0.5} castShadow />
-        <pointLight position={[-20, 20, 10]} intensity={1} />
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 20, 5]} intensity={3} castShadow />
+        <pointLight position={[-20, 20, 10]} intensity={2} />
+        <hemisphereLight intensity={0.6} position={[0, 1, 0]} />
         <CameraAnimation />
       </Canvas>
 
@@ -209,6 +237,46 @@ const Home = () => {
       >
         Comenzar Aventura
       </button>
+
+      {/* Botón para activar sonido (se muestra solo si aún no se ha activado) */}
+      {!soundActivated && (
+        <button
+          onClick={activateSound}
+          style={soundButtonStyle}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.1)';
+            e.target.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.3)';
+            e.target.style.backgroundColor = '#f0f0f0';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+            e.target.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+            e.target.style.backgroundColor = '#FFFFFF';
+          }}
+        >
+          Activar Sonido
+        </button>
+      )}
+
+      {/* Botón para silenciar/activar el sonido una vez activado */}
+      {soundActivated && (
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          style={muteButtonStyle}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.1)';
+            e.target.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.3)';
+            e.target.style.backgroundColor = '#f0f0f0';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+            e.target.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+            e.target.style.backgroundColor = '#FFFFFF';
+          }}
+        >
+          {isMuted ? '🔇 Silenciar' : '🔊 Sonido On'}
+        </button>
+      )}
     </div>
   );
 };
@@ -291,6 +359,42 @@ const buttonGroupStyle = {
   gap: '10px',
 };
 
+const soundButtonStyle = {
+  position: 'fixed',
+  top: '20px',
+  right: '20px',
+  padding: '10px 20px',
+  backgroundColor: '#FFFFFF',
+  color: '#4CAF50',
+  border: '2px solid #4CAF50',
+  borderRadius: '30px',
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  cursor: 'pointer',
+  zIndex: 10,
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
+  boxShadow: '0 8px 15px rgba(0, 0, 0, 0.2)',
+  textShadow: '0px 0px 10px rgba(76, 175, 80, 0.8)',
+};
+
+const muteButtonStyle = {
+  position: 'fixed',
+  top: '20px',
+  right: '180px',
+  padding: '10px 20px',
+  backgroundColor: '#FFFFFF',
+  color: '#4CAF50',
+  border: '2px solid #4CAF50',
+  borderRadius: '30px',
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  cursor: 'pointer',
+  zIndex: 10,
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
+  boxShadow: '0 8px 15px rgba(0, 0, 0, 0.2)',
+  textShadow: '0px 0px 10px rgba(76, 175, 80, 0.8)',
+};
+
 // Componente del Título con Responsividad
 const TierraSantaTitle = ({ initial, onClick }) => {
   const textRef = useRef();
@@ -327,17 +431,16 @@ const TierraSantaTitle = ({ initial, onClick }) => {
   );
 };
 
-// Componente CloudGroup actualizado
+// Componente CloudGroup
 const CloudGroup = () => {
-  // Ajustar la escala en función del tamaño de la pantalla
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const updateScale = () => {
       if (window.innerWidth < 768) {
-        setScale(0.8); // Escala más pequeña para dispositivos móviles
+        setScale(0.8);
       } else {
-        setScale(1); // Escala normal para escritorio
+        setScale(1);
       }
     };
 
@@ -351,7 +454,6 @@ const CloudGroup = () => {
       <Cloud position={[-40, 60, -100]} speed={0.2} opacity={0.5} />
       <Cloud position={[40, 70, -80]} speed={0.1} opacity={0.7} />
       <Cloud position={[0, 80, -90]} speed={0.3} opacity={0.6} />
-      {/* Añade más nubes si es necesario */}
     </group>
   );
 };

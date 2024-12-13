@@ -24,7 +24,7 @@ const DeforestationTitle = () => {
       bevelSegments={5} // Number of bevel segments
       position={[-50, -10, 0]} // Position in the 3D scene
     >
-      LA DEFORESTACIÓN
+      DEFORESTACIÓN
       {/* Material for the 3D text */}
       <meshPhongMaterial
         color="#1b5e20" // Base color
