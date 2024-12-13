@@ -1,5 +1,3 @@
-// /* eslint-disable react/no-unknown-property */
-// eslint-disable-next-line no-unused-vars
 import React, { Suspense, useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Html, OrbitControls, Sky, Stars } from "@react-three/drei";
@@ -10,78 +8,116 @@ import LostBiodiversity from "../../components/LostBiodiversity";
 import LightsDeforestation from "../../components/LightsDeforestation";
 import { Physics } from "@react-three/rapier";
 import Cow from "../../components/CowModel";
+import VideoBiodiversidad from "../../components/VideoBiodiversidad";
 
 const Biodiversity = () => {
   const [showDescription, setShowDescription] = useState(false);
-  const [showAwareness, setShowAwareness] = useState(false); // Estado para la ventana de sensibilización
+  const [showAwareness, setShowAwareness] = useState(false);
   const [showHelps, setShowHelps] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const textContainerRef = useRef();
   const navigate = useNavigate();
 
-  const handleHelp = () =>{
+  const handleHelp = () => {
     setShowHelps(!showHelps);
-  }
+  };
 
   const handleTitleClick = () => {
     setShowDescription(!showDescription);
   };
 
   const handleNextClick = () => {
-    navigate("/deforestation"); // Navega a la página deforestacion
+    navigate("/deforestation");
   };
 
-  // Función para manejar eventos de teclado
   const handleKeyDown = (event) => {
     if (event.key === "a" || event.key === "A") {
       setShowAwareness(true);
     }
   };
 
-  // Agregar y limpiar el listener de eventos de teclado
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-
-    // Limpiar el listener cuando el componente se desmonta
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
-  // Función para cerrar la ventana de sensibilización
   const handleCloseAwareness = () => {
     setShowAwareness(false);
+  };
+
+  const handleVideoEnd = () => {
+    setShowVideo(false);
+  };
+
+  const handleCloseVideo = () => {
+    setShowVideo(false);
   };
 
   return (
     <>
       <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
         <Navbar />
-        {/* Botón "Siguiente" */}
         <button
           onClick={handleNextClick}
           style={{
             position: "absolute",
             top: "20px",
             right: "20px",
-            padding: "10px 20px",
-            fontSize: "16px",
-            borderRadius: "8px",
+            padding: "12px 24px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            borderRadius: "30px",
             border: "none",
             backgroundColor: "#4CAF50",
             color: "white",
             cursor: "pointer",
-            zIndex: 9, // Asegura que el botón esté sobre el Canvas
+            zIndex: 9,
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            transition: "all 0.3s ease",
           }}
         >
           Anterior
         </button>
+
+        <button
+          onClick={() => setShowVideo(true)}
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            right: "20px",
+            padding: "12px 24px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            borderRadius: "30px",
+            border: "none",
+            backgroundColor: "#2196F3",
+            color: "white",
+            cursor: "pointer",
+            zIndex: 9,
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          Mostrar Video
+        </button>
+
         <Canvas shadows camera={{ position: [30, 5, 160], fov: 60 }}>
           <Suspense fallback={null}>
             <BiodiversityTittle initial onClick={handleTitleClick} />
             <Physics>
-              <Cow scale={[5, 5, 5]} rotation={[0, 3.8, 0]} /> 
+              <Cow scale={[5, 5, 5]} rotation={[0, 3.8, 0]} />
               <LostBiodiversity />
             </Physics>
+            {showVideo && (
+              <VideoBiodiversidad
+                name="screen"
+                position={[50, 30, 60]}
+                scale={[7, 7, 1]}
+                onEnded={handleVideoEnd}
+              />
+            )}
             <LightsDeforestation />
           </Suspense>
           <Sky
@@ -100,9 +136,9 @@ const Biodiversity = () => {
             fade
           />
           <OrbitControls
-            minAzimuthAngle={-Math.PI / 8} // Limita la rotación horizontal (izquierda)
-            maxAzimuthAngle={Math.PI / 8} // Limita la rotación horizontal (derecha)
-            minPolarAngle={Math.PI / 4} // Limita la rotación vertical (arriba)
+            minAzimuthAngle={-Math.PI / 8}
+            maxAzimuthAngle={Math.PI / 8}
+            minPolarAngle={Math.PI / 4}
             maxPolarAngle={Math.PI / 2}
             enableZoom={false}
             enablePan={false}
@@ -110,39 +146,48 @@ const Biodiversity = () => {
           />
           <Html>
             <div>
-              <a href="#"
-              onClick={handleHelp}
-              style={{
-                position:"absolute",
-                top:"220px",
-                left:"580px",
-                transform: "translate(10%, 10%)",
-              }}>
-                <img src="/assets/signoInterrogacion.svg" alt="Ayudas" 
+              <a
+                href="#"
+                onClick={handleHelp}
                 style={{
-                  width:"60px",
+                  position: "absolute",
+                  top: "220px",
+                  right:"610px",
+                  transform: "translate(10%, 10%)",
                 }}
+              >
+                <img
+                  src="/assets/signoInterrogacion.svg"
+                  alt="Ayudas"
+                  style={{
+                    width: "60px",
+                  }}
                 />
               </a>
-            {showHelps && (
-            <div
-            style={{
-              position: "absolute",
-              backgroundColor: "rgba(239, 244, 239, 0.2)",
-              fontWeight: "bold",
-              width: "300px",
-              padding: "5px",
-              top: "90px",
-              left: "280px",
-            }}
-            >
-            <p>Mensaje de sensibilización con la tecla (A)
-            o haciendo click algunos arboles cortados <br />
-            Mensaje de soluciones haciendo click en algunos arboles <br />
-            Mensaje sobre la perdidad de biodiversidad haciendo click en el titulo.
-            </p>
-            </div>
-            )}
+              {showHelps && (
+                <div
+                  style={{
+                    position: "absolute",
+                    backgroundColor: "rgba(239, 244, 239, 0.2)",
+                    fontWeight: "bold",
+                    width: "300px",
+                    padding: "10px",
+                    top: "90px",
+                    left: "180px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <p>
+                    Mensaje de sensibilización con la tecla (A) o haciendo click
+                    algunos árboles cortados.
+                    <br />
+                    Mensaje de soluciones haciendo click en algunos árboles.
+                    <br />
+                    Mensaje sobre la pérdida de biodiversidad haciendo click en
+                    el título.
+                  </p>
+                </div>
+              )}
             </div>
           </Html>
         </Canvas>
@@ -175,7 +220,6 @@ const Biodiversity = () => {
           </div>
         )}
 
-        {/* Ventana de sensibilización */}
         {showAwareness && (
           <div
             style={{
@@ -220,6 +264,30 @@ const Biodiversity = () => {
               Cerrar
             </button>
           </div>
+        )}
+
+        {showVideo && (
+          <button
+            onClick={handleCloseVideo}
+            style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              padding: "12px 24px",
+              fontSize: "18px",
+              fontWeight: "bold",
+              borderRadius: "30px",
+              border: "none",
+              backgroundColor: "#f44336",
+              color: "white",
+              cursor: "pointer",
+              zIndex: 10,
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Cerrar Video
+          </button>
         )}
       </div>
     </>
