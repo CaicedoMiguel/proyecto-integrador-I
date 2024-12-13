@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.js
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import Biodiversity from "./pages/enviromental_impacts/Biodiversity";
+import Deforestation from "./pages/enviromental_impacts/Deforestation";
+import TierraSanta from "./components/tierra-santa";
+import QuizPage from "./pages/quiz/QuizPage";
+import ProfilePage from "./pages/profile/profilePage";
+import Navbar from "./components/navbar/Navbar";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Navbar />
+      <Routes>
+        {/* Ruta raíz muestra TierraSanta */}
+        <Route path="/" element={<TierraSanta />} />
+
+        {/* Ruta para Home */}
+        <Route path="/home" element={<Home />} />
+        
+        {/* Ruta para Login */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Resto de rutas */}
+        <Route path="/biodiversity" element={<Biodiversity />} />
+        <Route path="/deforestation" element={<Deforestation />} />
+        <Route path="/quiz" element={<QuizPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+
+        {/* Si no coincide con ninguna otra, redirige a "/" */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
