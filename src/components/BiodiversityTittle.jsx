@@ -1,20 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Text3D } from "@react-three/drei";
 import * as THREE from 'three';
 
 const BiodiversityTittle = ({ initial, onClick }) => {
 
-  const textRef = useRef();
   const [hovered, setHovered] = useState(false);
 
-  useEffect(() => {
-    if (textRef.current) {
-      textRef.current.material.color.set(hovered ? '#FFFF00' : '#4CAF50');
-      textRef.current.material.emissive = new THREE.Color(hovered ? '#FFFF00' : '#000000');
-    }
-  }, [hovered]);
-  
-    return (
+  return (
     <Text3D
       font="/fonts/bebas-neue-regular.json"
       size={10}
@@ -28,15 +20,14 @@ const BiodiversityTittle = ({ initial, onClick }) => {
     >
       PERDIDA DE BIODIVERSIDAD
       <meshPhongMaterial
-        color="#aeb1ae"
-        // emissive="#818a79"
+        color={hovered ? "#FF0000" : "#aeb1ae"} // Rojo cuando hover
+        emissive={hovered ? new THREE.Color('#FF0000') : new THREE.Color('#000000')}
         metalness={0.7}
         roughness={0.8}
         transparent={false}
-        color={hovered ? "#ff6347" : "#aeb1ae"}
       />
     </Text3D>
-   );
+  );
 };
 
 export default BiodiversityTittle;
