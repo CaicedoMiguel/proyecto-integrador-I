@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Quiz.css";
+import "./Quices.css";
 import InteractiveScene from "./InteractiveScene";
 import userDAO from "../../daos/userDAO";
 import useAuthStore from "../../stores/use-auth-store";
@@ -74,7 +74,7 @@ const scenarios = [
   },
 ];
 
-const Quiz = ({ onCorrectAnswersChange }) => {
+const Quices = ({ onCorrectAnswersChange }) => {
   const { user } = useAuthStore();
   const [currentScenario, setCurrentScenario] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -297,4 +297,4 @@ const Quiz = ({ onCorrectAnswersChange }) => {
   );
 };
 
-export default Quiz;
+export default Quices;
