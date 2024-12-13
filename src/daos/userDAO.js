@@ -23,7 +23,7 @@ class UserDAO {
         return { success: false, data: null };
       }
     } catch (error) {
-      console.log("Error al obtener el documento: ", error);
+      console.error("Error al obtener el documento: ", error);
       return { success: false, data: null, error };
     }
   }
@@ -45,14 +45,12 @@ class UserDAO {
           },
           rewards: [],
         });
-        console.log("Documento creado con ID: ", userId);
         return { success: true, id: userId };
       } catch (error) {
         console.error("Error al agregar el documento: ", error);
         return { success: false, error };
       }
     } else {
-      console.log("El usuario ya existe.");
       return { success: false, error: new Error("El usuario ya existe.") };
     }
   }
@@ -61,7 +59,6 @@ class UserDAO {
     const userRef = doc(db, "users", id);
     try {
       await updateDoc(userRef, userData);
-      console.log("Documento actualizado correctamente!");
       return { success: true };
     } catch (error) {
       console.error("Error al actualizar el documento: ", error);
@@ -72,7 +69,6 @@ class UserDAO {
   async deleteUser(id) {
     try {
       await deleteDoc(doc(db, "users", id));
-      console.log("Documento eliminado correctamente!");
       return { success: true };
     } catch (error) {
       console.error("Error al eliminar el documento: ", error);
@@ -93,7 +89,6 @@ class UserDAO {
         "quizProgress.isGameOver": progressData.isGameOver,
         "quizProgress.currentQuizScore": progressData.currentQuizScore,
       });
-      console.log("Progreso del quiz actualizado correctamente.");
       return { success: true };
     } catch (error) {
       console.error("Error al actualizar el progreso del quiz: ", error);
@@ -111,7 +106,6 @@ class UserDAO {
         "quizProgress.isQuizCompleted": false,
         "quizProgress.isGameOver": false,
       });
-      console.log("Progreso del quiz reiniciado correctamente.");
       return { success: true };
     } catch (error) {
       console.error("Error al reiniciar el progreso del quiz: ", error);
@@ -127,7 +121,6 @@ class UserDAO {
         "quizProgress.failedQuizAttempts": stats.failedQuizAttempts,
         "quizProgress.maxScore": stats.maxScore,
       });
-      console.log("Estadísticas del quiz actualizadas correctamente.");
       return { success: true };
     } catch (error) {
       console.error("Error al actualizar las estadísticas del quiz: ", error);
@@ -141,7 +134,6 @@ class UserDAO {
       await updateDoc(userRef, {
         rewards: arrayUnion(reward),
       });
-      console.log("Recompensa añadida correctamente al usuario.");
       return { success: true };
     } catch (error) {
       console.error("Error al añadir la recompensa al usuario: ", error);
@@ -171,11 +163,10 @@ class UserDAO {
         return { success: false, data: null };
       }
     } catch (error) {
-      console.log("Error al obtener el progreso del quiz: ", error);
+      console.error("Error al obtener el progreso del quiz: ", error);
       return { success: false, data: null, error };
     }
   }
 }
 
 export default new UserDAO();
-

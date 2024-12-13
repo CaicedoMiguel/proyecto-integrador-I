@@ -6,7 +6,6 @@ const LostDeforestation = ({ shouldFall, ...props }) => {
     const deforestationRef = useRef();
     const { nodes, materials, animations } = useGLTF('models/deforestation.glb');
     const { actions } = useAnimations(animations, deforestationRef);
-    console.log(actions);
     const [fallenTrees, setFallenTrees] = useState([]);
 
     useEffect(() => {

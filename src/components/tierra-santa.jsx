@@ -136,7 +136,6 @@ const TierraSanta = () => {
       const scrollPosition = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const progress = Math.min(scrollPosition / maxScroll, 1);
-      console.log(`Scroll Position: ${scrollPosition}, Max Scroll: ${maxScroll}, Progress: ${progress}`);
       setScrollProgress(progress);
 
       if (progress >= 0.99) {
@@ -145,7 +144,6 @@ const TierraSanta = () => {
     };
 
     const navigateToHome = () => {
-      console.log("Navigating to /home");
       navigate('/home');
     };
 
@@ -271,4 +269,3 @@ const TierraSanta = () => {
 };
 
 export default TierraSanta;
-
