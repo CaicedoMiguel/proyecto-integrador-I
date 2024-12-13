@@ -1,20 +1,24 @@
-import { useEffect, useCallback } from "react";
-import useAuthStore from "../../stores/use-auth-store";
+import React, { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaRegUserCircle, FaLock } from "react-icons/fa";
-import "./Login.css";
+import useAuthStore from "../../stores/use-auth-store";
+import { FaRegUserCircle, FaLock, FaGoogle } from "react-icons/fa";
 import userDAO from "../../daos/userDAO";
+import "./Login.css";
 
 const Login = () => {
   const { user, error, loginGoogleWithPopUp, observeAuthState, clearError } = useAuthStore();
   const navigate = useNavigate();
 
-  // Observa el estado de autenticación al montar el componente
   useEffect(() => {
     observeAuthState();
   }, [observeAuthState]);
 
-  // Maneja la creación de usuario y la redirección tras el login
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     const handleUser = async () => {
       if (user) {
@@ -25,64 +29,68 @@ const Login = () => {
         };
         const result = await userDAO.createUser(newUser, user.uid);
         if (result.success) {
-          // Redirige al usuario a la página "home" después de iniciar sesión
           navigate("/home");
         } else {
-          console.log(result.error);
+          console.error(result.error);
         }
       }
     };
     handleUser();
   }, [user, navigate]);
 
-  // Maneja la acción de login con Google
   const handleLogin = useCallback(() => {
     loginGoogleWithPopUp();
   }, [loginGoogleWithPopUp]);
 
-  // Si el usuario ya está autenticado, no mostrar el formulario de login
   if (user) {
     return null;
   }
 
   return (
-    <div className="wrapper">
-      {error && (
-        <div className="error-message">
-          {error}
-          <button onClick={clearError}>Clear error</button>
-        </div>
-      )}
-      <form onSubmit={(e) => e.preventDefault()} className="login-form">
-        <h1>Login</h1>
-        <div className="input-box">
-          <input type="text" placeholder="Username" required disabled />
-          <FaRegUserCircle className="icon" />
-        </div>
-        <div className="input-box">
-          <input type="password" placeholder="Password" required disabled />
-          <FaLock className="icon" />
-        </div>
-
-        <div className="remember-forgot">
-          <label>
-            <input type="checkbox" disabled /> Remember me
-          </label>
-          <a href="#"> Forgot password </a>
-        </div>
-
-        <button type="submit" disabled>Login</button>
-
-        <button type="button" onClick={handleLogin} className="google-login-button">
-          Sign in with Google Account
-        </button>
-
-        <div className="register-link">
-          <p>Don't have an account? <a href="#"> Register </a></p>
-        </div>
-      </form>
+    <div className="login-container" style={{backgroundImage: "url('/src/assets/background.jpg')"}}>
+      <div className="login-card">
+        <h1 className="login-title">Welcome Back</h1>
+        {error && (
+          <div className="error-message">
+            {error}
+            <button onClick={clearError} className="clear-error-btn">
+              ×
+            </button>
+          </div>
+        )}
+        <form onSubmit={(e) => e.preventDefault()} className="login-form">
+          <div className="input-group">
+            <FaRegUserCircle className="input-icon" />
+            <input type="text" placeholder="Username" required disabled />
+          </div>
+          <div className="input-group">
+            <FaLock className="input-icon" />
+            <input type="password" placeholder="Password" required disabled />
+          </div>
+          <div className="form-options">
+            <label className="remember-me">
+              <input type="checkbox" disabled /> Remember me
+            </label>
+            <a href="#forgot-password" className="forgot-password">
+              Forgot password?
+            </a>
+          </div>
+          <button type="submit" className="login-btn" disabled>
+            Login
+          </button>
+          <div className="divider">or</div>
+          <button type="button" onClick={handleLogin} className="google-btn">
+            <FaGoogle className="google-icon" />
+            Sign in with Google
+          </button>
+        </form>
+        <p className="signup-link">
+          Don't have an account? <a href="#signup">Sign up</a>
+        </p>
+      </div>
     </div>
   );
 };
 
 export default Login;
+

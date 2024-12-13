@@ -1,20 +1,22 @@
 // src/components/navbar/Navbar.js
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "./Navbar.css";
 import useAuthStore from "../../stores/use-auth-store";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, signOut } = useAuthStore();
+  const { user, logout } = useAuthStore(); // Cambié signOut por logout (según tu código anterior)
+  const navigate = useNavigate(); // Hook para navegación
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    await logout(); // Cerrar sesión
     setIsOpen(false);
+    navigate("/home"); // Redirigir a la página de inicio después de cerrar sesión
   };
 
   return (

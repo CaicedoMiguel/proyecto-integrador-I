@@ -20,13 +20,13 @@ function App() {
 
         {/* Ruta para Home */}
         <Route path="/home" element={<Home />} />
-
-        {/* Resto de rutas */}
+        
+        {/* Ruta para Login */}
         <Route path="/login" element={<Login />} />
+        
+        {/* Resto de rutas */}
         <Route path="/biodiversity" element={<Biodiversity />} />
         <Route path="/deforestation" element={<Deforestation />} />
-
-        {/* Rutas adicionales */}
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/profile" element={<ProfilePage />} />
 

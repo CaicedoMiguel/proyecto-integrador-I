@@ -355,10 +355,10 @@ const Deforestation = () => {
               </button>
             ) : (
               <button
-                onClick={() => navigate("/biodiversity")}
+                onClick={() => navigate("/quiz")}
                 className="nav-button finish-button"
               >
-                Finalizar
+                Quiz
               </button>
             )}
 
