@@ -151,8 +151,8 @@ const Biodiversity = () => {
                 onClick={handleHelp}
                 style={{
                   position: "absolute",
-                  top: "240px",
-                  right:"590px",
+                  top: "220px",
+                  right:"610px",
                   transform: "translate(10%, 10%)",
                 }}
               >
@@ -173,7 +173,7 @@ const Biodiversity = () => {
                     width: "300px",
                     padding: "10px",
                     top: "90px",
-                    left: "280px",
+                    left: "180px",
                     borderRadius: "8px",
                   }}
                 >
