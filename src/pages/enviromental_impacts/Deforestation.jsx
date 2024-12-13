@@ -1,6 +1,7 @@
+// src/pages/enviromental_impacts/Deforestation.jsx
 import React, { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Stars, Sky, Html } from "@react-three/drei";
+import { Stars, Sky } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { Physics } from '@react-three/rapier';
@@ -13,8 +14,11 @@ import LostDeforestation from "../../components/LostDeforestation";
 import Dog from "../../components/DogModel";
 import Navbar from '../../components/navbar/Navbar';
 import './Styles.css'; 
-import { EffectComposer, Bloom, Vignette, DepthOfField } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 
+// Importa los archivos de sonido
+import footSound from '../../assets/sounds/foot.wav';
+import deforestationSound from '../../assets/sounds/deforestation.wav';
 
 const CAMERA_POSITIONS = [
   {
@@ -26,16 +30,16 @@ const CAMERA_POSITIONS = [
     lookAt: new THREE.Vector3(25.69, -15.25, 150.73),
   },
   {
-    position: new THREE.Vector3(77.34154334345368, -2.6468275771793213, 220.49287339767233),
-    lookAt: new THREE.Vector3(-5.723287859275314, -12.093047405869553, -12.732195097274296),
+    position: new THREE.Vector3(77.34, -2.65, 220.49),
+    lookAt: new THREE.Vector3(-5.72, -12.09, -12.73),
   },
   {
-    position: new THREE.Vector3(115.65618342706782, 4.300917195859684, 81.6113805558299),
-    lookAt: new THREE.Vector3(93.38266673088074, -5.518344414133743, 56.07500598020611),
+    position: new THREE.Vector3(115.66, 4.30, 81.61),
+    lookAt: new THREE.Vector3(93.38, -5.52, 56.08),
   },
   {
-    position: new THREE.Vector3(52.53859280193333, 3.15010345942333, 111.65783993430324),
-    lookAt: new THREE.Vector3(30.947823498215268, -4.468295888068112, 136.13396587114272),
+    position: new THREE.Vector3(52.54, 3.15, 111.66),
+    lookAt: new THREE.Vector3(30.95, -4.47, 136.13),
   },
 ];
 
@@ -107,24 +111,62 @@ const Deforestation = () => {
   const size = useWindowSize();
   const isMobile = size.width <= 600;
 
+  // Estado para el mute
+  const [isMuted, setIsMuted] = useState(false);
+
+  // Referencias a los objetos de audio
+  const footAudioRef = useRef(new Audio(footSound));
+  const deforestationAudioRef = useRef(new Audio(deforestationSound));
+
+  // Inicializar los objetos de audio al montar el componente
+  useEffect(() => {
+    footAudioRef.current.volume = isMuted ? 0 : 0.5;
+    deforestationAudioRef.current.volume = isMuted ? 0 : 0.7;
+    footAudioRef.current.preload = 'auto';
+    deforestationAudioRef.current.preload = 'auto';
+  }, [isMuted]);
+
+  // Función para mutear/desmutear
+  const toggleMute = () => {
+    setIsMuted((prev) => !prev);
+  };
+
   // Funciones para navegar entre los pasos
   const nextStep = useCallback(() => {
     setCurrentStep((prevStep) => {
       if (prevStep < STEPS.length - 1) {
+        // Reproducir foot.wav al avanzar
+        if (!footAudioRef.current.paused) {
+          footAudioRef.current.currentTime = 0;
+        }
+        if (!isMuted) {
+          footAudioRef.current.play().catch((error) => {
+            console.error('Error al reproducir foot.wav:', error);
+          });
+        }
         return prevStep + 1;
       }
       return prevStep;
     });
-  }, []);
+  }, [isMuted]);
 
   const prevStep = useCallback(() => {
     setCurrentStep((prevStep) => {
       if (prevStep > 0) {
+        // Reproducir foot.wav al retroceder
+        if (!footAudioRef.current.paused) {
+          footAudioRef.current.currentTime = 0;
+        }
+        if (!isMuted) {
+          footAudioRef.current.play().catch((error) => {
+            console.error('Error al reproducir foot.wav:', error);
+          });
+        }
         return prevStep - 1;
       }
       return prevStep;
     });
-  }, []);
+  }, [isMuted]);
 
   const resetCamera = useCallback(() => {
     setTargetPosition(CAMERA_POSITIONS[0].position.clone());
@@ -147,9 +189,25 @@ const Deforestation = () => {
         setTargetPosition(position.clone());
         setTargetLookAt(lookAt.clone());
         setShowInfoCanvas(currentStep !== 0);
+
+        // Si es el último paso, reproducir deforestation.wav
+        if (currentStep === STEPS.length - 1 && !isMuted) {
+          // Detener foot.wav si está reproduciéndose
+          if (!footAudioRef.current.paused) {
+            footAudioRef.current.pause();
+            footAudioRef.current.currentTime = 0;
+          }
+          // Reproducir deforestation.wav
+          if (!deforestationAudioRef.current.paused) {
+            deforestationAudioRef.current.currentTime = 0;
+          }
+          deforestationAudioRef.current.play().catch((error) => {
+            console.error('Error al reproducir deforestation.wav:', error);
+          });
+        }
       }
     }
-  }, [currentStep]);
+  }, [currentStep, isMuted]);
 
   // Manejo de eventos de teclado
   const handleKeyDown = useCallback((event) => {
@@ -224,25 +282,55 @@ const Deforestation = () => {
     trackMouse: true
   });
 
+  // Limpieza al desmontar (detener sonidos)
+  useEffect(() => {
+    return () => {
+      if (footAudioRef.current) {
+        footAudioRef.current.pause();
+        footAudioRef.current.currentTime = 0;
+      }
+      if (deforestationAudioRef.current) {
+        deforestationAudioRef.current.pause();
+        deforestationAudioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
+
   return (
     <div className="deforestation-container" {...handlers}>
       {/* Navbar */}
       <Navbar />
 
-      {/* Botón de Navegación */}
+      {/* Botón de Navegación y Botón de Silencio */}
       <div className="button-container">
         {!isMobile && (
-          <button
-            onClick={() => {
-              handleButtonPress();
-              navigate("/biodiversity");
-            }}
-            onMouseDown={handleButtonPress}
-            onMouseUp={() => setIsButtonPressed(false)}
-            onMouseLeave={() => setIsButtonPressed(false)}
-            className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
+          <>
+            <button
+              onClick={() => {
+                handleButtonPress();
+                navigate("/biodiversity");
+              }}
+              onMouseDown={handleButtonPress}
+              onMouseUp={() => setIsButtonPressed(false)}
+              onMouseLeave={() => setIsButtonPressed(false)}
+              className={`navigate-button-3d ${isButtonPressed ? 'pressed' : ''}`}
+            >
+              Explora la Biodiversidad
+            </button>
+            <button 
+              onClick={toggleMute} 
+              className="mute-button"
+            >
+              {isMuted ? "Activar Sonido" : "Silenciar"}
+            </button>
+          </>
+        )}
+        {isMobile && (
+          <button 
+            onClick={toggleMute} 
+            className="mute-button"
           >
-            Explora la Biodiversidad
+            {isMuted ? "Activar Sonido" : "Silenciar"}
           </button>
         )}
       </div>
@@ -290,7 +378,6 @@ const Deforestation = () => {
             <Bloom intensity={0.8} luminanceThreshold={0.2} luminanceSmoothing={0.9} />
             <Vignette eskil={false} offset={0.1} darkness={0.7} />
           </EffectComposer>
-
         </Suspense>
         <LightsDeforestation />
       </Canvas>
