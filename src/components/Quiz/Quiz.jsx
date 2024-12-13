@@ -90,6 +90,9 @@ const Quiz = () => {
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [newReward, setNewReward] = useState(null);
+  const [totalAttempts, setTotalAttempts] = useState(0);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [score, setScore] = useState(0); // Nueva variable de estado para la puntuación
 
   // Cargar el progreso del usuario al iniciar el componente
   useEffect(() => {
@@ -102,6 +105,9 @@ const Quiz = () => {
           setRewards(progress.data.rewards || []);
           setIsQuizCompleted(progress.data.isQuizCompleted || false);
           setIsGameOver(progress.data.isGameOver || false);
+          setTotalAttempts(progress.data.totalAttempts || 0);
+          setFailedAttempts(progress.data.failedAttempts || 0);
+          setScore(progress.data.score || 0); // Cargar la puntuación
         } else {
           // Si no hay progreso, asegurar que los estados están inicializados
           setCurrentScenario(0);
@@ -109,6 +115,9 @@ const Quiz = () => {
           setRewards([]);
           setIsQuizCompleted(false);
           setIsGameOver(false);
+          setTotalAttempts(0);
+          setFailedAttempts(0);
+          setScore(0); // Inicializar la puntuación
         }
       }
     };
@@ -125,21 +134,34 @@ const Quiz = () => {
           rewards,
           isQuizCompleted,
           isGameOver,
+          totalAttempts,
+          failedAttempts,
+          score, // Guardar la puntuación
         });
       }
     };
     saveQuizProgress();
-  }, [currentScenario, correctAnswers, rewards, user, isQuizCompleted, isGameOver]);
+  }, [currentScenario, correctAnswers, rewards, isQuizCompleted, isGameOver, totalAttempts, failedAttempts, score, user]);
 
+  /**
+   * Maneja la acción del usuario al seleccionar una respuesta.
+   * @param {boolean} isCorrect - Indica si la respuesta fue correcta.
+   */
   const handleAction = async (isCorrect) => {
-    let newCorrectAnswers = correctAnswers;
+    let updatedCorrectAnswers = correctAnswers;
+    let updatedTotalAttempts = totalAttempts + 1;
+    let updatedFailedAttempts = failedAttempts;
 
     if (isCorrect) {
-      newCorrectAnswers += 1;
+      updatedCorrectAnswers += 1;
+    } else {
+      updatedFailedAttempts += 1;
     }
 
-    // Actualizar el número de respuestas correctas
-    setCorrectAnswers(newCorrectAnswers);
+    // Actualizar los estados correspondientes
+    setCorrectAnswers(updatedCorrectAnswers);
+    setTotalAttempts(updatedTotalAttempts);
+    setFailedAttempts(updatedFailedAttempts);
 
     const nextScenario = currentScenario + 1;
 
@@ -147,10 +169,17 @@ const Quiz = () => {
       setCurrentScenario(nextScenario);
     } else {
       // Ha completado todas las preguntas
-      if (newCorrectAnswers >= 3) {
+      if (updatedCorrectAnswers >= 3) {
         setIsQuizCompleted(true);
-        const obtainedRewards = calculateRewards(newCorrectAnswers);
+        const obtainedRewards = calculateRewards(updatedCorrectAnswers);
         setRewards(obtainedRewards);
+
+        // Calcular la puntuación total
+        const calculatedScore = updatedCorrectAnswers * 20;
+        setScore(calculatedScore); // Actualizar el estado local de la puntuación
+
+        // Guardar la puntuación en Firestore
+        await userDAO.updateUserScore(user.uid, calculatedScore);
 
         // Guardar recompensas en Firestore
         for (const reward of obtainedRewards) {
@@ -164,14 +193,27 @@ const Quiz = () => {
       } else {
         // Menos de 3 respuestas correctas => Game Over
         setIsGameOver(true);
+
+        // Calcular la puntuación total
+        const calculatedScore = updatedCorrectAnswers * 20;
+        setScore(calculatedScore); // Actualizar el estado local de la puntuación
+
+        // Guardar la puntuación en Firestore
+        await userDAO.updateUserScore(user.uid, calculatedScore);
       }
     }
   };
 
+  /**
+   * Cierra el popup de recompensa.
+   */
   const handleCloseReward = () => {
     setNewReward(null);
   };
 
+  /**
+   * Reinicia el quiz y el progreso del usuario.
+   */
   const handleRestartQuiz = async () => {
     if (user) {
       // Reiniciar el estado local
@@ -181,6 +223,9 @@ const Quiz = () => {
       setIsQuizCompleted(false);
       setIsGameOver(false);
       setNewReward(null);
+      setTotalAttempts(0);
+      setFailedAttempts(0);
+      setScore(0); // Reiniciar la puntuación
 
       // Reiniciar el progreso en la base de datos
       await userDAO.resetQuizProgress(user.uid);
@@ -211,7 +256,7 @@ const Quiz = () => {
       <div className="quiz-container">
         <h2>Game Over</h2>
         <p>Has obtenido {correctAnswers} respuestas correctas.</p>
-        <p>Puntuación obtenida: {correctAnswers * 20} puntos</p>
+        <p>Puntuación obtenida: {score} puntos</p>
         <button onClick={handleRestartQuiz} className="restart-button">
           ¿Quieres volver a jugar?
         </button>
@@ -224,7 +269,7 @@ const Quiz = () => {
       <div className="quiz-completed">
         <h2>¡Quiz Completado!</h2>
         <p>Has obtenido {correctAnswers} respuestas correctas.</p>
-        <p>Puntuación Total: {correctAnswers * 20} puntos</p>
+        <p>Puntuación Total: {score} puntos</p>
         {rewards.length > 0 && (
           <>
             <h3>Recompensa:</h3>
@@ -257,7 +302,7 @@ const Quiz = () => {
         objects={currentScenarioData.objects}
         onAction={handleAction}
       />
-      <div className="score">Puntuación Actual: {correctAnswers * 20} puntos</div>
+      <div className="score">Puntuación Actual: {score} puntos</div>
 
       {/* Animación de nueva recompensa */}
       <AnimatePresence>
@@ -270,7 +315,7 @@ const Quiz = () => {
             transition={{ duration: 0.5 }}
           >
             <img src={newReward.image} alt={newReward.type} className="popup-image" />
-            <h3>{newReward.type} Obtenida!</h3>
+            <h3>{newReward.type} ¡Obtenida!</h3>
             <p>{newReward.description}</p>
             <button onClick={handleCloseReward} className="close-button">Cerrar</button>
           </motion.div>

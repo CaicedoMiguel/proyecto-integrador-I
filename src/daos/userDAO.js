@@ -60,11 +60,13 @@ class UserDAO {
           quizProgress: {
             currentScenario: 0,
             correctAnswers: 0,
+            totalAttempts: 0, // Añadido
+            failedAttempts: 0, // Añadido
             rewards: [],
             isQuizCompleted: false,
             isGameOver: false,
           },
-          score: 0,
+          score: 0, // Inicializar la puntuación
           rewards: [],
         });
         console.log("Documento creado con ID: ", userId);
@@ -128,7 +130,11 @@ class UserDAO {
     try {
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        quizProgress: progressData,
+        quizProgress: {
+          ...progressData,
+          totalAttempts: progressData.totalAttempts || 0, // Asegurar que exista
+          failedAttempts: progressData.failedAttempts || 0, // Asegurar que exista
+        },
       });
       console.log("Progreso del quiz actualizado correctamente.");
       return { success: true };
@@ -151,11 +157,13 @@ class UserDAO {
         quizProgress: {
           currentScenario: 0,
           correctAnswers: 0,
+          totalAttempts: 0, // Reiniciar a 0
+          failedAttempts: 0, // Reiniciar a 0
           rewards: [],
           isQuizCompleted: false,
           isGameOver: false,
         },
-        score: 0, // Opcional: Reinicia la puntuación total si es necesario
+        score: 0, // Reiniciar la puntuación
       });
       console.log("Progreso del quiz reiniciado correctamente.");
       return { success: true };
@@ -222,9 +230,12 @@ class UserDAO {
         const completeQuizProgress = {
           currentScenario: quizProgress.currentScenario || 0,
           correctAnswers: quizProgress.correctAnswers || 0,
+          totalAttempts: quizProgress.totalAttempts || 0, // Asegurar que exista
+          failedAttempts: quizProgress.failedAttempts || 0, // Asegurar que exista
           rewards: quizProgress.rewards || [],
           isQuizCompleted: quizProgress.isQuizCompleted || false,
           isGameOver: quizProgress.isGameOver || false,
+          score: userDoc.data().score || 0, // Incluir la puntuación
         };
         return { success: true, data: completeQuizProgress };
       } else {
