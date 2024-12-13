@@ -1,6 +1,6 @@
 import React from "react";
 import Rewards from "../../components/UserProfile/Rewards";
-import Navbar from '../../components/Navbar/Navbar';
+import Navbar from '../../components/navbar/Navbar';
 
 const ProfilePage = () => {
   return (
