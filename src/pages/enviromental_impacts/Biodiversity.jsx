@@ -118,7 +118,7 @@ const Biodiversity = () => {
                 left:"580px",
                 transform: "translate(10%, 10%)",
               }}>
-                <img src="/src/assets/signoInterrogacion.svg" alt="Ayudas" 
+                <img src="/assets/signoInterrogacion.svg" alt="Ayudas" 
                 style={{
                   width:"60px",
                 }}
