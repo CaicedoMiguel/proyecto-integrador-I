@@ -1,9 +1,12 @@
+// src/components/Quices/Quices.jsx
+
 import React, { useState, useEffect } from "react";
 import "./Quices.css";
 import InteractiveScene from "./InteractiveScene";
 import userDAO from "../../daos/userDAO";
 import useAuthStore from "../../stores/use-auth-store";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom"; // Importa useNavigate
 
 const calculateRewards = (correctAnswers) => {
   if (correctAnswers === 5) {
@@ -76,6 +79,7 @@ const scenarios = [
 
 const Quices = ({ onCorrectAnswersChange }) => {
   const { user } = useAuthStore();
+  const navigate = useNavigate(); // Inicializa useNavigate
   const [currentScenario, setCurrentScenario] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
@@ -227,6 +231,11 @@ const Quices = ({ onCorrectAnswersChange }) => {
     }
   };
 
+  // Nueva función manejadora para navegar al perfil
+  const handleGoToProfile = () => {
+    navigate("/profile"); // Asegúrate de que esta ruta exista en tu enrutador
+  };
+
   if (!user) {
     return <p>Por favor, inicia sesión para participar en el quiz.</p>;
   }
@@ -257,9 +266,14 @@ const Quices = ({ onCorrectAnswersChange }) => {
           <p>Intentos totales de quiz: {quizStats.totalQuizAttempts}</p>
           <p>Quices perdidos: {quizStats.failedQuizAttempts}</p>
           <p>Puntuación máxima: {quizStats.maxScore} puntos</p>
-          <button onClick={handleRestartQuiz} className="restart-button">
-            ¿Quieres volver a jugar?
-          </button>
+          <div className="buttons-container"> {/* Contenedor para los botones */}
+            <button onClick={handleRestartQuiz} className="restart-button">
+              ¿Quieres volver a jugar?
+            </button>
+            <button onClick={handleGoToProfile} className="profile-button">
+              Perfil
+            </button>
+          </div>
         </div>
       )}
 
@@ -271,9 +285,14 @@ const Quices = ({ onCorrectAnswersChange }) => {
           <p>Intentos totales de quiz: {quizStats.totalQuizAttempts}</p>
           <p>Quices perdidos: {quizStats.failedQuizAttempts}</p>
           <p>Puntuación máxima: {quizStats.maxScore} puntos</p>
-          <button onClick={handleRestartQuiz} className="restart-button">
-            ¿Quieres volver a jugar?
-          </button>
+          <div className="buttons-container"> {/* Contenedor para los botones */}
+            <button onClick={handleRestartQuiz} className="restart-button">
+              ¿Quieres volver a jugar?
+            </button>
+            <button onClick={handleGoToProfile} className="profile-button">
+              Perfil
+            </button>
+          </div>
         </div>
       )}
 
