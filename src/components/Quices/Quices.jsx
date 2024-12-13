@@ -235,9 +235,9 @@ const Quices = ({ onCorrectAnswersChange }) => {
   const currentScenarioData = isValidScenario ? scenarios[currentScenario] : null;
 
   return (
-    <div className="quiz-wrapper">
+    <div className="quices-wrapper">
       {(!isQuizCompleted && !isGameOver && isValidScenario) && (
-        <div className="quiz-container">
+        <div className="quices-container">
           <h2>Pregunta {currentScenario + 1} de {scenarios.length}</h2>
           <p className="description">{currentScenarioData.description}</p>
           <p>Aciertos hasta ahora: {correctAnswers}</p>
@@ -250,7 +250,7 @@ const Quices = ({ onCorrectAnswersChange }) => {
       )}
 
       {isGameOver && (
-        <div className="quiz-container">
+        <div className="quices-container">
           <h2>Game Over</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
           <p>Puntuación obtenida: {currentQuizScore} puntos</p>
@@ -264,7 +264,7 @@ const Quices = ({ onCorrectAnswersChange }) => {
       )}
 
       {isQuizCompleted && (
-        <div className="quiz-completed">
+        <div className="quices-completed">
           <h2>¡Quiz Completado!</h2>
           <p>Has obtenido {correctAnswers} respuestas correctas.</p>
           <p>Puntuación Total: {currentQuizScore} puntos</p>

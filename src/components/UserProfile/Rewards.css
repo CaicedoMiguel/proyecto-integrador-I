@@ -14,7 +14,6 @@
   margin-bottom: 20px;
   color: #333333;
 }
-
 .rewards-list {
   list-style: none;
   padding: 0;
@@ -59,4 +58,57 @@
 .earned-date {
   font-size: 0.9em;
   color: #999999;
+}
+
+/* Estilos para el popup de recompensa */
+.reward-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  width: 280px;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0px 8px 24px rgba(0,0,0,0.2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 9999; /* Asegura que aparezca sobre otros elementos */
+}
+
+.reward-popup .popup-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.reward-popup h3 {
+  font-size: 1.2em;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.reward-popup p {
+  font-size: 0.9em;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.reward-popup .close-button {
+  background: #0044cc;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.3s ease;
+}
+
+.reward-popup .close-button:hover {
+  background: #003399;
 }
